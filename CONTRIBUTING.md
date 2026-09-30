@@ -14,10 +14,11 @@ Open an [issue](https://github.com/dnd-mapp/ui/issues) to discuss any change bey
 
 The required Node and pnpm versions are set in `devEngines` in `package.json`. They are enforced through `engineStrict`, so installing with other versions fails.
 
-Install the dependencies with:
+Install the dependencies, and the Chromium browser that the tests run in, with:
 
 ```bash
 pnpm install
+pnpm exec playwright install chromium
 ```
 
 Dependency versions live in the catalogs in `pnpm-workspace.yaml`, which uses `catalogMode: strict`. Add or bump versions there and reference them in `package.json`. Use `catalog:` for the default catalog and a named catalog such as `catalog:angular` for a group of packages.
@@ -73,7 +74,7 @@ pnpm ng generate component <name> --project ui
 
 The `build` script builds the library with ng-packagr into `dist/ui`, and copies the changelog, the license, and the readme into it. The release workflow publishes that directory.
 
-Tests use Vitest through the Angular unit-test builder, and run in [jsdom](https://github.com/jsdom/jsdom). The builder sets up the Angular `TestBed`, and the Vitest globals, such as `describe`, `it`, `expect`, and `vi`, are available without an import. Coverage must stay above the thresholds in `vitest.config.ts`.
+Tests use Vitest through the Angular unit-test builder, and run in Chromium through [Playwright](https://playwright.dev/). The builder sets up the Angular `TestBed`, and the Vitest globals, such as `describe`, `it`, `expect`, and `vi`, are available without an import. Coverage must stay above the thresholds in `vitest.config.ts`.
 
 `tsconfig.json` holds the compiler options of the workspace, and refers to three projects: `projects/ui/tsconfig.lib.json` for the library, `projects/ui/tsconfig.spec.json` for the specs, and `tsconfig.tools.json` for the scripts and the config files. Only the spec project has the types of the Vitest globals, so the library cannot use them by mistake.
 
