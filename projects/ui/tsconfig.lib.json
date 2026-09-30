@@ -7,7 +7,7 @@
         "composite": true,
         "declaration": true,
         "declarationMap": true,
-        "outDir": "../../.tmp/tsc/lib",
+        "outDir": "../../tsc-out/lib",
         "types": []
     }
 }

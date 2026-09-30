@@ -4,7 +4,7 @@
     "include": ["src/**/*.ts"],
     "compilerOptions": {
         "composite": true,
-        "outDir": "../../.tmp/tsc/spec",
+        "outDir": "../../tsc-out/spec",
         "types": ["vitest/globals"]
     }
 }

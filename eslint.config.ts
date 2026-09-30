@@ -4,7 +4,7 @@ import angular from 'angular-eslint';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
 export default defineConfig([
-    globalIgnores(['.angular/', 'dist/', '.coverage/', '.vitest/', '.tmp/']),
+    globalIgnores(['.angular/', 'dist/', '.coverage/', '.vitest/', 'tsc-out/']),
     javascript,
     typescript,
     {
