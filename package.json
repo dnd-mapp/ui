@@ -9,7 +9,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "build": "ng build && node tools/copy-package-files.ts",
+    "build": "ng build",
     "test": "ng test",
     "test-ci": "ng test -c ci",
     "typecheck": "tsc -b --noEmit",

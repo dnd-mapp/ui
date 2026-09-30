@@ -41,4 +41,5 @@ jobs:
                   bump: ${{ inputs.bump }}
                   client-id: ${{ vars.GH_APP_CLIENT_ID }}
                   private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+                  changelog: projects/ui/CHANGELOG.md
                   manifest: projects/ui/package.json

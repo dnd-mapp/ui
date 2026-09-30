@@ -48,9 +48,9 @@ The repository is an Angular workspace with a single project, the `ui` library i
 | `projects/ui/package.json`    | The manifest of the published package, with its version and peer dependencies       |
 | `projects/ui/ng-package.json` | The ng-packagr config                                                               |
 | `projects/ui/README.md`       | The readme of the published package                                                 |
+| `projects/ui/CHANGELOG.md`    | The changelog of the published package                                              |
 | `projects/ui/src/index.ts`    | The entry point of the package, which exports the public API                        |
 | `projects/ui/src/lib`         | The components, each in a directory of its own                                      |
-| `tools/copy-package-files.ts` | Copies the changelog, the license, and the readme into the package after a build    |
 | `vitest.config.ts`            | The Vitest options that the test target in `angular.json` has no builder option for |
 
 The `package.json` in the repository root belongs to the workspace, and pnpm never publishes it. Its `publishConfig.directory` points pnpm at `dist/ui` instead, so publishing from the root publishes the built package.
@@ -73,7 +73,7 @@ pnpm ng generate component <name> --project ui
 
 ## Building and testing
 
-The `build` script builds the library with ng-packagr into `dist/ui`, and copies the changelog, the license, and the readme into it. The release workflow publishes that directory.
+The `build` script builds the library with ng-packagr into `dist/ui`, together with the package readme and changelog. pnpm adds the license from the repository root when it packs the package. The release workflow publishes that directory.
 
 Tests use Vitest through the Angular unit-test builder, and run in Chromium through [Playwright](https://playwright.dev/). The builder sets up the Angular `TestBed`, and the Vitest globals, such as `describe`, `it`, `expect`, and `vi`, are available without an import. The test target in `angular.json` holds the test options, and coverage must stay above its thresholds. Its `development` configuration is the default and runs in watch mode with the Vitest UI. The `ci` configuration runs the tests once in headless Chromium.
 
@@ -98,7 +98,7 @@ The `lint-md` script lints the Markdown files with markdownlint. The `lint-ts` s
 
 ## Changelog and versioning
 
-This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Record every notable change for consumers under `[Unreleased]` in `CHANGELOG.md`, using the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
+This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Record every notable change for consumers under `[Unreleased]` in `projects/ui/CHANGELOG.md`, using the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 The exports of the package, the selectors of the components, and their inputs, outputs, and content slots are the public API. So are the peer dependencies.
 
