@@ -46,7 +46,7 @@ The button enhances the native element, so it keeps the keyboard support, the fo
 | Focus    | The button has keyboard focus                    | An amber ring, 2px outside the button          |
 | Disabled | The native `disabled` attribute is set           | The `disabled` fill and label, and no response |
 
-The focus ring shows on keyboard focus only, through `:focus-visible`. Hover and pressed never apply to a disabled button.
+The focus ring shows on keyboard focus only, through `:focus-visible`. A disabled button never shows it, because the native `disabled` attribute keeps the button from taking focus. Hover and pressed never apply to a disabled button either.
 
 <Canvas of={ButtonStories.Disabled} />
 
