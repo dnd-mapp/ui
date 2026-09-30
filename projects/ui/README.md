@@ -7,8 +7,6 @@ The Angular component library of D&D Mapp. It holds the presentational component
 
 A presentational component only renders what it's given. It takes its data through inputs and reports what the user does through outputs, and it never fetches data or talks to services. The app decides what happens.
 
-The library has no components yet. The button is the first one to come.
-
 ## Requirements
 
 - Angular 22.2 or later, with `@angular/core` and `@angular/common`.
@@ -31,6 +29,32 @@ The components style themselves with the custom properties of the design tokens,
 ```
 
 The components follow the `color-scheme` of the page, just like the tokens. See the [design tokens](https://github.com/dnd-mapp/design-tokens#light-and-dark-mode) for how to switch between light and dark mode.
+
+## Components
+
+| Component | Selector             | Use for                       |
+|:----------|:---------------------|:------------------------------|
+| `Button`  | `button[dma-button]` | The one main action in a view |
+
+### Button
+
+Put `dma-button` on a native `button` element, and import `Button` into the component that uses it. The content of the element is the label.
+
+```ts
+import { Component } from '@angular/core';
+import { Button } from '@dnd-mapp/ui';
+
+@Component({
+    selector: 'app-map-toolbar',
+    imports: [Button],
+    template: `<button dma-button type="button" (click)="save()">Save map</button>`,
+})
+export class MapToolbar {
+    save() {}
+}
+```
+
+The button has the `Primary` variant in the `Medium` size so far. Set the native `disabled` attribute to disable it.
 
 ## Changelog
 
