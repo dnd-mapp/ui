@@ -3,6 +3,7 @@ import { Component, signal, type Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { tokens } from '@dnd-mapp/design-tokens';
 import { ButtonHarness } from '@dnd-mapp/ui/components/testing';
+import { ButtonSizes, DEFAULT_BUTTON_SIZE, type ButtonSize } from './button-size';
 import { ButtonVariants, DEFAULT_BUTTON_VARIANT, type ButtonVariant } from './button-variant';
 import { ButtonComponent } from './button.component';
 
@@ -11,6 +12,7 @@ import { ButtonComponent } from './button.component';
         dma-button
         type="button"
         [variant]="variant()"
+        [size]="size()"
         [disabled]="disabled()"
         (click)="clicks.set(clicks() + 1)"
     >
@@ -20,6 +22,7 @@ import { ButtonComponent } from './button.component';
 })
 class TestHostComponent {
     public readonly variant = signal<ButtonVariant>(DEFAULT_BUTTON_VARIANT);
+    public readonly size = signal<ButtonSize>(DEFAULT_BUTTON_SIZE);
     public readonly disabled = signal(false);
     public readonly clicks = signal(0);
 }
@@ -36,6 +39,12 @@ class NoVariantTestHostComponent {}
 })
 class BareVariantTestHostComponent {}
 
+@Component({
+    template: `<button dma-button type="button" size>Save map</button>`,
+    imports: [ButtonComponent],
+})
+class BareSizeTestHostComponent {}
+
 /**
  * The color tokens of a button in one state, such as `tokens.color.background.accent`. A `null` fill or border
  * shows none.
@@ -46,29 +55,44 @@ interface Look {
     label: string;
 }
 
+/**
+ * The tokens of a button in one size, such as `tokens.spacing['16']`. The height has no token, so it's in pixels.
+ */
+interface Dimensions {
+    height: number;
+    padding: string;
+    radius: string;
+    fontSize: string;
+    lineHeight: string;
+}
+
 const transparent = 'rgba(0, 0, 0, 0)';
 
-/** Resolves a color token to the color that the browser computes for it inside `context`. */
-function resolveColor(token: string | null, context: HTMLElement) {
-    if (token === null) {
-        return transparent;
-    }
-    // A token is a `var()` of its custom property, such as `var(--dma-color-background-accent)`.
-    const property = token.slice('var('.length, -')'.length);
-
-    if (getComputedStyle(context).getPropertyValue(property) === '') {
-        throw new Error(`The design tokens don't define ${property}.`);
+/**
+ * Resolves `value` to what the browser computes for the CSS `property` inside `context`. The value can name
+ * tokens, such as `var(--dma-color-background-accent)` or `calc(var(--dma-spacing-16) - 1px)`.
+ */
+function resolveStyle(property: string, value: string, context: HTMLElement) {
+    for (const [name] of value.matchAll(/--[\w-]+/g)) {
+        if (getComputedStyle(context).getPropertyValue(name) === '') {
+            throw new Error(`The design tokens don't define ${name}.`);
+        }
     }
     const probe = document.createElement('span');
 
-    probe.style.color = token;
+    probe.style.setProperty(property, value);
     context.append(probe);
 
-    const color = getComputedStyle(probe).color;
+    const resolved = getComputedStyle(probe).getPropertyValue(property);
 
     probe.remove();
 
-    return color;
+    return resolved;
+}
+
+/** Resolves a color token to the color that the browser computes for it inside `context`. */
+function resolveColor(token: string | null, context: HTMLElement) {
+    return token === null ? transparent : resolveStyle('color', token, context);
 }
 
 function toColors({ fill, border, label }: Look, context: HTMLElement) {
@@ -76,6 +100,30 @@ function toColors({ fill, border, label }: Look, context: HTMLElement) {
         fill: resolveColor(fill, context),
         border: resolveColor(border, context),
         label: resolveColor(label, context),
+    };
+}
+
+/** Resolves the tokens of a size to what the browser computes for them inside `context`. */
+function toDimensions({ height, padding, radius, fontSize, lineHeight }: Dimensions, context: HTMLElement) {
+    return {
+        height,
+        // The 1px border sits inside the padding.
+        padding: resolveStyle('padding-inline-start', `calc(${padding} - 1px)`, context),
+        radius: resolveStyle('border-top-left-radius', radius, context),
+        fontSize: resolveStyle('font-size', fontSize, context),
+        lineHeight: resolveStyle('line-height', lineHeight, context),
+    };
+}
+
+async function getDimensions(button: ButtonHarness) {
+    const host = await button.host();
+
+    return {
+        height: (await host.getDimensions()).height,
+        padding: await host.getCssValue('padding-inline-start'),
+        radius: await host.getCssValue('border-top-left-radius'),
+        fontSize: await host.getCssValue('font-size'),
+        lineHeight: await host.getCssValue('line-height'),
     };
 }
 
@@ -88,6 +136,14 @@ async function getColors(button: ButtonHarness) {
         label: await host.getCssValue('color'),
     };
 }
+
+const mediumDimensions: Dimensions = {
+    height: 40,
+    padding: tokens.spacing['16'],
+    radius: tokens.radius['8'],
+    fontSize: tokens.text.label.medium['font-size'],
+    lineHeight: tokens.text.label.medium['line-height'],
+};
 
 const primaryLook: Look = {
     fill: tokens.color.background.accent,
@@ -157,6 +213,67 @@ describe('ButtonComponent', () => {
         expect(await getColors(button)).toEqual(toColors(primaryLook, element));
     });
 
+    it('has the Medium size when it sets no size', async () => {
+        const { element, button } = await setup(NoVariantTestHostComponent);
+
+        expect(await getDimensions(button)).toEqual(toDimensions(mediumDimensions, element));
+    });
+
+    it('has the Medium size when it sets the size attribute without a value', async () => {
+        const { element, button } = await setup(BareSizeTestHostComponent);
+
+        expect(await getDimensions(button)).toEqual(toDimensions(mediumDimensions, element));
+    });
+
+    describe.each<{ size: ButtonSize; dimensions: Dimensions }>([
+        {
+            size: ButtonSizes.small,
+            dimensions: {
+                height: 32,
+                padding: tokens.spacing['12'],
+                radius: tokens.radius['4'],
+                fontSize: tokens.text.label.small['font-size'],
+                lineHeight: tokens.text.label.small['line-height'],
+            },
+        },
+        {
+            size: ButtonSizes.medium,
+            dimensions: mediumDimensions,
+        },
+        {
+            size: ButtonSizes.large,
+            dimensions: {
+                height: 48,
+                padding: tokens.spacing['24'],
+                radius: tokens.radius['12'],
+                fontSize: tokens.text.label.large['font-size'],
+                lineHeight: tokens.text.label.large['line-height'],
+            },
+        },
+    ])('in the $size size', ({ size, dimensions }) => {
+        it('has the height, padding, radius, and text style of its size', async () => {
+            const { fixture, element, button } = await setup(TestHostComponent);
+
+            fixture.componentInstance.size.set(size);
+
+            expect(await button.getText()).toBe('Save map');
+            expect(await getDimensions(button)).toEqual(toDimensions(dimensions, element));
+        });
+
+        it('keeps its size in every variant', async () => {
+            const { fixture, button } = await setup(TestHostComponent);
+
+            fixture.componentInstance.size.set(size);
+
+            for (const variant of Object.values(ButtonVariants)) {
+                fixture.componentInstance.variant.set(variant);
+
+                expect(await button.getText()).toBe('Save map');
+                expect((await (await button.host()).getDimensions()).height).toBe(dimensions.height);
+            }
+        });
+    });
+
     describe.each<{ variant: ButtonVariant; enabled: Look; disabled: Look }>([
         {
             variant: ButtonVariants.primary,
@@ -200,14 +317,6 @@ describe('ButtonComponent', () => {
 
             expect(await button.isDisabled()).toBe(true);
             expect(await getColors(button)).toEqual(toColors(disabled, element));
-        });
-
-        it('has the height of a Medium button', async () => {
-            const { button } = await setupVariant();
-
-            const { height } = await (await button.host()).getDimensions();
-
-            expect(height).toBe(40);
         });
     });
 });

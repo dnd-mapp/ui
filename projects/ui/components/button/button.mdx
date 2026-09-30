@@ -14,7 +14,7 @@ A button starts an action, such as saving a map. It's built after the `Button` c
 
 ## When to use
 
-Pick the variant after the weight of the action. The button has the `Medium` size so far. The `Small` and `Large` sizes and the icon slots will follow.
+Pick the variant after the weight of the action. The icon slots will follow.
 
 | Variant     | Look                                | Use for                                                        |
 | :---------- | :---------------------------------- | :------------------------------------------------------------- |
@@ -24,6 +24,16 @@ Pick the variant after the weight of the action. The button has the `Medium` siz
 | `danger`    | The danger fill, in the `red` scale | Actions that destroy or remove something, such as "Delete map" |
 
 Keep to one `primary` button in a view, so the main action stands out. A `danger` button replaces the `primary` one when the main action destroys something, such as in a dialog that confirms a delete.
+
+Pick the size after the space around the button. Keep the buttons in one row to one size, so they line up.
+
+| Size     | Height | Padding      | Radius      | Text style     | Use for                                                 |
+| :------- | -----: | :----------- | :---------- | :------------- | :------------------------------------------------------ |
+| `small`  |   32px | `spacing/12` | `radius/4`  | `Label/Small`  | Dense layouts, such as table rows and panel headers     |
+| `medium` |   40px | `spacing/16` | `radius/8`  | `Label/Medium` | Most actions, such as the ones in toolbars and dialogs  |
+| `large`  |   48px | `spacing/24` | `radius/12` | `Label/Large`  | Actions that lead a sparse view, such as an empty state |
+
+<Canvas of={ButtonStories.Sizes} />
 
 ## Usage
 
@@ -47,6 +57,12 @@ Set the variant with the `variant` input. It takes `primary`, `secondary`, `ghos
 
 ```html
 <button dma-button type="button" variant="danger" (click)="delete()">Delete map</button>
+```
+
+Set the size with the `size` input. It takes `small`, `medium`, or `large`, and defaults to `medium`. The `ButtonSizes` constant holds the values, and the `ButtonSize` type is their union.
+
+```html
+<button dma-button type="button" variant="ghost" size="small" (click)="rename()">Rename map</button>
 ```
 
 The button enhances the native element, so it keeps the keyboard support, the form behavior, and the `button` role of the browser. Set `type="button"` unless the button submits a form.
@@ -91,4 +107,4 @@ const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }))
 await button.click();
 ```
 
-Find a button by its `text`, which takes a string or a regular expression, by whether it's `disabled`, or by its `variant`. The harness can click the button, read its label and its variant, tell whether it's disabled, and move focus to or away from it.
+Find a button by its `text`, which takes a string or a regular expression, by whether it's `disabled`, by its `variant`, or by its `size`. The harness can click the button, read its label, its variant, and its size, tell whether it's disabled, and move focus to or away from it.

@@ -70,7 +70,13 @@ Set the `variant` input to `primary`, `secondary`, `ghost`, or `danger`. It defa
 <button dma-button type="button" variant="danger" (click)="delete()">Delete map</button>
 ```
 
-The button has the `Medium` size so far. Set the native `disabled` attribute to disable it.
+Set the `size` input to `small`, `medium`, or `large`. It defaults to `medium`, which fits most actions. Use `small` in dense layouts, such as table rows, and `large` for an action that leads a sparse view.
+
+```html
+<button dma-button type="button" variant="ghost" size="small" (click)="rename()">Rename map</button>
+```
+
+Set the native `disabled` attribute to disable the button.
 
 ## Testing
 

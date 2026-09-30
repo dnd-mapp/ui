@@ -1,5 +1,5 @@
 import { ComponentHarness, HarnessPredicate, type BaseHarnessFilters } from '@angular/cdk/testing';
-import type { ButtonVariant } from '@dnd-mapp/ui/components';
+import type { ButtonSize, ButtonVariant } from '@dnd-mapp/ui/components';
 
 /**
  * The criteria to find a `ButtonHarness` by.
@@ -13,6 +13,9 @@ export interface ButtonHarnessFilters extends BaseHarnessFilters {
 
     /** Only find buttons in this variant. */
     variant?: ButtonVariant;
+
+    /** Only find buttons in this size. */
+    size?: ButtonSize;
 }
 
 /**
@@ -32,11 +35,8 @@ export class ButtonHarness extends ComponentHarness {
                 options.disabled,
                 async (harness, disabled) => (await harness.isDisabled()) === disabled,
             )
-            .addOption(
-                'variant',
-                options.variant,
-                async (harness, variant) => (await harness.getVariant()) === variant,
-            );
+            .addOption('variant', options.variant, async (harness, variant) => (await harness.getVariant()) === variant)
+            .addOption('size', options.size, async (harness, size) => (await harness.getSize()) === size);
     }
 
     /** Clicks the button. */
@@ -57,6 +57,11 @@ export class ButtonHarness extends ComponentHarness {
     /** Returns the variant of the button. */
     public async getVariant(): Promise<ButtonVariant> {
         return (await (await this.host()).getAttribute('data-variant')) as ButtonVariant;
+    }
+
+    /** Returns the size of the button. */
+    public async getSize(): Promise<ButtonSize> {
+        return (await (await this.host()).getAttribute('data-size')) as ButtonSize;
     }
 
     /** Moves focus to the button. */
