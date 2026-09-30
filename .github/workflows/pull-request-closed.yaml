@@ -15,7 +15,6 @@ jobs:
         permissions:
             contents: write
             deployments: write
-            pull-requests: write
         # Shared with the deploy-storybook job, and cancels a deploy of the same pull request that is still running.
         concurrency:
             group: storybook-preview-${{ github.event.pull_request.number }}
@@ -57,9 +56,3 @@ jobs:
               env:
                   NUMBER: ${{ github.event.pull_request.number }}
                   GH_TOKEN: ${{ github.token }}
-
-            - name: Update the preview comment
-              uses: ./.github/actions/storybook-preview-comment
-              with:
-                  body: "**Storybook preview:** removed, because the pull request closed."
-                  create: "false"
