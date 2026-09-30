@@ -9,7 +9,11 @@
     "build": "ng build",
     "test": "ng test --ui",
     "test-ci": "ng test --no-watch",
-    "typecheck": "tsc -b --noEmit"
+    "typecheck": "tsc -b --noEmit",
+    "lint-ts": "eslint",
+    "lint-md": "markdownlint-cli2",
+    "format": "prettier -w .",
+    "format-check": "prettier -c ."
   },
   "engines": {
     "node": "^24.21.0"
@@ -34,16 +38,28 @@
     "@angular/compiler-cli": "catalog:angular",
     "@angular/core": "catalog:angular",
     "@angular/platform-browser": "catalog:angular",
+    "@commitlint/cli": "catalog:commitlint",
+    "@dnd-mapp/config-commitlint": "catalog:commitlint",
+    "@dnd-mapp/config-eslint": "catalog:eslint",
+    "@dnd-mapp/config-markdown": "catalog:markdown",
+    "@dnd-mapp/config-prettier": "catalog:prettier",
     "@dnd-mapp/config-typescript": "catalog:",
     "@dnd-mapp/design-tokens": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:vitest",
     "@vitest/ui": "catalog:vitest",
+    "angular-eslint": "catalog:eslint",
+    "eslint": "catalog:eslint",
     "jsdom": "catalog:vitest",
+    "lefthook": "catalog:commitlint",
+    "markdownlint-cli2": "catalog:markdown",
     "ng-packagr": "catalog:angular",
+    "prettier": "catalog:prettier",
+    "prettier-plugin-organize-imports": "catalog:prettier",
     "rxjs": "catalog:angular",
     "tslib": "catalog:angular",
     "typescript": "catalog:",
+    "typescript-eslint": "catalog:eslint",
     "vitest": "catalog:vitest"
   }
 }
