@@ -1,23 +1,23 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Button } from '../../button/button';
-import { ButtonHarness } from './button-harness';
+import { ButtonComponent } from '../../button/button.component';
+import { ButtonHarness } from './button.harness';
 
 @Component({
-    imports: [Button],
+    imports: [ButtonComponent],
     template: `
         <button dma-button type="button" (click)="clicks.set(clicks() + 1)">Save map</button>
         <button dma-button type="button" disabled>Delete map</button>
     `,
 })
-class TestHost {
+class TestHostComponent {
     readonly clicks = signal(0);
 }
 
 describe('ButtonHarness', () => {
     function setup() {
-        const fixture = TestBed.createComponent(TestHost);
+        const fixture = TestBed.createComponent(TestHostComponent);
         const loader = TestbedHarnessEnvironment.loader(fixture);
 
         return { fixture, loader };

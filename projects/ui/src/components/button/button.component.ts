@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
  */
 @Component({
     selector: 'button[dma-button]',
-    templateUrl: './button.html',
-    styleUrl: './button.scss',
+    templateUrl: './button.component.html',
+    styleUrl: './button.component.scss',
 })
-export class Button {}
+export class ButtonComponent {}

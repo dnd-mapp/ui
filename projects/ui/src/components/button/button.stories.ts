@@ -1,5 +1,5 @@
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular-vite';
-import { Button } from './button';
+import { ButtonComponent } from './button.component';
 
 interface ButtonArgs {
     label: string;
@@ -8,8 +8,8 @@ interface ButtonArgs {
 
 const meta: Meta<ButtonArgs> = {
     title: 'Components/Button',
-    component: Button,
-    decorators: [moduleMetadata({ imports: [Button] })],
+    component: ButtonComponent,
+    decorators: [moduleMetadata({ imports: [ButtonComponent] })],
     args: {
         label: 'Save map',
         disabled: false,

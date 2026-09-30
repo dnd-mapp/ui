@@ -1,4 +1,4 @@
 /**
  * The components of @dnd-mapp/ui.
  */
-export { Button } from './button/button';
+export { ButtonComponent } from './button/button.component';

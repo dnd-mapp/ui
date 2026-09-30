@@ -1,18 +1,18 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Button } from './button';
+import { ButtonComponent } from './button.component';
 
 @Component({
-    imports: [Button],
+    imports: [ButtonComponent],
     template: `<button dma-button type="button" [disabled]="disabled()">Save map</button>`,
 })
-class TestHost {
+class TestHostComponent {
     readonly disabled = signal(false);
 }
 
-describe('Button', () => {
+describe('ButtonComponent', () => {
     async function setup() {
-        const fixture = TestBed.createComponent(TestHost);
+        const fixture = TestBed.createComponent(TestHostComponent);
         await fixture.whenStable();
         const button = (fixture.nativeElement as HTMLElement).querySelector('button');
 
