@@ -1,5 +1,5 @@
 name: CI checks
-description: Installs dependencies, checks formatting, lints Markdown, code, and workflows, type checks, tests, and builds
+description: Installs dependencies, checks formatting, lints Markdown, code, and workflows, type checks, tests, and builds the package and Storybook
 
 runs:
     using: composite
@@ -36,6 +36,10 @@ runs:
         - name: Build
           shell: bash
           run: pnpm run build
+
+        - name: Build Storybook
+          shell: bash
+          run: pnpm run build-storybook
 
         - name: Install the Playwright browsers
           shell: bash
