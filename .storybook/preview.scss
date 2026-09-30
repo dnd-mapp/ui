@@ -10,3 +10,10 @@
 body {
     background-color: var(--dma-color-background-default);
 }
+
+// Docs pages and their story canvases take the page color of the tokens too, like the stories. The doubled class
+// outweighs the styles that the Storybook theme sets on the same elements.
+.sbdocs.sbdocs-wrapper,
+.docs-story.docs-story {
+    background-color: var(--dma-color-background-default);
+}

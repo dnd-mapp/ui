@@ -114,7 +114,7 @@ pnpm run storybook
 pnpm run build-storybook
 ```
 
-The `storybook` script serves Storybook on port 6006 and updates it as you edit. The `build-storybook` script builds the static Storybook into `dist/storybook`. The theme switch in the toolbar sets `color-scheme` on the preview, so the tokens resolve to their light or dark values.
+The `storybook` script serves Storybook on port 6006 and updates it as you edit. The `build-storybook` script builds the static Storybook into `dist/storybook`. The theme switch in the toolbar sets `color-scheme` on the preview, so the tokens resolve to their light or dark values. On a docs page, the switch also picks the light or dark Storybook theme, through the docs container in `.storybook/preview.ts`. The docs page and its story canvases take their background from the tokens, like the stories.
 
 MDX leaves out GitHub Flavored Markdown, so `.storybook/main.ts` adds [remark-gfm](https://github.com/remarkjs/remark-gfm) to the docs addon. Tables and the other GitHub extensions work in the MDX docs as they do in the Markdown files.
 

@@ -72,6 +72,7 @@
     "playwright": "catalog:vitest",
     "prettier": "catalog:prettier",
     "prettier-plugin-organize-imports": "catalog:prettier",
+    "react": "catalog:storybook",
     "remark-gfm": "catalog:storybook",
     "rxjs": "catalog:angular",
     "sass": "catalog:storybook",
