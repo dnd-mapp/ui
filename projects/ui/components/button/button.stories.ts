@@ -10,6 +10,26 @@ const meta: Meta<ButtonArgs> = {
     title: 'Components/Button',
     component: ButtonComponent,
     decorators: [moduleMetadata({ imports: [ButtonComponent] })],
+    argTypes: {
+        label: {
+            description:
+                'The content of the `button` element. It is the accessible name of the button, so keep it a short verb phrase, such as "Save map".',
+            type: { name: 'string', required: true },
+            control: 'text',
+            table: {
+                type: { summary: 'string' },
+            },
+        },
+        disabled: {
+            description:
+                'The native `disabled` attribute of the `button` element. A disabled button leaves the tab order and ignores clicks.',
+            control: 'boolean',
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: 'false' },
+            },
+        },
+    },
     args: {
         label: 'Save map',
         disabled: false,

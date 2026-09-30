@@ -70,7 +70,7 @@ Every component is presentational. It receives its data through inputs, reports 
 - Keep the components accessible. ESLint checks the templates against the accessibility rules of angular-eslint.
 - Export every component from `projects/ui/components/index.ts`.
 - Write a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component in `projects/ui/components/testing/harnesses`, and export it from `projects/ui/components/testing/index.ts`. Test it in a spec of its own, and test the component through it, so its spec interacts with the component the way a consumer's tests do. Use the `TestElement` of the harness host, such as `getCssValue()`, for what the harness doesn't cover.
-- Write stories for every component in a `<name>.stories.ts` file next to it. Mirror the page of its Figma component: every variant, size, and state, in the light and the dark theme.
+- Write stories for every component in a `<name>.stories.ts` file next to it. Mirror the page of its Figma component: every variant, size, and state, in the light and the dark theme. Give every arg a description, a type, and its default when it has one, in the `argTypes` of the stories, so the docs table explains it.
 - Document every component in a `<name>.mdx` file next to its stories: when to use it, how to use it, its states, its accessibility, and its harness.
 
 Generate a component with the Angular CLI. The schematic defaults in `angular.json` apply the 2016 naming, so it writes `<name>.component.ts`, `.html`, `.scss`, and `.spec.ts` files:
