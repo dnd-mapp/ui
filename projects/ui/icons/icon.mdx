@@ -1,0 +1,88 @@
+import { Canvas, Controls, Meta } from '@storybook/addon-docs/blocks';
+
+import * as IconStories from './icon.stories';
+
+<Meta of={IconStories} />
+
+# Icon
+
+An icon shows a glyph from Font Awesome Free beside a label, such as the `plus` in "Add map". It's built after the `Icon` component in the `Icons` Figma file.
+
+<Canvas of={IconStories.Icon} />
+
+<Controls of={IconStories.Icon} />
+
+## When to use
+
+Use an icon to help the user recognize an action or a state at a glance. Put it beside a label, which says what the action does. An icon without a label needs a control that names it, such as an icon button with a tooltip.
+
+Each glyph has a component of its own, so the bundle of an app holds only the glyphs it uses. In Figma, one `Icon` component picks its glyph through the `Icon` property instead.
+
+| Glyph          | Component                  | Selector                | Use for                                                        |
+| :------------- | :------------------------- | :---------------------- | :------------------------------------------------------------- |
+| `chevron-down` | `IconChevronDownComponent` | `dma-icon-chevron-down` | An action that opens a menu or a list below it                 |
+| `circle-notch` | `IconCircleNotchComponent` | `dma-icon-circle-notch` | A control that is busy, such as a button that is loading       |
+| `plus`         | `IconPlusComponent`        | `dma-icon-plus`         | An action that adds or creates something, such as a new map    |
+| `xmark`        | `IconXmarkComponent`       | `dma-icon-xmark`        | An action that closes or dismisses something, such as a dialog |
+
+<Canvas of={IconStories.Glyphs} />
+
+Pick the size after the label beside the icon. Each frame is as high as the line height of the label style it pairs with, so an icon never changes the height of a control. The glyph fills 0.8 times the frame.
+
+| Size     | Frame | Glyph  | Pairs with     |
+| :------- | ----: | -----: | :------------- |
+| `small`  |  16px | 12.8px | `Label/Small`  |
+| `medium` |  20px |   16px | `Label/Medium` |
+| `large`  |  24px | 19.2px | `Label/Large`  |
+
+<Canvas of={IconStories.Sizes} />
+
+## Usage
+
+Import the component of each glyph you need from `@dnd-mapp/ui/icons`, and put it in the template.
+
+```ts
+import { Component } from '@angular/core';
+import { IconPlusComponent } from '@dnd-mapp/ui/icons';
+
+@Component({
+    selector: 'app-map-list-header',
+    imports: [IconPlusComponent],
+    template: `<span class="add-map"><dma-icon-plus />Add map</span>`,
+})
+export class MapListHeaderComponent {}
+```
+
+Set the size with the `size` input. It takes `small`, `medium`, or `large`, and defaults to `medium`. The `IconSizes` constant holds the values, and the `IconSize` type is their union.
+
+```html
+<dma-icon-xmark size="small" />
+```
+
+The icon takes the color of the text around it, through `currentColor`. Set the color on the element that holds the icon and its label, and both follow it. The `IconGlyphs` constant lists the glyph names, and the `IconGlyph` type is their union.
+
+## Accessibility
+
+- Every icon has `aria-hidden="true"`, because the label or the control beside it carries the meaning. Assistive technology skips the icon.
+- An icon never names a control by itself. When a control shows only an icon, give the control an accessible name, such as through `aria-label`.
+- The icon takes the color of its label, so it passes the same contrast as the label. In forced colors mode, it takes the system text color.
+
+## Testing
+
+The `@dnd-mapp/ui/icons/testing` entry point has an `IconHarness` for tests of the components that use the icons. It finds an icon of any glyph, and needs `@angular/cdk`.
+
+```ts
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { IconHarness } from '@dnd-mapp/ui/icons/testing';
+
+const loader = TestbedHarnessEnvironment.loader(fixture);
+const icon = await loader.getHarness(IconHarness.with({ glyph: 'plus' }));
+
+expect(await icon.getSize()).toBe('medium');
+```
+
+Find an icon by its `glyph` or by its `size`. The harness can read the glyph and the size of an icon.
+
+## Credit
+
+Icons from Font Awesome Free 7.3.1 by Fonticons, Inc. (fontawesome.com), licensed under CC BY 4.0 (creativecommons.org/licenses/by/4.0). Scaled and recolored for D&D Mapp.
