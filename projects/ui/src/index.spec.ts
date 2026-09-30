@@ -1,4 +1,4 @@
-import * as publicApi from './public-api';
+import * as publicApi from './index';
 
 describe('public API', () => {
     it('exports the expected names', () => {

@@ -39,7 +39,7 @@
                         "browsers": ["chromium"],
                         "coverage": true,
                         "coverageInclude": ["projects/ui/src/**/*.ts"],
-                        "coverageExclude": ["projects/ui/src/public-api.ts"],
+                        "coverageExclude": ["projects/ui/src/index.ts"],
                         "coverageReporters": ["text-summary", "html"],
                         "coverageThresholds": {
                             "branches": 80,
