@@ -28,3 +28,19 @@ jobs:
               env:
                   BASE_SHA: ${{ github.event.pull_request.base.sha }}
                   HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+    build-storybook:
+        name: Build Storybook
+        runs-on: ubuntu-26.04
+        timeout-minutes: 10
+        permissions:
+            contents: read
+        concurrency:
+            group: ${{ github.workflow }}-${{ github.ref }}-${{ github.job }}
+            cancel-in-progress: true
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+            - name: Build Storybook
+              uses: ./.github/actions/build-storybook
