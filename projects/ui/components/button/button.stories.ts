@@ -26,7 +26,7 @@ const meta: Meta<ButtonArgs> = {
             description:
                 'The variant of the button, which sets its colors. Use `primary` for the one main action in a view, `secondary` for other actions beside it, `ghost` for minor actions that should stay quiet, and `danger` for actions that destroy or remove something.',
             options: Object.values(ButtonVariants),
-            control: 'inline-radio',
+            control: 'select',
             table: {
                 type: { summary: 'ButtonVariant' },
                 defaultValue: { summary: `'${DEFAULT_BUTTON_VARIANT}'` },
