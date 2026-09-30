@@ -47,6 +47,7 @@ The repository is an Angular workspace with a single project, the `ui` library i
 | `angular.json`                | The workspace config, with the build and test targets of the library                |
 | `projects/ui/package.json`    | The manifest of the published package, with its version and peer dependencies       |
 | `projects/ui/ng-package.json` | The ng-packagr config                                                               |
+| `projects/ui/README.md`       | The readme of the published package                                                 |
 | `projects/ui/src/index.ts`    | The entry point of the package, which exports the public API                        |
 | `projects/ui/src/lib`         | The components, each in a directory of its own                                      |
 | `tools/copy-package-files.ts` | Copies the changelog, the license, and the readme into the package after a build    |
