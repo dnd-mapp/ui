@@ -40,7 +40,7 @@
                         "headless": true,
                         "coverage": true,
                         "coverageInclude": ["projects/ui/src/**/*.ts"],
-                        "coverageExclude": ["projects/ui/src/index.ts", "projects/ui/src/**/*.stories.ts"],
+                        "coverageExclude": ["projects/ui/src/**/index.ts", "projects/ui/src/**/*.stories.ts"],
                         "coverageReporters": ["text-summary", "html"],
                         "coverageThresholds": {
                             "branches": 80,

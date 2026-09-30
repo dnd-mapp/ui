@@ -1,4 +1,5 @@
 /**
- * The public API of @dnd-mapp/ui.
+ * The primary entry point of @dnd-mapp/ui. The components live in the `@dnd-mapp/ui/src/components` entry point,
+ * and their harnesses in `@dnd-mapp/ui/src/components/testing`.
  */
-export { Button } from './lib/button/button';
+export {};

@@ -14,7 +14,9 @@
         "module": "preserve",
         "target": "es2022",
         "paths": {
-            "@dnd-mapp/ui": ["./projects/ui/src/index.ts"]
+            "@dnd-mapp/ui": ["./projects/ui/src/index.ts"],
+            "@dnd-mapp/ui/src/components": ["./projects/ui/src/components/index.ts"],
+            "@dnd-mapp/ui/src/components/testing": ["./projects/ui/src/components/testing/index.ts"]
         }
     },
     "angularCompilerOptions": {
