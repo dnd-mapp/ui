@@ -6,4 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- The `Button` component, with the `button[dma-button]` selector, in the `Primary` variant and the `Medium` size.
+
 [Unreleased]: https://github.com/dnd-mapp/ui/commits/main
