@@ -59,4 +59,16 @@ describe('ButtonComponent', () => {
         expect(await button.isDisabled()).toBe(true);
         expect(await (await button.host()).getCssValue('cursor')).toBe('not-allowed');
     });
+
+    it("doesn't take focus when disabled, so it never shows the focus ring", async () => {
+        const { fixture, button } = await setup();
+
+        fixture.componentInstance.disabled.set(true);
+
+        expect(await button.isDisabled()).toBe(true);
+
+        await button.focus();
+
+        expect(await button.isFocused()).toBe(false);
+    });
 });
