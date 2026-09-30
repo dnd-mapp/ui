@@ -35,9 +35,9 @@ The components follow the `color-scheme` of the page, just like the tokens. See 
 
 Import the components from `@dnd-mapp/ui/components`.
 
-| Component         | Selector             | Harness         | Use for                       |
-|:------------------|:---------------------|:----------------|:------------------------------|
-| `ButtonComponent` | `button[dma-button]` | `ButtonHarness` | The one main action in a view |
+| Component         | Selector             | Harness         | Use for                         |
+|:------------------|:---------------------|:----------------|:--------------------------------|
+| `ButtonComponent` | `button[dma-button]` | `ButtonHarness` | An action, such as saving a map |
 
 ### Button
 
@@ -57,7 +57,20 @@ export class MapToolbarComponent {
 }
 ```
 
-The button has the `Primary` variant in the `Medium` size so far. Set the native `disabled` attribute to disable it.
+Set the `variant` input to `primary`, `secondary`, `ghost`, or `danger`. It defaults to `primary`.
+
+| Variant     | Use for                                                        |
+|:------------|:---------------------------------------------------------------|
+| `primary`   | The one main action in a view, such as "Save map"              |
+| `secondary` | Other actions beside the main one, such as "Export map"        |
+| `ghost`     | Minor actions that should stay quiet, such as toolbar actions  |
+| `danger`    | Actions that destroy or remove something, such as "Delete map" |
+
+```html
+<button dma-button type="button" variant="danger" (click)="delete()">Delete map</button>
+```
+
+The button has the `Medium` size so far. Set the native `disabled` attribute to disable it.
 
 ## Testing
 
