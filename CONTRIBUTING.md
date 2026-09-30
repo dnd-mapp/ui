@@ -80,7 +80,7 @@ The builder fails when it finds no spec files, so `public-api.spec.ts` checks th
 
 `tsconfig.json` holds the compiler options of the workspace, and refers to three projects: `projects/ui/tsconfig.lib.json` for the library, `projects/ui/tsconfig.spec.json` for the specs, and `tsconfig.tools.json` for the scripts and the config files. Only the spec project has the types of the Vitest globals, so the library cannot use them by mistake.
 
-Check and format the repository with these commands. CI runs `format-check`, `lint-md`, `lint-ts`, actionlint, `typecheck`, `test-ci`, and `build`. Run them yourself before you open a pull request.
+Check and format the repository with these commands. CI runs `format-check`, `lint-md`, `lint-ts`, actionlint, `typecheck`, `build`, and `test-ci`. Run them yourself before you open a pull request.
 
 ```bash
 pnpm run format-check
@@ -88,8 +88,8 @@ pnpm run format
 pnpm run lint-md
 pnpm run lint-ts
 pnpm run typecheck
-pnpm run test-ci
 pnpm run build
+pnpm run test-ci
 actionlint
 ```
 

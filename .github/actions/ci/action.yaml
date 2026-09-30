@@ -33,6 +33,10 @@ runs:
           shell: bash
           run: pnpm run typecheck
 
+        - name: Build
+          shell: bash
+          run: pnpm run build
+
         - name: Install the Playwright browsers
           shell: bash
           run: pnpm exec playwright install --with-deps chromium
@@ -40,7 +44,3 @@ runs:
         - name: Test
           shell: bash
           run: pnpm run test-ci
-
-        - name: Build
-          shell: bash
-          run: pnpm run build
