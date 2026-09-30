@@ -83,7 +83,7 @@ The builder fails when it finds no spec files, so `index.spec.ts` checks the exp
 
 `tsconfig.json` holds the compiler options of the workspace, and refers to four projects: `projects/ui/tsconfig.lib.json` for the library, `projects/ui/tsconfig.spec.json` for the specs, `.storybook/tsconfig.json` for the stories, and `tsconfig.tools.json` for the scripts and the config files. Only the spec project has the types of the Vitest globals, so the library cannot use them by mistake.
 
-Check and format the repository with these commands. CI runs `format-check`, `lint-md`, `lint-ts`, actionlint, `typecheck`, `build`, `build-storybook`, and `test-ci`. Run them yourself before you open a pull request.
+Check and format the repository with these commands. The `CI` job runs `format-check`, `lint-md`, `lint-ts`, actionlint, `typecheck`, `build`, and `test-ci`, and the `Build Storybook` job runs `build-storybook`. Both are required checks of a pull request. Run them yourself before you open a pull request.
 
 ```bash
 pnpm run format-check
@@ -112,9 +112,11 @@ The `storybook` script serves Storybook on port 6006 and updates it as you edit.
 
 Stories live next to their component in `projects/ui/src`, and stay out of the package, the specs, and the coverage. The `.storybook/tsconfig.json` project type checks them together with the library and `.storybook/preview.ts`.
 
-The `storybook` job of the [push workflow](.github/workflows/push-main.yaml) deploys the Storybook of every push to `main` to [GitHub Pages](https://dnd-mapp.github.io/ui/main/). It reuses the build of the `ci` job, and publishes it through the `deploy-storybook` action in `.github/actions`.
+The `build-storybook` job builds Storybook apart from the `ci` job, so a deploy doesn't wait for the tests. The `deploy-storybook` job of the [push workflow](.github/workflows/push-main.yaml) deploys the Storybook of every push to `main` to [GitHub Pages](https://dnd-mapp.github.io/ui/main/). It reuses the build of the `build-storybook` job, and publishes it through the `deploy-storybook` action in `.github/actions`.
 
-The action copies a build into one folder of the `gh-pages` branch, and leaves the other folders on the branch as they are. So each build of Storybook, such as the one of `main`, gets a folder of its own, and the root of the site redirects to the folder that the `root-redirect` input names. The Pages settings of the repository serve the root of the `gh-pages` branch.
+The action copies a build into one folder of the `gh-pages` branch, and leaves the other folders on the branch as they are. So each build of Storybook, such as the one of `main`, gets a folder of its own, and the root of the site redirects to the folder that the `root-redirect` input names. Without a `path`, the action removes the folder instead. The Pages settings of the repository serve the root of the `gh-pages` branch.
+
+Each pull request gets a preview of its Storybook at `https://dnd-mapp.github.io/ui/pr-<number>/`. The `deploy-storybook` job of the [pull request workflow](.github/workflows/pull-request.yaml) deploys it to the `storybook-preview` environment on every push, and a comment on the pull request links to it. When the pull request closes, the [pull request closed workflow](.github/workflows/pull-request-closed.yaml) removes the folder, marks the deployment inactive, and updates the comment. Pull requests from forks and from Renovate get no preview: a fork's token cannot push to `gh-pages`, and dependency updates don't need one.
 
 ## Changelog and versioning
 
