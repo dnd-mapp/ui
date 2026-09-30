@@ -16,6 +16,10 @@ export default defineConfig([
                 tsconfigRootDir: import.meta.dirname,
             },
         },
+        rules: {
+            // Every class member states its access, so `public` API is a choice rather than a default.
+            '@typescript-eslint/explicit-member-accessibility': ['error', { accessibility: 'explicit' }],
+        },
     },
     {
         files: ['projects/ui/**/*.ts'],
@@ -30,6 +34,9 @@ export default defineConfig([
                 { type: ['element', 'attribute'], prefix: 'dma', style: 'kebab-case' },
             ],
             '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'dma', style: 'camelCase' }],
+            // The classes follow the naming of the 2016 Angular style guide, such as `ButtonComponent`.
+            '@angular-eslint/component-class-suffix': 'error',
+            '@angular-eslint/directive-class-suffix': 'error',
         },
     },
     {

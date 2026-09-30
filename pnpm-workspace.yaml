@@ -35,11 +35,13 @@ catalogs:
   angular:
     "@angular/animations": ~22.2.0
     "@angular/build": ~22.2.0
+    "@angular/cdk": ~22.2.0
     "@angular/cli": ~22.2.0
     "@angular/common": ~22.2.0
     "@angular/compiler": ~22.2.0
     "@angular/compiler-cli": ~22.2.0
     "@angular/core": ~22.2.0
+    "@angular/forms": ~22.2.0
     "@angular/platform-browser": ~22.2.0
     ng-packagr: ~22.2.1
     rxjs: ~7.8.2
@@ -67,6 +69,8 @@ catalogs:
     "@storybook/addon-themes": ~10.6.0
     "@storybook/angular-vite": ~10.6.0
     "@types/react": ~19.3.0
+    react: ~19.3.0
+    remark-gfm: ~4.0.1
     sass: ~1.104.1
     storybook: ~10.6.0
     vite: ~8.3.0

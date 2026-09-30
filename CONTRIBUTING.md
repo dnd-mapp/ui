@@ -42,19 +42,22 @@ The pre-commit hooks only check files. Run `pnpm run format` to fix formatting i
 
 The repository is an Angular workspace with a single project, the `ui` library in `projects/ui`. [ng-packagr](https://github.com/ng-packagr/ng-packagr) builds it into the package.
 
-| File                          | Purpose                                                                             |
-|:------------------------------|:------------------------------------------------------------------------------------|
-| `angular.json`                | The workspace config, with the build and test targets of the library                |
-| `projects/ui/package.json`    | The manifest of the published package, with its version and peer dependencies       |
-| `projects/ui/ng-package.json` | The ng-packagr config                                                               |
-| `projects/ui/README.md`       | The readme of the published package                                                 |
-| `projects/ui/CHANGELOG.md`    | The changelog of the published package                                              |
-| `projects/ui/src/index.ts`    | The entry point of the package, which exports the public API                        |
-| `projects/ui/src/lib`         | The components, each in a directory of its own                                      |
-| `vitest.config.ts`            | The Vitest options that the test target in `angular.json` has no builder option for |
-| `.storybook`                  | The Storybook config, its TypeScript project, and the introduction page             |
+| File                             | Purpose                                                                                        |
+|:---------------------------------|:-----------------------------------------------------------------------------------------------|
+| `angular.json`                   | The workspace config, with the build and test targets of the library                           |
+| `projects/ui/package.json`       | The manifest of the published package, with its version and peer dependencies                  |
+| `projects/ui/ng-package.json`    | The ng-packagr config                                                                          |
+| `projects/ui/README.md`          | The readme of the published package                                                            |
+| `projects/ui/CHANGELOG.md`       | The changelog of the published package                                                         |
+| `projects/ui/src/index.ts`       | The primary entry point of the package, `@dnd-mapp/ui`, which exports nothing yet              |
+| `projects/ui/components`         | The `@dnd-mapp/ui/components` entry point, with each component in a directory of its own       |
+| `projects/ui/components/testing` | The `@dnd-mapp/ui/components/testing` entry point, with the component harnesses in `harnesses` |
+| `vitest.config.ts`               | The Vitest options that the test target in `angular.json` has no builder option for            |
+| `.storybook`                     | The Storybook config, its TypeScript project, and the introduction page                        |
 
 The `package.json` in the repository root belongs to the workspace, and pnpm never publishes it. Its `publishConfig.directory` points pnpm at `dist/ui` instead, so publishing from the root publishes the built package.
+
+Each secondary entry point has an `index.ts` that exports its public API, and an `ng-package.json` that points ng-packagr at it. ng-packagr names a secondary entry point after its path from `projects/ui`, so keep the entry points directly in `projects/ui` rather than in `src`. The `paths` in `tsconfig.json` map each entry point to its `index.ts`, so the specs and the stories can import it by name.
 
 ## Components
 
@@ -62,24 +65,27 @@ Every component is presentational. It receives its data through inputs, reports 
 
 - Build each component after its Figma component, with the same variants, sizes, and states.
 - Give selectors the `dma` prefix, such as `dma-badge`, or an attribute selector such as `button[dma-button]` for a component that enhances a native element.
+- Name files and classes after the [2016 Angular style guide](https://v19.angular.dev/style-guide): put the type in both, such as `ButtonComponent` in `button.component.ts`. A harness follows the same pattern, such as `ButtonHarness` in `button.harness.ts`. ESLint checks the class suffixes of components and directives.
 - Write the styles in SCSS. Take colors, spacing, radii, and text styles from the custom properties of the design tokens, such as `var(--dma-spacing-16)`. Only hard code a value when no token fits.
 - Keep the components accessible. ESLint checks the templates against the accessibility rules of angular-eslint.
-- Export every component from `projects/ui/src/index.ts`, and add its name to `index.spec.ts`.
-- Write stories for every component in a `<name>.stories.ts` file next to it. Mirror the page of its Figma component: every variant, size, and state, in the light and the dark theme.
+- Export every component from `projects/ui/components/index.ts`.
+- Write a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component in `projects/ui/components/testing/harnesses`, and export it from `projects/ui/components/testing/index.ts`. Test it in a spec of its own, and test the component through it, so its spec interacts with the component the way a consumer's tests do. Use the `TestElement` of the harness host, such as `getCssValue()`, for what the harness doesn't cover.
+- Write stories for every component in a `<name>.stories.ts` file next to it. Mirror the page of its Figma component: every variant, size, and state, in the light and the dark theme. Give every arg a description, a type, and its default when it has one, in the `argTypes` of the stories, so the docs table explains it.
+- Document every component in a `<name>.mdx` file next to its stories: when to use it, how to use it, its states, its accessibility, and its harness.
 
-Generate a component with the Angular CLI, which writes a TypeScript, a template, an SCSS, and a spec file:
+Generate a component with the Angular CLI. The schematic defaults in `angular.json` apply the 2016 naming, so it writes `<name>.component.ts`, `.html`, `.scss`, and `.spec.ts` files:
 
 ```bash
-pnpm ng generate component <name> --project ui
+pnpm ng generate component <name> --project ui --path projects/ui/components
 ```
+
+The harnesses build on the testing APIs of `@angular/cdk`. The package lists it as an optional peer dependency, because only the testing entry point needs it.
 
 ## Building and testing
 
 The `build` script builds the library with ng-packagr into `dist/ui`, together with the package readme and changelog. pnpm adds the license from the repository root when it packs the package. The release workflow publishes that directory.
 
 Tests use Vitest through the Angular unit-test builder, and run in headless Chromium through [Playwright](https://playwright.dev/). The builder sets up the Angular `TestBed`, and the Vitest globals, such as `describe`, `it`, `expect`, and `vi`, are available without an import. The test target in `angular.json` holds the test options, and coverage must stay above its thresholds. Its `development` configuration is the default and runs in watch mode with the Vitest UI. The `ci` configuration runs the tests once.
-
-The builder fails when it finds no spec files, so `index.spec.ts` checks the exports of the package until the first component brings its own specs.
 
 `tsconfig.json` holds the compiler options of the workspace, and refers to four projects: `projects/ui/tsconfig.lib.json` for the library, `projects/ui/tsconfig.spec.json` for the specs, `.storybook/tsconfig.json` for the stories, and `tsconfig.tools.json` for the scripts and the config files. Only the spec project has the types of the Vitest globals, so the library cannot use them by mistake.
 
@@ -108,9 +114,11 @@ pnpm run storybook
 pnpm run build-storybook
 ```
 
-The `storybook` script serves Storybook on port 6006 and updates it as you edit. The `build-storybook` script builds the static Storybook into `dist/storybook`. The theme switch in the toolbar sets `color-scheme` on the preview, so the tokens resolve to their light or dark values.
+The `storybook` script serves Storybook on port 6006 and updates it as you edit. The `build-storybook` script builds the static Storybook into `dist/storybook`. The theme switch in the toolbar sets `color-scheme` on the preview, so the tokens resolve to their light or dark values. On a docs page, the switch also picks the light or dark Storybook theme, through the docs container in `.storybook/preview.ts`. The docs page and its story canvases take their background from the tokens, like the stories.
 
-Stories live next to their component in `projects/ui/src`, and stay out of the package, the specs, and the coverage. The `.storybook/tsconfig.json` project type checks them together with the library and `.storybook/preview.ts`.
+MDX leaves out GitHub Flavored Markdown, so `.storybook/main.ts` adds [remark-gfm](https://github.com/remarkjs/remark-gfm) to the docs addon. Tables and the other GitHub extensions work in the MDX docs as they do in the Markdown files.
+
+Stories and MDX docs live next to their component in `projects/ui/components`, and stay out of the package, the specs, and the coverage. An MDX doc attaches itself to the stories of its component through `<Meta of={...} />`, so it shows as the `Docs` page of that component. The `.storybook/tsconfig.json` project type checks them together with the library and `.storybook/preview.ts`.
 
 The `build-storybook` job builds Storybook apart from the `ci` job, so a deploy doesn't wait for the tests. The `deploy-storybook` job of the [push workflow](.github/workflows/push-main.yaml) deploys the Storybook of every push to `main` to [GitHub Pages](https://dnd-mapp.github.io/ui/main/). It reuses the build of the `build-storybook` job, and publishes it through the `deploy-storybook` action in `.github/actions`.
 
@@ -149,6 +157,8 @@ Follow the rules in `.editorconfig`.
 - Use UTF-8 and LF line endings.
 - Indent with 4 spaces, or 2 spaces in `package.json` and `pnpm-*.yaml`.
 - End every file with a newline and trim trailing whitespace.
+
+Give every class member an explicit access modifier, such as `public` or `protected`, including properties, methods, and static members. ESLint checks this with the `explicit-member-accessibility` rule of typescript-eslint.
 
 Follow these rules for prose, including Markdown files.
 

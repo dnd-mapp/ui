@@ -1,4 +1,4 @@
 /**
- * The public API of @dnd-mapp/ui.
+ * The primary entry point of @dnd-mapp/ui.
  */
 export {};
