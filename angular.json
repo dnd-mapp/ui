@@ -20,6 +20,7 @@
             "architect": {
                 "build": {
                     "builder": "@angular/build:ng-packagr",
+                    "defaultConfiguration": "production",
                     "configurations": {
                         "production": {
                             "tsConfig": "projects/ui/tsconfig.lib.prod.json"
@@ -27,8 +28,7 @@
                         "development": {
                             "tsConfig": "projects/ui/tsconfig.lib.json"
                         }
-                    },
-                    "defaultConfiguration": "production"
+                    }
                 },
                 "test": {
                     "builder": "@angular/build:unit-test",
