@@ -52,7 +52,7 @@
                     },
                     "configurations": {
                         "ci": {
-                            "reporters": ["dot", "html", "github-actions"],
+                            "reporters": ["dot", "github-actions"],
                             "watch": false
                         },
                         "development": {
