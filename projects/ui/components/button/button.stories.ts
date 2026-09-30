@@ -8,14 +8,6 @@ interface ButtonArgs {
     disabled: boolean;
 }
 
-/** A label for each variant that fits the kind of action it's for. */
-const labels: Record<ButtonVariant, string> = {
-    primary: 'Save map',
-    secondary: 'Export map',
-    ghost: 'Rename map',
-    danger: 'Delete map',
-};
-
 const meta: Meta<ButtonArgs> = {
     title: 'Components/Button',
     component: ButtonComponent,
@@ -50,11 +42,6 @@ const meta: Meta<ButtonArgs> = {
             },
         },
     },
-    args: {
-        label: labels[DEFAULT_BUTTON_VARIANT],
-        variant: DEFAULT_BUTTON_VARIANT,
-        disabled: false,
-    },
     render: (args) => ({
         props: args,
         template: `<button dma-button type="button" [variant]="variant" [disabled]="disabled">{{ label }}</button>`,
@@ -65,26 +52,37 @@ export default meta;
 
 type Story = StoryObj<ButtonArgs>;
 
-export const Primary: Story = {};
+// The stories of a single button set their args as literals, so Storybook can show them in the code snippet.
+// `States` sets none, because its template doesn't use them.
+export const Primary: Story = {
+    args: {
+        label: 'Save map',
+        variant: 'primary',
+        disabled: false,
+    },
+};
 
 export const Secondary: Story = {
     args: {
-        label: labels.secondary,
-        variant: ButtonVariants.secondary,
+        label: 'Export map',
+        variant: 'secondary',
+        disabled: false,
     },
 };
 
 export const Ghost: Story = {
     args: {
-        label: labels.ghost,
-        variant: ButtonVariants.ghost,
+        label: 'Rename map',
+        variant: 'ghost',
+        disabled: false,
     },
 };
 
 export const Danger: Story = {
     args: {
-        label: labels.danger,
-        variant: ButtonVariants.danger,
+        label: 'Delete map',
+        variant: 'danger',
+        disabled: false,
     },
 };
 
@@ -96,13 +94,17 @@ export const States: Story = {
     parameters: {
         controls: { disable: true },
     },
+    // The template spells out every button, so Storybook can show it in the code snippet.
     render: () => ({
-        props: { labels, variants: Object.values(ButtonVariants) },
         template: `<div style="display: grid; grid-template-columns: repeat(2, max-content); gap: var(--dma-spacing-16)">
-            @for (variant of variants; track variant) {
-                <button dma-button type="button" [variant]="variant">{{ labels[variant] }}</button>
-                <button dma-button type="button" [variant]="variant" disabled>{{ labels[variant] }}</button>
-            }
+            <button dma-button type="button" variant="primary">Save map</button>
+            <button dma-button type="button" variant="primary" disabled>Save map</button>
+            <button dma-button type="button" variant="secondary">Export map</button>
+            <button dma-button type="button" variant="secondary" disabled>Export map</button>
+            <button dma-button type="button" variant="ghost">Rename map</button>
+            <button dma-button type="button" variant="ghost" disabled>Rename map</button>
+            <button dma-button type="button" variant="danger">Delete map</button>
+            <button dma-button type="button" variant="danger" disabled>Delete map</button>
         </div>`,
     }),
 };
