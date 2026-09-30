@@ -39,6 +39,7 @@
     "@angular/core": "catalog:angular",
     "@angular/platform-browser": "catalog:angular",
     "@commitlint/cli": "catalog:commitlint",
+    "@dnd-mapp/changelog-tools": "catalog:",
     "@dnd-mapp/config-commitlint": "catalog:commitlint",
     "@dnd-mapp/config-eslint": "catalog:eslint",
     "@dnd-mapp/config-markdown": "catalog:markdown",

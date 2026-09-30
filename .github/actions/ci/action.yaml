@@ -1,0 +1,42 @@
+name: CI checks
+description: Installs dependencies, checks formatting, lints Markdown, code, and workflows, type checks, tests, and builds
+
+runs:
+    using: composite
+    steps:
+        - name: Set up Node.js and pnpm and install dependencies
+          uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
+          with:
+              cache: true
+              runtime: node
+              require-lockfile: true
+
+        - name: Check formatting
+          shell: bash
+          run: pnpm run format-check
+
+        - name: Lint Markdown
+          shell: bash
+          run: pnpm run lint-md
+
+        - name: Lint code
+          shell: bash
+          run: pnpm run lint-ts
+
+        - name: Lint workflows
+          uses: raven-actions/actionlint@3d39aea434753780c3b3d4a1a31c854b4dbf49d7 # v2.2.0
+          with:
+              version: 1.7.12
+              pyflakes: false
+
+        - name: Type check
+          shell: bash
+          run: pnpm run typecheck
+
+        - name: Test
+          shell: bash
+          run: pnpm run test-ci
+
+        - name: Build
+          shell: bash
+          run: pnpm run build

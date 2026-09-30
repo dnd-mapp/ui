@@ -26,6 +26,7 @@ catalogMode: "strict"
 savePrefix: "~"
 
 catalog:
+  "@dnd-mapp/changelog-tools": ~1.1.1
   "@dnd-mapp/config-typescript": ~1.1.0
   "@dnd-mapp/design-tokens": ~1.0.0
   "@types/node": ~24.19.0
