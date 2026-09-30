@@ -1,7 +1,7 @@
 {
     "$schema": "https://json.schemastore.org/tsconfig",
     "extends": "@dnd-mapp/config-typescript/node",
-    "include": [".prettierrc.ts", "commitlint.config.ts", "eslint.config.ts", "vitest.config.ts"],
+    "include": [".storybook/main.ts", ".prettierrc.ts", "commitlint.config.ts", "eslint.config.ts", "vitest.config.ts"],
     "compilerOptions": {
         "allowImportingTsExtensions": true,
         "composite": true,

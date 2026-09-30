@@ -12,6 +12,8 @@
     "build": "ng build",
     "test": "ng test",
     "test-ci": "ng test -c ci",
+    "storybook": "ng run ui:storybook",
+    "build-storybook": "ng run ui:build-storybook",
     "typecheck": "tsc -b --noEmit",
     "lint-ts": "eslint",
     "lint-md": "markdownlint-cli2",
@@ -34,6 +36,8 @@
     }
   },
   "devDependencies": {
+    "@analogjs/vite-plugin-angular": "catalog:storybook",
+    "@angular/animations": "catalog:angular",
     "@angular/build": "catalog:angular",
     "@angular/cli": "catalog:angular",
     "@angular/common": "catalog:angular",
@@ -49,12 +53,17 @@
     "@dnd-mapp/config-prettier": "catalog:prettier",
     "@dnd-mapp/config-typescript": "catalog:",
     "@dnd-mapp/design-tokens": "catalog:",
+    "@storybook/addon-docs": "catalog:storybook",
+    "@storybook/addon-themes": "catalog:storybook",
+    "@storybook/angular-vite": "catalog:storybook",
     "@types/node": "catalog:",
+    "@types/react": "catalog:storybook",
     "@vitest/browser-playwright": "catalog:vitest",
     "@vitest/coverage-v8": "catalog:vitest",
     "@vitest/ui": "catalog:vitest",
     "angular-eslint": "catalog:eslint",
     "eslint": "catalog:eslint",
+    "eslint-plugin-storybook": "catalog:eslint",
     "lefthook": "catalog:commitlint",
     "markdownlint-cli2": "catalog:markdown",
     "ng-packagr": "catalog:angular",
@@ -62,9 +71,12 @@
     "prettier": "catalog:prettier",
     "prettier-plugin-organize-imports": "catalog:prettier",
     "rxjs": "catalog:angular",
+    "sass": "catalog:storybook",
+    "storybook": "catalog:storybook",
     "tslib": "catalog:angular",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:eslint",
+    "vite": "catalog:storybook",
     "vitest": "catalog:vitest"
   }
 }

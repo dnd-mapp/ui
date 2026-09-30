@@ -1,0 +1,12 @@
+// The tokens resolve light-dark() through color-scheme, so the theme switch sets it on the root.
+:root[data-color-scheme='light'] {
+    color-scheme: light;
+}
+
+:root[data-color-scheme='dark'] {
+    color-scheme: dark;
+}
+
+body {
+    background-color: var(--dma-color-background-default);
+}

@@ -52,6 +52,7 @@ The repository is an Angular workspace with a single project, the `ui` library i
 | `projects/ui/src/index.ts`    | The entry point of the package, which exports the public API                        |
 | `projects/ui/src/lib`         | The components, each in a directory of its own                                      |
 | `vitest.config.ts`            | The Vitest options that the test target in `angular.json` has no builder option for |
+| `.storybook`                  | The Storybook config, its TypeScript project, and the introduction page             |
 
 The `package.json` in the repository root belongs to the workspace, and pnpm never publishes it. Its `publishConfig.directory` points pnpm at `dist/ui` instead, so publishing from the root publishes the built package.
 
@@ -64,6 +65,7 @@ Every component is presentational. It receives its data through inputs, reports 
 - Write the styles in SCSS. Take colors, spacing, radii, and text styles from the custom properties of the design tokens, such as `var(--dma-spacing-16)`. Only hard code a value when no token fits.
 - Keep the components accessible. ESLint checks the templates against the accessibility rules of angular-eslint.
 - Export every component from `projects/ui/src/index.ts`, and add its name to `index.spec.ts`.
+- Write stories for every component in a `<name>.stories.ts` file next to it. Mirror the page of its Figma component: every variant, size, and state, in the light and the dark theme.
 
 Generate a component with the Angular CLI, which writes a TypeScript, a template, an SCSS, and a spec file:
 
@@ -79,9 +81,9 @@ Tests use Vitest through the Angular unit-test builder, and run in headless Chro
 
 The builder fails when it finds no spec files, so `index.spec.ts` checks the exports of the package until the first component brings its own specs.
 
-`tsconfig.json` holds the compiler options of the workspace, and refers to three projects: `projects/ui/tsconfig.lib.json` for the library, `projects/ui/tsconfig.spec.json` for the specs, and `tsconfig.tools.json` for the scripts and the config files. Only the spec project has the types of the Vitest globals, so the library cannot use them by mistake.
+`tsconfig.json` holds the compiler options of the workspace, and refers to four projects: `projects/ui/tsconfig.lib.json` for the library, `projects/ui/tsconfig.spec.json` for the specs, `.storybook/tsconfig.json` for the stories, and `tsconfig.tools.json` for the scripts and the config files. Only the spec project has the types of the Vitest globals, so the library cannot use them by mistake.
 
-Check and format the repository with these commands. CI runs `format-check`, `lint-md`, `lint-ts`, actionlint, `typecheck`, `build`, and `test-ci`. Run them yourself before you open a pull request.
+Check and format the repository with these commands. CI runs `format-check`, `lint-md`, `lint-ts`, actionlint, `typecheck`, `build`, `build-storybook`, and `test-ci`. Run them yourself before you open a pull request.
 
 ```bash
 pnpm run format-check
@@ -90,11 +92,25 @@ pnpm run lint-md
 pnpm run lint-ts
 pnpm run typecheck
 pnpm run build
+pnpm run build-storybook
 pnpm run test-ci
 actionlint
 ```
 
-The `lint-md` script lints the Markdown files with markdownlint. The `lint-ts` script lints the code and the templates with ESLint and angular-eslint. The `typecheck` script checks the TypeScript projects with `tsc -b`, and the `build` script checks the templates. Use `pnpm test` to run the tests in watch mode with the Vitest UI.
+The `lint-md` script lints the Markdown files with markdownlint. The `lint-ts` script lints the code, the templates, and the stories with ESLint, angular-eslint, and the Storybook plugin. The `typecheck` script checks the TypeScript projects with `tsc -b`, and the `build` script checks the templates. Use `pnpm test` to run the tests in watch mode with the Vitest UI.
+
+## Storybook
+
+[Storybook](https://storybook.js.org/) shows the components, so you can check each one against its Figma component while you build it. It runs on Vite through the `@storybook/angular-vite` framework, with the `storybook` and `build-storybook` targets in `angular.json`. Both targets load the fonts and the tokens of `@dnd-mapp/design-tokens` as global styles, the same way the package readme tells consumers to.
+
+```bash
+pnpm run storybook
+pnpm run build-storybook
+```
+
+The `storybook` script serves Storybook on port 6006 and updates it as you edit. The `build-storybook` script builds the static Storybook into `dist/storybook`. The theme switch in the toolbar sets `color-scheme` on the preview, so the tokens resolve to their light or dark values.
+
+Stories live next to their component in `projects/ui/src`, and stay out of the package, the specs, and the coverage. The `.storybook/tsconfig.json` project type checks them together with the library and `.storybook/preview.ts`.
 
 ## Changelog and versioning
 
