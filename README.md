@@ -6,7 +6,7 @@
 
 The source of [`@dnd-mapp/ui`](projects/ui/README.md), the Angular component library of D&D Mapp. It holds the presentational components of the D&D Mapp apps, built after the components in the `Design system` Figma file and styled with [`@dnd-mapp/design-tokens`](https://github.com/dnd-mapp/design-tokens).
 
-The repository is an Angular workspace with a single project, the library in `projects/ui`. Read the [package readme](projects/ui/README.md) to install and use the components.
+The repository is an Angular workspace with a single project, the library in `projects/ui`. Read the [package readme](projects/ui/README.md) to install and use the components, and browse them in the [Storybook of `main`](https://dnd-mapp.github.io/ui/main/).
 
 ## Getting started
 
