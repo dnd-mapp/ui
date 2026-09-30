@@ -36,6 +36,7 @@ export default defineConfig([
         files: ['projects/ui/**/*.html'],
         extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
     },
-    // The plugin types its configs with `files?: undefined`, which `exactOptionalPropertyTypes` rejects.
+    // The plugin's types don't fit `defineConfig`. Its configs carry keys like `files?: undefined`, which
+    // `exactOptionalPropertyTypes` rejects, and its rules use typescript-eslint's `RuleModule`, not ESLint's type.
     storybook.configs['flat/recommended'] as unknown as Linter.Config[],
 ]);
