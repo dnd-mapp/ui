@@ -24,6 +24,12 @@ pnpm test
 pnpm run build
 ```
 
+Serve Storybook on port 6006 to see the components in the light and the dark theme.
+
+```bash
+pnpm run storybook
+```
+
 ## Contributing
 
 Contributions are welcome. See the [contributing guide](CONTRIBUTING.md) for the project layout, the checks, the release steps, and the commit conventions.
