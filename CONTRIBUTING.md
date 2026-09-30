@@ -116,6 +116,8 @@ pnpm run build-storybook
 
 The `storybook` script serves Storybook on port 6006 and updates it as you edit. The `build-storybook` script builds the static Storybook into `dist/storybook`. The theme switch in the toolbar sets `color-scheme` on the preview, so the tokens resolve to their light or dark values.
 
+MDX leaves out GitHub Flavored Markdown, so `.storybook/main.ts` adds [remark-gfm](https://github.com/remarkjs/remark-gfm) to the docs addon. Tables and the other GitHub extensions work in the MDX docs as they do in the Markdown files.
+
 Stories and MDX docs live next to their component in `projects/ui/src`, and stay out of the package, the specs, and the coverage. An MDX doc attaches itself to the stories of its component through `<Meta of={...} />`, so it shows as the `Docs` page of that component. The `.storybook/tsconfig.json` project type checks them together with the library and `.storybook/preview.ts`.
 
 The `build-storybook` job builds Storybook apart from the `ci` job, so a deploy doesn't wait for the tests. The `deploy-storybook` job of the [push workflow](.github/workflows/push-main.yaml) deploys the Storybook of every push to `main` to [GitHub Pages](https://dnd-mapp.github.io/ui/main/). It reuses the build of the `build-storybook` job, and publishes it through the `deploy-storybook` action in `.github/actions`.

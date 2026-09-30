@@ -1,8 +1,22 @@
 import type { StorybookConfig } from '@storybook/angular-vite';
+import remarkGfm from 'remark-gfm';
 
 const config: StorybookConfig = {
     stories: ['./introduction.mdx', '../projects/ui/src/**/*.mdx', '../projects/ui/src/**/*.stories.ts'],
-    addons: ['@storybook/addon-docs', '@storybook/addon-themes'],
+    addons: [
+        {
+            name: '@storybook/addon-docs',
+            options: {
+                // MDX leaves out GitHub Flavored Markdown, which the tables in the docs need.
+                mdxPluginOptions: {
+                    mdxCompileOptions: {
+                        remarkPlugins: [remarkGfm],
+                    },
+                },
+            },
+        },
+        '@storybook/addon-themes',
+    ],
     framework: '@storybook/angular-vite',
     core: {
         disableTelemetry: true,
