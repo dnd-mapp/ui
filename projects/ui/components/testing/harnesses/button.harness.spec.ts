@@ -1,15 +1,15 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ButtonComponent } from '../../button/button.component';
+import { ButtonComponent } from '@dnd-mapp/ui/components';
 import { ButtonHarness } from './button.harness';
 
 @Component({
-    imports: [ButtonComponent],
     template: `
         <button dma-button type="button" (click)="clicks.set(clicks() + 1)">Save map</button>
         <button dma-button type="button" disabled>Delete map</button>
     `,
+    imports: [ButtonComponent],
 })
 class TestHostComponent {
     readonly clicks = signal(0);

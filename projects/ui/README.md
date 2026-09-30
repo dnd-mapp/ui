@@ -33,7 +33,7 @@ The components follow the `color-scheme` of the page, just like the tokens. See 
 
 ## Components
 
-Import the components from `@dnd-mapp/ui/src/components`.
+Import the components from `@dnd-mapp/ui/components`.
 
 | Component         | Selector             | Harness         | Use for                       |
 |:------------------|:---------------------|:----------------|:------------------------------|
@@ -45,7 +45,7 @@ Put `dma-button` on a native `button` element, and import `ButtonComponent` into
 
 ```ts
 import { Component } from '@angular/core';
-import { ButtonComponent } from '@dnd-mapp/ui/src/components';
+import { ButtonComponent } from '@dnd-mapp/ui/components';
 
 @Component({
     selector: 'app-map-toolbar',
@@ -61,7 +61,7 @@ The button has the `Primary` variant in the `Medium` size so far. Set the native
 
 ## Testing
 
-The `@dnd-mapp/ui/src/components/testing` entry point has a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component, to test the components of your app that use them. The harnesses need `@angular/cdk`, so install it to use them.
+The `@dnd-mapp/ui/components/testing` entry point has a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component, to test the components of your app that use them. The harnesses need `@angular/cdk`, so install it to use them.
 
 ```bash
 pnpm add -D @angular/cdk
@@ -71,7 +71,7 @@ Load a harness through the harness environment of the CDK.
 
 ```ts
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ButtonHarness } from '@dnd-mapp/ui/src/components/testing';
+import { ButtonHarness } from '@dnd-mapp/ui/components/testing';
 
 const loader = TestbedHarnessEnvironment.loader(fixture);
 const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }));

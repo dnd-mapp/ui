@@ -10,7 +10,7 @@
         "ui": {
             "projectType": "library",
             "root": "projects/ui",
-            "sourceRoot": "projects/ui/src",
+            "sourceRoot": "projects/ui",
             "prefix": "dma",
             "schematics": {
                 "@schematics/angular:component": {
@@ -61,8 +61,8 @@
                         "browsers": ["chromium"],
                         "headless": true,
                         "coverage": true,
-                        "coverageInclude": ["projects/ui/src/**/*.ts"],
-                        "coverageExclude": ["projects/ui/src/**/index.ts", "projects/ui/src/**/*.stories.ts"],
+                        "coverageInclude": ["projects/ui/src/**/*.ts", "projects/ui/components/**/*.ts"],
+                        "coverageExclude": ["projects/ui/**/index.ts", "projects/ui/**/*.stories.ts"],
                         "coverageReporters": ["text-summary", "html"],
                         "coverageThresholds": {
                             "branches": 80,
