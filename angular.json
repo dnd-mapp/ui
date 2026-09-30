@@ -40,7 +40,7 @@
                         "headless": true,
                         "coverage": true,
                         "coverageInclude": ["projects/ui/src/**/*.ts"],
-                        "coverageExclude": ["projects/ui/src/index.ts"],
+                        "coverageExclude": ["projects/ui/src/index.ts", "projects/ui/src/**/*.stories.ts"],
                         "coverageReporters": ["text-summary", "html"],
                         "coverageThresholds": {
                             "branches": 80,
@@ -59,6 +59,28 @@
                             "ui": true,
                             "watch": true
                         }
+                    }
+                },
+                "storybook": {
+                    "builder": "@storybook/angular-vite:start-storybook",
+                    "options": {
+                        "port": 6006,
+                        "styles": [
+                            "@dnd-mapp/design-tokens/fonts.css",
+                            "@dnd-mapp/design-tokens/tokens.css",
+                            ".storybook/preview.scss"
+                        ]
+                    }
+                },
+                "build-storybook": {
+                    "builder": "@storybook/angular-vite:build-storybook",
+                    "options": {
+                        "outputDir": "dist/storybook",
+                        "styles": [
+                            "@dnd-mapp/design-tokens/fonts.css",
+                            "@dnd-mapp/design-tokens/tokens.css",
+                            ".storybook/preview.scss"
+                        ]
                     }
                 }
             }

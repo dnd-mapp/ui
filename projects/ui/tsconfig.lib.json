@@ -2,7 +2,7 @@
     "$schema": "https://json.schemastore.org/tsconfig",
     "extends": "../../tsconfig.json",
     "include": ["src/**/*.ts"],
-    "exclude": ["src/**/*.spec.ts"],
+    "exclude": ["src/**/*.spec.ts", "src/**/*.stories.ts"],
     "compilerOptions": {
         "composite": true,
         "declaration": true,
