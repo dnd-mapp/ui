@@ -57,7 +57,7 @@ jobs:
 
             - name: Stage the package
               shell: bash
-              run: pnpm stage publish dist/ui --provenance --no-git-checks
+              run: pnpm stage publish --provenance --no-git-checks
 
     release:
         name: GitHub Release

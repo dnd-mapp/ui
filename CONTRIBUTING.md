@@ -52,7 +52,7 @@ The repository is an Angular workspace with a single project, the `ui` library i
 | `tools/copy-package-files.ts` | Copies the changelog, the license, and the readme into the package after a build    |
 | `vitest.config.ts`            | The Vitest options that the test target in `angular.json` has no builder option for |
 
-The `package.json` in the repository root belongs to the workspace and is never published.
+The `package.json` in the repository root belongs to the workspace, and pnpm never publishes it. Its `publishConfig.directory` points pnpm at `dist/ui` instead, so publishing from the root publishes the built package.
 
 ## Components
 
