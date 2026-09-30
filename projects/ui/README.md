@@ -78,9 +78,40 @@ Set the `size` input to `small`, `medium`, or `large`. It defaults to `medium`, 
 
 Set the native `disabled` attribute to disable the button.
 
+## Icons
+
+Import the icons from `@dnd-mapp/ui/icons`. Each glyph has a component of its own, so the bundle of your app holds only the glyphs it imports. The glyphs come from Font Awesome Free, and ship inside this package, so you don't install Font Awesome.
+
+| Component                  | Selector                | Use for                                                        |
+|:---------------------------|:------------------------|:---------------------------------------------------------------|
+| `IconChevronDownComponent` | `dma-icon-chevron-down` | An action that opens a menu or a list below it                 |
+| `IconCircleNotchComponent` | `dma-icon-circle-notch` | A control that is busy, such as a button that is loading       |
+| `IconPlusComponent`        | `dma-icon-plus`         | An action that adds or creates something, such as a new map    |
+| `IconXmarkComponent`       | `dma-icon-xmark`        | An action that closes or dismisses something, such as a dialog |
+
+```ts
+import { Component } from '@angular/core';
+import { IconPlusComponent } from '@dnd-mapp/ui/icons';
+
+@Component({
+    selector: 'app-map-list-header',
+    imports: [IconPlusComponent],
+    template: `<span class="add-map"><dma-icon-plus />Add map</span>`,
+})
+export class MapListHeaderComponent {}
+```
+
+Set the `size` input to `small`, `medium`, or `large`, to match the `Label/Small`, `Label/Medium`, or `Label/Large` text style beside the icon. It defaults to `medium`. Each size is as high as the line height of its label, so an icon never changes the height of a control.
+
+```html
+<dma-icon-xmark size="small" />
+```
+
+An icon takes the color of the text around it. It's hidden from assistive technology with `aria-hidden="true"`, so give a control that shows only an icon an accessible name of its own.
+
 ## Testing
 
-The `@dnd-mapp/ui/components/testing` entry point has a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component, to test the components of your app that use them. The harnesses need `@angular/cdk`, so install it to use them.
+The `@dnd-mapp/ui/components/testing` entry point has a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component, and `@dnd-mapp/ui/icons/testing` has the `IconHarness` for the icons. Use them to test the components of your app that use them. The harnesses need `@angular/cdk`, so install it to use them.
 
 ```bash
 pnpm add -D @angular/cdk
@@ -109,3 +140,5 @@ Contributions are welcome. See the [contributing guide](../../CONTRIBUTING.md) f
 ## License
 
 [MIT](../../LICENSE) © D&D Mapp
+
+Icons from Font Awesome Free 7.3.1 by Fonticons, Inc. (fontawesome.com), licensed under CC BY 4.0 (creativecommons.org/licenses/by/4.0). Scaled and recolored for D&D Mapp. See the [third-party notices](THIRD_PARTY_NOTICES.md).
