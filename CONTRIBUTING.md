@@ -42,15 +42,15 @@ The pre-commit hooks only check files. Run `pnpm run format` to fix formatting i
 
 The repository is an Angular workspace with a single project, the `ui` library in `projects/ui`. [ng-packagr](https://github.com/ng-packagr/ng-packagr) builds it into the package.
 
-| File                            | Purpose                                                                          |
-|:--------------------------------|:---------------------------------------------------------------------------------|
-| `angular.json`                  | The workspace config, with the build and test targets of the library             |
-| `projects/ui/package.json`      | The manifest of the published package, with its version and peer dependencies    |
-| `projects/ui/ng-package.json`   | The ng-packagr config                                                            |
-| `projects/ui/src/public-api.ts` | The entry point of the package, which exports the public API                     |
-| `projects/ui/src/lib`           | The components, each in a directory of its own                                   |
-| `tools/copy-package-files.ts`   | Copies the changelog, the license, and the readme into the package after a build |
-| `vitest.config.ts`              | The Vitest options that the Angular unit-test builder uses                       |
+| File                            | Purpose                                                                             |
+|:--------------------------------|:------------------------------------------------------------------------------------|
+| `angular.json`                  | The workspace config, with the build and test targets of the library                |
+| `projects/ui/package.json`      | The manifest of the published package, with its version and peer dependencies       |
+| `projects/ui/ng-package.json`   | The ng-packagr config                                                               |
+| `projects/ui/src/public-api.ts` | The entry point of the package, which exports the public API                        |
+| `projects/ui/src/lib`           | The components, each in a directory of its own                                      |
+| `tools/copy-package-files.ts`   | Copies the changelog, the license, and the readme into the package after a build    |
+| `vitest.config.ts`              | The Vitest options that the test target in `angular.json` has no builder option for |
 
 The `package.json` in the repository root belongs to the workspace and is never published.
 
@@ -74,7 +74,9 @@ pnpm ng generate component <name> --project ui
 
 The `build` script builds the library with ng-packagr into `dist/ui`, and copies the changelog, the license, and the readme into it. The release workflow publishes that directory.
 
-Tests use Vitest through the Angular unit-test builder, and run in Chromium through [Playwright](https://playwright.dev/). The builder sets up the Angular `TestBed`, and the Vitest globals, such as `describe`, `it`, `expect`, and `vi`, are available without an import. Coverage must stay above the thresholds in `vitest.config.ts`.
+Tests use Vitest through the Angular unit-test builder, and run in Chromium through [Playwright](https://playwright.dev/). The builder sets up the Angular `TestBed`, and the Vitest globals, such as `describe`, `it`, `expect`, and `vi`, are available without an import. The test target in `angular.json` holds the test options, and coverage must stay above its thresholds. Its `development` configuration is the default and runs in watch mode with the Vitest UI. The `ci` configuration runs the tests once in headless Chromium.
+
+The builder fails when it finds no spec files, so `public-api.spec.ts` checks the exports of the package until the first component brings its own specs.
 
 `tsconfig.json` holds the compiler options of the workspace, and refers to three projects: `projects/ui/tsconfig.lib.json` for the library, `projects/ui/tsconfig.spec.json` for the specs, and `tsconfig.tools.json` for the scripts and the config files. Only the spec project has the types of the Vitest globals, so the library cannot use them by mistake.
 

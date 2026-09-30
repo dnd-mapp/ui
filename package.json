@@ -7,8 +7,8 @@
   "scripts": {
     "ng": "ng",
     "build": "ng build && node tools/copy-package-files.ts",
-    "test": "ng test --ui",
-    "test-ci": "ng test --no-watch",
+    "test": "ng test",
+    "test-ci": "ng test -c ci",
     "typecheck": "tsc -b --noEmit",
     "lint-ts": "eslint",
     "lint-md": "markdownlint-cli2",

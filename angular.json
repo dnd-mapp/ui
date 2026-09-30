@@ -32,10 +32,33 @@
                 },
                 "test": {
                     "builder": "@angular/build:unit-test",
+                    "defaultConfiguration": "development",
                     "options": {
                         "tsConfig": "projects/ui/tsconfig.spec.json",
                         "runnerConfig": "vitest.config.ts",
-                        "browsers": ["chromium"]
+                        "browsers": ["chromium"],
+                        "coverage": true,
+                        "coverageInclude": ["projects/ui/src/**/*.ts"],
+                        "coverageExclude": ["projects/ui/src/public-api.ts"],
+                        "coverageReporters": ["text-summary", "html"],
+                        "coverageThresholds": {
+                            "branches": 80,
+                            "functions": 80,
+                            "lines": 80,
+                            "statements": 80
+                        },
+                        "reporters": ["dot", "html"]
+                    },
+                    "configurations": {
+                        "ci": {
+                            "headless": true,
+                            "reporters": ["dot", "html", "github-actions"],
+                            "watch": false
+                        },
+                        "development": {
+                            "ui": true,
+                            "watch": true
+                        }
                     }
                 }
             }
