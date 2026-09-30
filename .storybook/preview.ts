@@ -2,18 +2,40 @@ import { DocsContainer, type DocsContainerProps } from '@storybook/addon-docs/bl
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
 import type { Preview } from '@storybook/angular-vite';
 import { createElement, type PropsWithChildren } from 'react';
-import { themes, type ThemeVars } from 'storybook/theming';
+import { GLOBALS_UPDATED, SET_GLOBALS } from 'storybook/internal/core-events';
+import { addons } from 'storybook/preview-api';
+import { themes } from 'storybook/theming';
+
+interface GlobalsEvent {
+    globals: Record<string, unknown>;
+}
 
 /**
- * Picks the Storybook theme of a docs page from the theme switch in the toolbar. Storybook renders the docs page
- * again when the switch changes, so the page follows it.
+ * The globals of the preview, such as the theme that the switch in the toolbar picked. A docs page without stories
+ * has no story context to read them from, so the preview tracks them from its channel. Storybook emits
+ * `GLOBALS_UPDATED` before it renders a docs page again, so the page always sees the new value.
  */
-function docsThemeOf(context: DocsContainerProps['context']): ThemeVars {
-    const [story] = context.componentStories();
-    // The story context type loses its known keys to an index signature, so `globals` comes back as `any`.
-    const globals = story ? (context.getStoryContext(story)['globals'] as Record<string, unknown>) : {};
+let globals: GlobalsEvent['globals'] = {};
 
-    return globals['theme'] === 'Dark' ? themes.dark : themes.light;
+const channel = addons.getChannel();
+
+channel.on(SET_GLOBALS, (event: GlobalsEvent) => {
+    globals = event.globals;
+});
+channel.on(GLOBALS_UPDATED, (event: GlobalsEvent) => {
+    globals = event.globals;
+});
+
+/**
+ * Renders a docs page in the light or dark Storybook theme, after the theme switch in the toolbar.
+ */
+function ThemedDocsContainer(props: PropsWithChildren<DocsContainerProps>) {
+    const dark = globals['theme'] === 'Dark';
+
+    // The theme decorator only runs for stories, so a docs page without them sets the color scheme itself.
+    document.documentElement.dataset['colorScheme'] = dark ? 'dark' : 'light';
+
+    return createElement(DocsContainer, { ...props, theme: dark ? themes.dark : themes.light });
 }
 
 const preview: Preview = {
@@ -26,8 +48,7 @@ const preview: Preview = {
     ],
     parameters: {
         docs: {
-            container: (props: PropsWithChildren<DocsContainerProps>) =>
-                createElement(DocsContainer, { ...props, theme: docsThemeOf(props.context) }),
+            container: ThemedDocsContainer,
         },
     },
 };
