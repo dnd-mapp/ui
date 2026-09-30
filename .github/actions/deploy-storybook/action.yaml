@@ -55,6 +55,7 @@ runs:
                   fi
 
                   rm -rf "${site:?}/$TARGET"
+
                   if [[ -n "$SOURCE" ]]; then
                       cp -R "$SOURCE" "$site/$TARGET"
                       message="Deploy $TARGET from $GITHUB_SHA"
