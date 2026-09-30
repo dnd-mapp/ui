@@ -4,20 +4,39 @@
     justify-content: center;
     gap: var(--dma-spacing-8);
     box-sizing: border-box;
-    // The 40px height of a Medium button has no token.
-    block-size: 2.5rem;
     margin: 0;
     padding-block: 0;
-    // The border sits inside the padding, like the inside stroke in Figma, so every variant has the same size.
-    padding-inline: calc(var(--dma-spacing-16) - 1px);
     // Only `secondary` shows its border. The 1px width has no token.
     border: 1px solid transparent;
-    border-radius: var(--dma-radius-8);
-    font: var(--dma-text-label-medium-font);
-    letter-spacing: var(--dma-text-label-medium-letter-spacing);
     white-space: nowrap;
     background-color: transparent;
     cursor: pointer;
+}
+
+// The heights of the sizes have no tokens. The border sits inside the padding, like the inside stroke in Figma,
+// so every variant has the same size.
+:host([data-size='small']) {
+    block-size: 2rem;
+    padding-inline: calc(var(--dma-spacing-12) - 1px);
+    border-radius: var(--dma-radius-4);
+    font: var(--dma-text-label-small-font);
+    letter-spacing: var(--dma-text-label-small-letter-spacing);
+}
+
+:host([data-size='medium']) {
+    block-size: 2.5rem;
+    padding-inline: calc(var(--dma-spacing-16) - 1px);
+    border-radius: var(--dma-radius-8);
+    font: var(--dma-text-label-medium-font);
+    letter-spacing: var(--dma-text-label-medium-letter-spacing);
+}
+
+:host([data-size='large']) {
+    block-size: 3rem;
+    padding-inline: calc(var(--dma-spacing-24) - 1px);
+    border-radius: var(--dma-radius-12);
+    font: var(--dma-text-label-large-font);
+    letter-spacing: var(--dma-text-label-large-letter-spacing);
 }
 
 :host([data-variant='primary']) {
