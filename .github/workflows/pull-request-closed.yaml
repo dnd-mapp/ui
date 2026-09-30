@@ -1,0 +1,65 @@
+name: Pull request closed
+
+on:
+    pull_request:
+        types:
+            - closed
+
+jobs:
+    remove-storybook:
+        name: Remove Storybook preview
+        # The same pull requests as the deploy-storybook job of the pull request workflow.
+        if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'renovate[bot]'
+        runs-on: ubuntu-26.04
+        timeout-minutes: 5
+        permissions:
+            contents: write
+            deployments: write
+            pull-requests: write
+        # Shared with the deploy-storybook job, and cancels a deploy of the same pull request that is still running.
+        concurrency:
+            group: storybook-preview-${{ github.event.pull_request.number }}
+            cancel-in-progress: true
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  ref: ${{ github.event.repository.default_branch }}
+
+            - name: Remove Storybook
+              uses: ./.github/actions/deploy-storybook
+              with:
+                  target: pr-${{ github.event.pull_request.number }}
+
+            - name: Mark the deployment inactive
+              shell: bash
+              run: |
+                  url="https://dnd-mapp.github.io/ui/pr-$NUMBER/"
+
+                  # A new deployment marks the older ones with the same URL inactive, so only the latest one of this
+                  # pull request can still be active.
+                  ids="$(
+                      gh api --paginate "repos/$GITHUB_REPOSITORY/deployments?environment=storybook-preview&per_page=100" \
+                          --jq '.[].id'
+                  )"
+
+                  for id in $ids; do
+                      status="$(
+                          gh api "repos/$GITHUB_REPOSITORY/deployments/$id/statuses?per_page=1" \
+                              --jq '.[0] | "\(.state) \(.environment_url)"'
+                      )"
+
+                      if [[ "$status" == "success $url" ]]; then
+                          gh api --method POST "repos/$GITHUB_REPOSITORY/deployments/$id/statuses" -f state=inactive > /dev/null
+                          break
+                      fi
+                  done
+              env:
+                  NUMBER: ${{ github.event.pull_request.number }}
+                  GH_TOKEN: ${{ github.token }}
+
+            - name: Update the preview comment
+              uses: ./.github/actions/storybook-preview-comment
+              with:
+                  body: "**Storybook preview:** removed, because the pull request closed."
+                  create: "false"

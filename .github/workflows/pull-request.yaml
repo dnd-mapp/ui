@@ -28,3 +28,60 @@ jobs:
               env:
                   BASE_SHA: ${{ github.event.pull_request.base.sha }}
                   HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+    build-storybook:
+        name: Build Storybook
+        runs-on: ubuntu-26.04
+        timeout-minutes: 10
+        permissions:
+            contents: read
+        concurrency:
+            group: ${{ github.workflow }}-${{ github.ref }}-${{ github.job }}
+            cancel-in-progress: true
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+            - name: Build Storybook
+              uses: ./.github/actions/build-storybook
+
+    deploy-storybook:
+        name: Deploy Storybook preview
+        needs: build-storybook
+        # Pull requests from forks get a read-only token, and Renovate's pull requests don't need a preview.
+        if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'renovate[bot]'
+        runs-on: ubuntu-26.04
+        timeout-minutes: 5
+        permissions:
+            contents: write
+            pull-requests: write
+        environment:
+            name: storybook-preview
+            url: https://dnd-mapp.github.io/ui/pr-${{ github.event.pull_request.number }}/
+        # Shared with the workflow that removes the preview, so a removal never races a deploy of the same pull request.
+        concurrency:
+            group: storybook-preview-${{ github.event.pull_request.number }}
+            cancel-in-progress: true
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+            - name: Download Storybook
+              uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+              with:
+                  name: storybook
+                  path: ${{ runner.temp }}/storybook
+
+            - name: Deploy Storybook
+              uses: ./.github/actions/deploy-storybook
+              with:
+                  path: ${{ runner.temp }}/storybook
+                  target: pr-${{ github.event.pull_request.number }}
+
+            - name: Link the preview
+              uses: ./.github/actions/storybook-preview-comment
+              with:
+                  body: |
+                      **Storybook preview:** https://dnd-mapp.github.io/ui/pr-${{ github.event.pull_request.number }}/
+
+                      Built from ${{ github.event.pull_request.head.sha }}. GitHub Pages takes about a minute to publish a new build.

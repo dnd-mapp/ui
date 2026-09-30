@@ -1,0 +1,39 @@
+name: Storybook preview comment
+description: Writes the comment that links a pull request to its Storybook preview, and edits that comment instead of adding a new one
+
+inputs:
+    body:
+        description: The Markdown body of the comment
+        required: true
+    create:
+        description: Whether to add the comment when the pull request does not have it yet
+        required: false
+        default: "true"
+
+runs:
+    using: composite
+    steps:
+        - name: Write the comment
+          shell: bash
+          run: |
+              marker='<!-- storybook-preview -->'
+              body="$marker"$'\n'"$BODY"
+
+              ids="$(
+                  gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$NUMBER/comments" \
+                      --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$marker\"))) | .id"
+              )"
+              id="${ids%%$'\n'*}"
+
+              if [[ -n "$id" ]]; then
+                  gh api --method PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -f body="$body" > /dev/null
+              elif [[ "$CREATE" == "true" ]]; then
+                  gh api --method POST "repos/$GITHUB_REPOSITORY/issues/$NUMBER/comments" -f body="$body" > /dev/null
+              else
+                  echo "The pull request has no Storybook preview comment to edit."
+              fi
+          env:
+              BODY: ${{ inputs.body }}
+              CREATE: ${{ inputs.create }}
+              NUMBER: ${{ github.event.pull_request.number }}
+              GH_TOKEN: ${{ github.token }}

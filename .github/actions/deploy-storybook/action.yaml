@@ -1,12 +1,13 @@
 name: Deploy Storybook
-description: Publishes a built Storybook to a folder of the gh-pages branch, and keeps the other folders on the branch as they are
+description: Publishes a built Storybook to a folder of the gh-pages branch, or removes that folder, and keeps the other folders on the branch as they are
 
 inputs:
     path:
-        description: The directory that holds the built Storybook
-        required: true
+        description: The directory that holds the built Storybook. Leave it empty to remove the target folder instead.
+        required: false
+        default: ""
     target:
-        description: The folder on the gh-pages branch to publish to, such as main
+        description: The folder on the gh-pages branch to publish to or remove, such as main or pr-42
         required: true
     root-redirect:
         description: The folder that the root of the site redirects to. Leave it empty to keep the current root page.
@@ -44,6 +45,9 @@ runs:
                   if ((status == 0)); then
                       git fetch --depth=1 origin gh-pages
                       git worktree add -b gh-pages "$site" FETCH_HEAD
+                  elif ((status == 2)) && [[ -z "$SOURCE" ]]; then
+                      echo "The gh-pages branch does not exist, so there is nothing to remove."
+                      exit 0
                   elif ((status == 2)); then
                       git worktree add --orphan -b gh-pages "$site"
                   else
@@ -51,7 +55,13 @@ runs:
                   fi
 
                   rm -rf "${site:?}/$TARGET"
-                  cp -R "$SOURCE" "$site/$TARGET"
+
+                  if [[ -n "$SOURCE" ]]; then
+                      cp -R "$SOURCE" "$site/$TARGET"
+                      message="Deploy $TARGET from $GITHUB_SHA"
+                  else
+                      message="Remove $TARGET"
+                  fi
 
                   # Without it, Pages runs Jekyll, which drops files that start with an underscore.
                   touch "$site/.nojekyll"
@@ -79,7 +89,7 @@ runs:
                       echo "The gh-pages branch is up to date."
                       exit 0
                   fi
-                  git -C "$site" commit --quiet --message "Deploy $TARGET from $GITHUB_SHA"
+                  git -C "$site" commit --quiet --message "$message"
 
                   if git push origin gh-pages; then
                       exit 0
