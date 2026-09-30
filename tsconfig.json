@@ -13,7 +13,7 @@
         "module": "preserve",
         "target": "es2022",
         "paths": {
-            "@dnd-mapp/ui": ["./dist/ui"]
+            "@dnd-mapp/ui": ["./projects/ui/src/index.ts"]
         }
     },
     "angularCompilerOptions": {
