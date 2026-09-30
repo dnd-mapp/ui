@@ -1,0 +1,21 @@
+{
+  "components": {
+    "components-button": {
+      "id": "components-button",
+      "name": "ButtonComponent",
+      "path": "./projects/ui/components/button/button.stories.ts",
+      "description": "A button that starts an action, such as saving a map. Put it on a native `button` element, and give it a\nlabel as its content.\n\nIt has the `Primary` variant of the `Button` Figma component in the `Medium` size. Use it for the one main\naction in a view.",
+      "jsDocTags": {},
+      "argTypes": {},
+      "renderer": "angular",
+      "angularComponentMeta": {
+        "name": "ButtonComponent",
+        "selector": "button[dma-button]",
+        "standalone": true,
+        "inputs": [],
+        "outputs": [],
+        "enums": []
+      }
+    }
+  }
+}
