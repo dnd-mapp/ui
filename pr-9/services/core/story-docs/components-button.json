@@ -1,0 +1,42 @@
+{
+  "components": {
+    "components-button": {
+      "id": "components-button",
+      "name": "ButtonComponent",
+      "path": "./projects/ui/components/button/button.stories.ts",
+      "stories": {
+        "components-button--primary": {
+          "id": "components-button--primary",
+          "name": "Primary",
+          "snippet": "import { Component } from '@angular/core';\nimport { ButtonComponent } from './button.component';\n\n@Component({\n  selector: 'app-demo',\n  imports: [ButtonComponent],\n  template: `\n    <button\n        dma-button\n        type=\"button\"\n        [variant]=\"variant\"\n        [disabled]=\"disabled\">\n        {{ label }}\n    </button>`,\n})\nexport class DemoComponent {\n  disabled = false;\n}",
+          "warning": "Incomplete snippet: `labels[DEFAULT_BUTTON_VARIANT]`, `DEFAULT_BUTTON_VARIANT` could not be resolved statically."
+        },
+        "components-button--secondary": {
+          "id": "components-button--secondary",
+          "name": "Secondary",
+          "snippet": "import { Component } from '@angular/core';\nimport { ButtonComponent } from './button.component';\n\n@Component({\n  selector: 'app-demo',\n  imports: [ButtonComponent],\n  template: `\n    <button\n        dma-button\n        type=\"button\"\n        [variant]=\"variant\"\n        [disabled]=\"disabled\">\n        {{ label }}\n    </button>`,\n})\nexport class DemoComponent {\n  disabled = false;\n}",
+          "warning": "Incomplete snippet: `labels.secondary`, `ButtonVariants.secondary` could not be resolved statically."
+        },
+        "components-button--ghost": {
+          "id": "components-button--ghost",
+          "name": "Ghost",
+          "snippet": "import { Component } from '@angular/core';\nimport { ButtonComponent } from './button.component';\n\n@Component({\n  selector: 'app-demo',\n  imports: [ButtonComponent],\n  template: `\n    <button\n        dma-button\n        type=\"button\"\n        [variant]=\"variant\"\n        [disabled]=\"disabled\">\n        {{ label }}\n    </button>`,\n})\nexport class DemoComponent {\n  disabled = false;\n}",
+          "warning": "Incomplete snippet: `labels.ghost`, `ButtonVariants.ghost` could not be resolved statically."
+        },
+        "components-button--danger": {
+          "id": "components-button--danger",
+          "name": "Danger",
+          "snippet": "import { Component } from '@angular/core';\nimport { ButtonComponent } from './button.component';\n\n@Component({\n  selector: 'app-demo',\n  imports: [ButtonComponent],\n  template: `\n    <button\n        dma-button\n        type=\"button\"\n        [variant]=\"variant\"\n        [disabled]=\"disabled\">\n        {{ label }}\n    </button>`,\n})\nexport class DemoComponent {\n  disabled = false;\n}",
+          "warning": "Incomplete snippet: `labels.danger`, `ButtonVariants.danger` could not be resolved statically."
+        },
+        "components-button--states": {
+          "id": "components-button--states",
+          "name": "States",
+          "snippet": "import { Component } from '@angular/core';\nimport { ButtonComponent } from './button.component';\n\n@Component({\n  selector: 'app-demo',\n  imports: [ButtonComponent],\n  template: `\n    <div\n        style=\"display: grid; grid-template-columns: repeat(2, max-content); gap: var(--dma-spacing-16)\">\n        @for (variant of variants; track variant) {\n        <button\n            dma-button\n            type=\"button\"\n            [variant]=\"variant\">\n            {{ labels[variant] }}\n        </button>\n        <button\n            dma-button\n            type=\"button\"\n            [variant]=\"variant\"\n            disabled>\n            {{ labels[variant] }}\n        </button>\n        }\n    </div>`,\n})\nexport class DemoComponent {}",
+          "warning": "Incomplete snippet: `variants`, `labels` could not be provided, since the story declares no such arg.\nIncomplete snippet: `label`, `disabled` could not be bound, since ButtonComponent declares no such input.",
+          "description": "Every variant in its Default and its Disabled state. Hover, Pressed, and Focus show when you point at, hold,\nor tab to a button."
+        }
+      }
+    }
+  }
+}
