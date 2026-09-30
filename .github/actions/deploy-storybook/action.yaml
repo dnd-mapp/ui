@@ -32,8 +32,8 @@ runs:
 
               site="$RUNNER_TEMP/gh-pages"
 
-              # Other workflows may push to gh-pages at the same time, so
-              # start over from the new tip when the push is rejected.
+              # Other workflows may push to gh-pages at the same time, so start over from the new tip when the
+              # push is rejected.
               for attempt in 1 2 3; do
                   git worktree remove --force "$site" 2>/dev/null || true
                   git branch -D gh-pages 2>/dev/null || true
@@ -74,6 +74,7 @@ runs:
                   fi
 
                   git -C "$site" add --all
+
                   if git -C "$site" diff --cached --quiet; then
                       echo "The gh-pages branch is up to date."
                       exit 0
