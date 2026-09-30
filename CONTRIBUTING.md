@@ -69,7 +69,7 @@ Every component is presentational. It receives its data through inputs, reports 
 - Write the styles in SCSS. Take colors, spacing, radii, and text styles from the custom properties of the design tokens, such as `var(--dma-spacing-16)`. Only hard code a value when no token fits.
 - Keep the components accessible. ESLint checks the templates against the accessibility rules of angular-eslint.
 - Export every component from `projects/ui/components/index.ts`.
-- Write a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component in `projects/ui/components/testing/harnesses`, and export it from `projects/ui/components/testing/index.ts`. Test it in a spec of its own.
+- Write a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component in `projects/ui/components/testing/harnesses`, and export it from `projects/ui/components/testing/index.ts`. Test it in a spec of its own, and test the component through it, so its spec interacts with the component the way a consumer's tests do. Use the `TestElement` of the harness host, such as `getCssValue()`, for what the harness doesn't cover.
 - Write stories for every component in a `<name>.stories.ts` file next to it. Mirror the page of its Figma component: every variant, size, and state, in the light and the dark theme.
 - Document every component in a `<name>.mdx` file next to its stories: when to use it, how to use it, its states, its accessibility, and its harness.
 
