@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The `ButtonComponent`, with the `button[dma-button]` selector, in the `Primary` variant and the `Medium` size. Import it from `@dnd-mapp/ui/components`.
 - The `variant` input of `ButtonComponent`, with the `primary`, `secondary`, `ghost`, and `danger` variants. It defaults to `primary`, and so does the bare `variant` attribute. The `ButtonVariants` constant, the `ButtonVariant` type, and `DEFAULT_BUTTON_VARIANT` list the values.
 - The `ButtonHarness` component harness, in the `@dnd-mapp/ui/components/testing` entry point.
+- The `variant` filter and the `getVariant()` method of `ButtonHarness`, to find a button by its variant and read it.
 - `@angular/cdk` 22.2 or later as an optional peer dependency, for the component harnesses.
 
 [Unreleased]: https://github.com/dnd-mapp/ui/commits/main
