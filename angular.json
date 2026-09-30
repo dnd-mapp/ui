@@ -37,6 +37,7 @@
                         "tsConfig": "projects/ui/tsconfig.spec.json",
                         "runnerConfig": "vitest.config.ts",
                         "browsers": ["chromium"],
+                        "headless": true,
                         "coverage": true,
                         "coverageInclude": ["projects/ui/src/**/*.ts"],
                         "coverageExclude": ["projects/ui/src/index.ts"],
@@ -51,7 +52,6 @@
                     },
                     "configurations": {
                         "ci": {
-                            "headless": true,
                             "reporters": ["dot", "html", "github-actions"],
                             "watch": false
                         },

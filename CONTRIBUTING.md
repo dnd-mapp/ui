@@ -75,7 +75,7 @@ pnpm ng generate component <name> --project ui
 
 The `build` script builds the library with ng-packagr into `dist/ui`, together with the package readme and changelog. pnpm adds the license from the repository root when it packs the package. The release workflow publishes that directory.
 
-Tests use Vitest through the Angular unit-test builder, and run in Chromium through [Playwright](https://playwright.dev/). The builder sets up the Angular `TestBed`, and the Vitest globals, such as `describe`, `it`, `expect`, and `vi`, are available without an import. The test target in `angular.json` holds the test options, and coverage must stay above its thresholds. Its `development` configuration is the default and runs in watch mode with the Vitest UI. The `ci` configuration runs the tests once in headless Chromium.
+Tests use Vitest through the Angular unit-test builder, and run in headless Chromium through [Playwright](https://playwright.dev/). The builder sets up the Angular `TestBed`, and the Vitest globals, such as `describe`, `it`, `expect`, and `vi`, are available without an import. The test target in `angular.json` holds the test options, and coverage must stay above its thresholds. Its `development` configuration is the default and runs in watch mode with the Vitest UI. The `ci` configuration runs the tests once.
 
 The builder fails when it finds no spec files, so `index.spec.ts` checks the exports of the package until the first component brings its own specs.
 
