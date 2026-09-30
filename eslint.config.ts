@@ -30,6 +30,9 @@ export default defineConfig([
                 { type: ['element', 'attribute'], prefix: 'dma', style: 'kebab-case' },
             ],
             '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'dma', style: 'camelCase' }],
+            // The classes follow the naming of the 2016 Angular style guide, such as `ButtonComponent`.
+            '@angular-eslint/component-class-suffix': 'error',
+            '@angular-eslint/directive-class-suffix': 'error',
         },
     },
     {
