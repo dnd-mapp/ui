@@ -1,7 +1,7 @@
 import type { StorybookConfig } from '@storybook/angular-vite';
 
 const config: StorybookConfig = {
-    stories: ['./introduction.mdx', '../projects/ui/src/**/*.stories.ts'],
+    stories: ['./introduction.mdx', '../projects/ui/src/**/*.mdx', '../projects/ui/src/**/*.stories.ts'],
     addons: ['@storybook/addon-docs', '@storybook/addon-themes'],
     framework: '@storybook/angular-vite',
     core: {

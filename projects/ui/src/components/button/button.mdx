@@ -1,0 +1,75 @@
+import { Canvas, Controls, Meta } from '@storybook/addon-docs/blocks';
+
+import * as ButtonStories from './button.stories';
+
+<Meta of={ButtonStories} />
+
+# Button
+
+A button starts an action, such as saving a map. It's built after the `Button` component in the `Design system` Figma file.
+
+<Canvas of={ButtonStories.Primary} />
+
+<Controls of={ButtonStories.Primary} />
+
+## When to use
+
+The button has the `Primary` variant in the `Medium` size so far. Use it for the one main action in a view. The `Secondary`, `Ghost`, and `Danger` variants, the `Small` and `Large` sizes, and the icon slots will follow.
+
+## Usage
+
+Put `dma-button` on a native `button` element, and import `Button` into the component that uses it. The content of the element is the label.
+
+```ts
+import { Component } from '@angular/core';
+import { Button } from '@dnd-mapp/ui/src/components';
+
+@Component({
+    selector: 'app-map-toolbar',
+    imports: [Button],
+    template: `<button dma-button type="button" (click)="save()">Save map</button>`,
+})
+export class MapToolbar {
+    save() {}
+}
+```
+
+The button enhances the native element, so it keeps the keyboard support, the form behavior, and the `button` role of the browser. Set `type="button"` unless the button submits a form.
+
+## States
+
+| State    | How it's triggered                               | Look                                           |
+| :------- | :----------------------------------------------- | :--------------------------------------------- |
+| Default  | The button is enabled, and nothing happens to it | The accent fill, with the `on-accent` label    |
+| Hover    | The pointer is over the button                   | The `accent-hover` fill                        |
+| Pressed  | The button is held down                          | The `accent-pressed` fill                      |
+| Focus    | The button has keyboard focus                    | An amber ring, 2px outside the button          |
+| Disabled | The native `disabled` attribute is set           | The `disabled` fill and label, and no response |
+
+The focus ring shows on keyboard focus only, through `:focus-visible`. Hover and pressed never apply to a disabled button.
+
+<Canvas of={ButtonStories.Disabled} />
+
+Switch between the light and the dark theme with the paintbrush in the toolbar.
+
+## Accessibility
+
+- The label is the accessible name of the button, so keep it a short verb phrase, such as "Save map".
+- The label passes 4.5:1 against its fill, and the focus ring passes 3:1 against the page, in both themes.
+- A disabled button leaves the tab order and ignores clicks, like any native button.
+
+## Testing
+
+The `@dnd-mapp/ui/src/components/testing` entry point has a `ButtonHarness` for tests of the components that use the button. It needs `@angular/cdk`.
+
+```ts
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ButtonHarness } from '@dnd-mapp/ui/src/components/testing';
+
+const loader = TestbedHarnessEnvironment.loader(fixture);
+const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }));
+
+await button.click();
+```
+
+Find a button by its `text`, which takes a string or a regular expression, or by whether it's `disabled`. The harness can click the button, read its label, tell whether it's disabled, and move focus to or away from it.
