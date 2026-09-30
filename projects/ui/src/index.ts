@@ -1,4 +1,4 @@
 /**
  * The public API of @dnd-mapp/ui.
  */
-export {};
+export { Button, type ButtonSize, type ButtonVariant } from './lib/button/button';

@@ -1,0 +1,6 @@
+<span class="dma-button-content"><ng-content /></span>
+@if (spinnerVisible()) {
+    <svg class="dma-button-spinner" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+        <path fill="currentColor" [attr.d]="spinnerPath" />
+    </svg>
+}

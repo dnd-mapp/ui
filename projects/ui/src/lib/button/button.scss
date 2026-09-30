@@ -1,0 +1,148 @@
+// The styles aren't encapsulated, so the classes style the host button itself. Each class starts with `dma-button`.
+
+.dma-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: var(--_button-height);
+    margin: 0;
+    padding-block: 0;
+
+    // Every variant has a 1px border, transparent unless the variant shows it. The padding leaves it out, so the
+    // label sits where the Figma component puts it, with its border on the inside.
+    padding-inline: calc(var(--_button-padding) - 1px);
+    border: 1px solid var(--_button-border);
+    border-radius: var(--_button-radius);
+    outline: none;
+    background-color: var(--_button-background);
+    color: var(--_button-text);
+    font: var(--_button-font);
+    letter-spacing: 0;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    appearance: none;
+
+    &:focus-visible {
+        outline: 2px solid var(--dma-color-border-focus);
+        outline-offset: 2px;
+    }
+
+    &:hover:not(.dma-button-disabled, [aria-disabled='true']) {
+        background-color: var(--_button-background-hover);
+    }
+
+    &:active:not(.dma-button-disabled, [aria-disabled='true']) {
+        background-color: var(--_button-background-pressed);
+    }
+
+    &.dma-button-disabled {
+        border-color: var(--_button-border-disabled);
+        background-color: var(--_button-background-disabled);
+        color: var(--dma-color-text-disabled);
+        cursor: not-allowed;
+    }
+}
+
+.dma-button-small {
+    --_button-height: 2rem;
+    --_button-padding: var(--dma-spacing-12);
+    --_button-gap: var(--dma-spacing-4);
+    --_button-radius: var(--dma-radius-4);
+    --_button-font: var(--dma-text-label-small-font);
+    --_button-icon-size: 1rem;
+}
+
+.dma-button-medium {
+    --_button-height: 2.5rem;
+    --_button-padding: var(--dma-spacing-16);
+    --_button-gap: var(--dma-spacing-8);
+    --_button-radius: var(--dma-radius-8);
+    --_button-font: var(--dma-text-label-medium-font);
+    --_button-icon-size: 1.25rem;
+}
+
+.dma-button-large {
+    --_button-height: 3rem;
+    --_button-padding: var(--dma-spacing-24);
+    --_button-gap: var(--dma-spacing-12);
+    --_button-radius: var(--dma-radius-12);
+    --_button-font: var(--dma-text-label-large-font);
+    --_button-icon-size: 1.5rem;
+}
+
+.dma-button-primary {
+    --_button-background: var(--dma-color-background-accent);
+    --_button-background-hover: var(--dma-color-background-accent-hover);
+    --_button-background-pressed: var(--dma-color-background-accent-pressed);
+    --_button-background-disabled: var(--dma-color-background-disabled);
+    --_button-border: transparent;
+    --_button-border-disabled: transparent;
+    --_button-text: var(--dma-color-text-on-accent);
+}
+
+.dma-button-secondary {
+    --_button-background: transparent;
+    --_button-background-hover: var(--dma-color-background-neutral-hover);
+    --_button-background-pressed: var(--dma-color-background-neutral-pressed);
+
+    // The disabled fill matches the hover tint, so a disabled button keeps no fill rather than look hovered.
+    --_button-background-disabled: transparent;
+    --_button-border: var(--dma-color-border-default);
+    --_button-border-disabled: var(--dma-color-border-disabled);
+    --_button-text: var(--dma-color-text-default);
+}
+
+.dma-button-danger {
+    --_button-background: var(--dma-color-background-danger);
+    --_button-background-hover: var(--dma-color-background-danger-hover);
+    --_button-background-pressed: var(--dma-color-background-danger-pressed);
+    --_button-background-disabled: var(--dma-color-background-disabled);
+    --_button-border: transparent;
+    --_button-border-disabled: transparent;
+    --_button-text: var(--dma-color-text-on-danger);
+}
+
+.dma-button-ghost {
+    --_button-background: transparent;
+    --_button-background-hover: var(--dma-color-background-neutral-hover);
+    --_button-background-pressed: var(--dma-color-background-neutral-pressed);
+    --_button-background-disabled: transparent;
+    --_button-border: transparent;
+    --_button-border-disabled: transparent;
+    --_button-text: var(--dma-color-text-default);
+}
+
+.dma-button-content {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--_button-gap);
+
+    // Hide the label with opacity, not visibility, so it keeps the width of the button and stays its accessible name.
+    .dma-button-loading & {
+        opacity: 0;
+    }
+}
+
+.dma-button-spinner {
+    position: absolute;
+    inset: 0;
+    width: var(--_button-icon-size);
+    height: var(--_button-icon-size);
+    margin: auto;
+    animation: dma-button-spin 1s linear infinite;
+
+    // A still spinner looks frozen, so reduced motion slows it down rather than stop it.
+    @media (prefers-reduced-motion: reduce) {
+        animation-duration: 3s;
+    }
+}
+
+@keyframes dma-button-spin {
+    to {
+        transform: rotate(1turn);
+    }
+}
