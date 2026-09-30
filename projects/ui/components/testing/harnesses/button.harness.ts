@@ -1,4 +1,5 @@
 import { ComponentHarness, HarnessPredicate, type BaseHarnessFilters } from '@angular/cdk/testing';
+import type { ButtonVariant } from '@dnd-mapp/ui/components';
 
 /**
  * The criteria to find a `ButtonHarness` by.
@@ -9,6 +10,9 @@ export interface ButtonHarnessFilters extends BaseHarnessFilters {
 
     /** Only find buttons that are disabled, or only the ones that aren't. */
     disabled?: boolean;
+
+    /** Only find buttons in this variant. */
+    variant?: ButtonVariant;
 }
 
 /**
@@ -27,6 +31,11 @@ export class ButtonHarness extends ComponentHarness {
                 'disabled',
                 options.disabled,
                 async (harness, disabled) => (await harness.isDisabled()) === disabled,
+            )
+            .addOption(
+                'variant',
+                options.variant,
+                async (harness, variant) => (await harness.getVariant()) === variant,
             );
     }
 
@@ -43,6 +52,11 @@ export class ButtonHarness extends ComponentHarness {
     /** Returns whether the button is disabled. */
     public async isDisabled(): Promise<boolean> {
         return (await this.host()).getProperty<boolean>('disabled');
+    }
+
+    /** Returns the variant of the button. */
+    public async getVariant(): Promise<ButtonVariant> {
+        return (await (await this.host()).getAttribute('data-variant')) as ButtonVariant;
     }
 
     /** Moves focus to the button. */

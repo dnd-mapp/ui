@@ -52,10 +52,18 @@
                         }
                     }
                 },
+                "test-build": {
+                    "builder": "@angular/build:application",
+                    "options": {
+                        "tsConfig": "projects/ui/tsconfig.spec.json",
+                        "styles": ["@dnd-mapp/design-tokens/tokens.css"]
+                    }
+                },
                 "test": {
                     "builder": "@angular/build:unit-test",
                     "defaultConfiguration": "development",
                     "options": {
+                        "buildTarget": "ui:test-build",
                         "tsConfig": "projects/ui/tsconfig.spec.json",
                         "runnerConfig": "vitest.config.ts",
                         "browsers": ["chromium"],

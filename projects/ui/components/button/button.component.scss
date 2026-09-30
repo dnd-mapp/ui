@@ -8,26 +8,64 @@
     block-size: 2.5rem;
     margin: 0;
     padding-block: 0;
-    padding-inline: var(--dma-spacing-16);
-    border: none;
+    // The border sits inside the padding, like the inside stroke in Figma, so every variant has the same size.
+    padding-inline: calc(var(--dma-spacing-16) - 1px);
+    // Only `secondary` shows its border. The 1px width has no token.
+    border: 1px solid transparent;
     border-radius: var(--dma-radius-8);
     font: var(--dma-text-label-medium-font);
     letter-spacing: var(--dma-text-label-medium-letter-spacing);
     white-space: nowrap;
-    color: var(--dma-color-text-on-accent);
-    background-color: var(--dma-color-background-accent);
+    background-color: transparent;
     cursor: pointer;
 }
 
-:host(:hover:not(:disabled)) {
+:host([data-variant='primary']) {
+    color: var(--dma-color-text-on-accent);
+    background-color: var(--dma-color-background-accent);
+}
+
+:host([data-variant='primary']:hover:not(:disabled)) {
     background-color: var(--dma-color-background-accent-hover);
 }
 
-:host(:active:not(:disabled)) {
+:host([data-variant='primary']:active:not(:disabled)) {
     background-color: var(--dma-color-background-accent-pressed);
 }
 
-// The ring sits 2px outside the button, so the page color keeps it apart from the fill.
+:host([data-variant='secondary']) {
+    border-color: var(--dma-color-border-default);
+}
+
+:host([data-variant='secondary']),
+:host([data-variant='ghost']) {
+    color: var(--dma-color-text-default);
+}
+
+:host([data-variant='secondary']:hover:not(:disabled)),
+:host([data-variant='ghost']:hover:not(:disabled)) {
+    background-color: var(--dma-color-background-neutral-hover);
+}
+
+:host([data-variant='secondary']:active:not(:disabled)),
+:host([data-variant='ghost']:active:not(:disabled)) {
+    background-color: var(--dma-color-background-neutral-pressed);
+}
+
+:host([data-variant='danger']) {
+    color: var(--dma-color-text-on-danger);
+    background-color: var(--dma-color-background-danger);
+}
+
+:host([data-variant='danger']:hover:not(:disabled)) {
+    background-color: var(--dma-color-background-danger-hover);
+}
+
+:host([data-variant='danger']:active:not(:disabled)) {
+    background-color: var(--dma-color-background-danger-pressed);
+}
+
+// The ring sits 2px outside the button, so the page color keeps it apart from the fill or the border.
 :host(:focus-visible) {
     outline: 2px solid var(--dma-color-border-focus);
     outline-offset: 2px;
@@ -35,6 +73,15 @@
 
 :host(:disabled) {
     color: var(--dma-color-text-disabled);
-    background-color: var(--dma-color-background-disabled);
     cursor: not-allowed;
+}
+
+// `secondary` and `ghost` keep no fill when disabled, because the disabled fill matches the hover tint.
+:host([data-variant='primary']:disabled),
+:host([data-variant='danger']:disabled) {
+    background-color: var(--dma-color-background-disabled);
+}
+
+:host([data-variant='secondary']:disabled) {
+    border-color: var(--dma-color-border-disabled);
 }
