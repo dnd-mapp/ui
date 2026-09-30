@@ -112,6 +112,10 @@ The `storybook` script serves Storybook on port 6006 and updates it as you edit.
 
 Stories live next to their component in `projects/ui/src`, and stay out of the package, the specs, and the coverage. The `.storybook/tsconfig.json` project type checks them together with the library and `.storybook/preview.ts`.
 
+The `storybook` job of the [push workflow](.github/workflows/push-main.yaml) deploys the Storybook of every push to `main` to [GitHub Pages](https://dnd-mapp.github.io/ui/main/). It reuses the build of the `ci` job, and publishes it through the `deploy-storybook` action in `.github/actions`.
+
+The action copies a build into one folder of the `gh-pages` branch, and leaves the other folders on the branch as they are. So each build of Storybook, such as the one of `main`, gets a folder of its own, and the root of the site redirects to the folder that the `root-redirect` input names. The Pages settings of the repository serve the root of the `gh-pages` branch.
+
 ## Changelog and versioning
 
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Record every notable change for consumers under `[Unreleased]` in `projects/ui/CHANGELOG.md`, using the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.

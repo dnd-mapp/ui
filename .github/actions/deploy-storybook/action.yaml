@@ -1,0 +1,99 @@
+name: Deploy Storybook
+description: Publishes a built Storybook to a folder of the gh-pages branch, and keeps the other folders on the branch as they are
+
+inputs:
+    path:
+        description: The directory that holds the built Storybook
+        required: true
+    target:
+        description: The folder on the gh-pages branch to publish to, such as main
+        required: true
+    root-redirect:
+        description: The folder that the root of the site redirects to. Leave it empty to keep the current root page.
+        required: false
+        default: ""
+
+runs:
+    using: composite
+    steps:
+        - name: Publish to the gh-pages branch
+          shell: bash
+          run: |
+              folder='^[A-Za-z0-9][A-Za-z0-9._-]*$'
+
+              if [[ ! "$TARGET" =~ $folder ]]; then
+                  echo "::error::target must be a single folder name, not '$TARGET'"
+                  exit 1
+              fi
+              if [[ -n "$ROOT_REDIRECT" && ! "$ROOT_REDIRECT" =~ $folder ]]; then
+                  echo "::error::root-redirect must be a single folder name, not '$ROOT_REDIRECT'"
+                  exit 1
+              fi
+
+              site="$RUNNER_TEMP/gh-pages"
+
+              # Other workflows may push to gh-pages at the same time, so start over from the new tip when the
+              # push is rejected.
+              for attempt in 1 2 3; do
+                  git worktree remove --force "$site" 2>/dev/null || true
+                  git branch -D gh-pages 2>/dev/null || true
+
+                  # ls-remote exits with 2 when the branch does not exist yet.
+                  git ls-remote --exit-code --heads origin gh-pages > /dev/null && status=0 || status=$?
+
+                  if ((status == 0)); then
+                      git fetch --depth=1 origin gh-pages
+                      git worktree add -b gh-pages "$site" FETCH_HEAD
+                  elif ((status == 2)); then
+                      git worktree add --orphan -b gh-pages "$site"
+                  else
+                      exit "$status"
+                  fi
+
+                  rm -rf "${site:?}/$TARGET"
+                  cp -R "$SOURCE" "$site/$TARGET"
+
+                  # Without it, Pages runs Jekyll, which drops files that start with an underscore.
+                  touch "$site/.nojekyll"
+
+                  if [[ -n "$ROOT_REDIRECT" ]]; then
+                      cat > "$site/index.html" <<EOF
+              <!doctype html>
+              <html lang="en">
+                  <head>
+                      <meta charset="utf-8" />
+                      <title>D&amp;D Mapp UI</title>
+                      <meta http-equiv="refresh" content="0; url=$ROOT_REDIRECT/" />
+                      <link rel="canonical" href="$ROOT_REDIRECT/" />
+                  </head>
+                  <body>
+                      <p><a href="$ROOT_REDIRECT/">Open Storybook</a></p>
+                  </body>
+              </html>
+              EOF
+                  fi
+
+                  git -C "$site" add --all
+
+                  if git -C "$site" diff --cached --quiet; then
+                      echo "The gh-pages branch is up to date."
+                      exit 0
+                  fi
+                  git -C "$site" commit --quiet --message "Deploy $TARGET from $GITHUB_SHA"
+
+                  if git push origin gh-pages; then
+                      exit 0
+                  fi
+                  echo "::warning::The push to gh-pages was rejected in attempt $attempt."
+              done
+
+              echo "::error::Could not push to gh-pages."
+              exit 1
+          env:
+              SOURCE: ${{ inputs.path }}
+              TARGET: ${{ inputs.target }}
+              ROOT_REDIRECT: ${{ inputs.root-redirect }}
+              GIT_AUTHOR_NAME: github-actions[bot]
+              GIT_AUTHOR_EMAIL: 41898799+github-actions[bot]@users.noreply.github.com
+              GIT_COMMITTER_NAME: github-actions[bot]
+              GIT_COMMITTER_EMAIL: 41898799+github-actions[bot]@users.noreply.github.com
