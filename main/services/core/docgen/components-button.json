@@ -4,9 +4,24 @@
       "id": "components-button",
       "name": "ButtonComponent",
       "path": "./projects/ui/components/button/button.stories.ts",
-      "description": "A button that starts an action, such as saving a map. Put it on a native `button` element, and give it a\nlabel as its content.\n\nIt has the variants of the `Button` Figma component, in the `Medium` size. Use `primary` for the one main\naction in a view, `secondary` for other actions beside it, `ghost` for minor actions that should stay quiet,\nand `danger` for actions that destroy or remove something.",
+      "description": "A button that starts an action, such as saving a map. Put it on a native `button` element, and give it a\nlabel as its content.\n\nIt has the variants and the sizes of the `Button` Figma component. Use `primary` for the one main action in a\nview, `secondary` for other actions beside it, `ghost` for minor actions that should stay quiet, and `danger`\nfor actions that destroy or remove something. Use `medium` unless the layout around the button calls for a\n`small` or a `large` one.",
       "jsDocTags": {},
       "argTypes": {
+        "size": {
+          "name": "size",
+          "description": "The size of the button, which sets its height, padding, radius, and text style.",
+          "type": {
+            "name": "other",
+            "value": "empty-enum"
+          },
+          "table": {
+            "category": "inputs",
+            "type": {
+              "summary": "\"\" | ButtonSize"
+            },
+            "defaultValue": {}
+          }
+        },
         "variant": {
           "name": "variant",
           "description": "The variant of the button, which sets its colors.",
@@ -23,13 +38,14 @@
           }
         }
       },
-      "apiDescription": "## Inputs\n\n```\nexport type ButtonComponentInputs = {\n  /** The variant of the button, which sets its colors. */\n  variant?: \"\" | ButtonVariant;\n}\n```",
+      "apiDescription": "## Inputs\n\n```\nexport type ButtonComponentInputs = {\n  /** The size of the button, which sets its height, padding, radius, and text style. */\n  size?: \"\" | ButtonSize;\n  /** The variant of the button, which sets its colors. */\n  variant?: \"\" | ButtonVariant;\n}\n```",
       "renderer": "angular",
       "angularComponentMeta": {
         "name": "ButtonComponent",
         "selector": "button[dma-button]",
         "standalone": true,
         "inputs": [
+          "size",
           "variant"
         ],
         "outputs": [],
