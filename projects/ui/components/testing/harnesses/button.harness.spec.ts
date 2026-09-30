@@ -7,7 +7,7 @@ import { ButtonHarness } from './button.harness';
 @Component({
     template: `
         <button dma-button type="button" (click)="clicks.set(clicks() + 1)">Save map</button>
-        <button dma-button type="button" variant="danger" disabled>Delete map</button>
+        <button dma-button type="button" variant="danger" size="small" disabled>Delete map</button>
     `,
     imports: [ButtonComponent],
 })
@@ -61,6 +61,24 @@ describe('ButtonHarness', () => {
 
         expect(await saveButton.getVariant()).toBe('primary');
         expect(await deleteButton.getVariant()).toBe('danger');
+    });
+
+    it('finds a button by its size', async () => {
+        const { loader } = setup();
+
+        const button = await loader.getHarness(ButtonHarness.with({ size: 'small' }));
+
+        expect(await button.getText()).toBe('Delete map');
+    });
+
+    it('reports the size of a button', async () => {
+        const { loader } = setup();
+
+        const saveButton = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }));
+        const deleteButton = await loader.getHarness(ButtonHarness.with({ text: 'Delete map' }));
+
+        expect(await saveButton.getSize()).toBe('medium');
+        expect(await deleteButton.getSize()).toBe('small');
     });
 
     it('reports whether a button is disabled', async () => {
