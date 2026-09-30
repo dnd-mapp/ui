@@ -7,7 +7,7 @@ import { ButtonComponent } from './button.component';
     template: `<button dma-button type="button" [disabled]="disabled()">Save map</button>`,
 })
 class TestHostComponent {
-    readonly disabled = signal(false);
+    public readonly disabled = signal(false);
 }
 
 describe('ButtonComponent', () => {

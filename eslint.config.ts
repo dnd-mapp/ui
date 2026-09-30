@@ -16,6 +16,10 @@ export default defineConfig([
                 tsconfigRootDir: import.meta.dirname,
             },
         },
+        rules: {
+            // Every class member states its access, so `public` API is a choice rather than a default.
+            '@typescript-eslint/explicit-member-accessibility': ['error', { accessibility: 'explicit' }],
+        },
     },
     {
         files: ['projects/ui/**/*.ts'],

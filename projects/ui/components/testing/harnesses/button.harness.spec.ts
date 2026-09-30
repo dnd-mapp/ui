@@ -12,7 +12,7 @@ import { ButtonHarness } from './button.harness';
     imports: [ButtonComponent],
 })
 class TestHostComponent {
-    readonly clicks = signal(0);
+    public readonly clicks = signal(0);
 }
 
 describe('ButtonHarness', () => {

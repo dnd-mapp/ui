@@ -158,6 +158,8 @@ Follow the rules in `.editorconfig`.
 - Indent with 4 spaces, or 2 spaces in `package.json` and `pnpm-*.yaml`.
 - End every file with a newline and trim trailing whitespace.
 
+Give every class member an explicit access modifier, such as `public` or `protected`, including properties, methods, and static members. ESLint checks this with the `explicit-member-accessibility` rule of typescript-eslint.
+
 Follow these rules for prose, including Markdown files.
 
 - Never hard wrap prose. Write each paragraph or list item on a single line.
