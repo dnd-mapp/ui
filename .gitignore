@@ -19,4 +19,4 @@ dist/
 .coverage/
 .vitest/
 
-.tmp/
+tsc-out/

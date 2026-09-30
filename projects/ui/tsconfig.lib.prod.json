@@ -1,0 +1,10 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "extends": "./tsconfig.lib.json",
+    "compilerOptions": {
+        "declarationMap": false
+    },
+    "angularCompilerOptions": {
+        "compilationMode": "partial"
+    }
+}

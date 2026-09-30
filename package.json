@@ -1,0 +1,70 @@
+{
+  "$schema": "https://www.schemastore.org/package.json",
+  "name": "@dnd-mapp/ui-workspace",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "directory": "dist/ui"
+  },
+  "scripts": {
+    "ng": "ng",
+    "build": "ng build",
+    "test": "ng test",
+    "test-ci": "ng test -c ci",
+    "typecheck": "tsc -b --noEmit",
+    "lint-ts": "eslint",
+    "lint-md": "markdownlint-cli2",
+    "format": "prettier -w .",
+    "format-check": "prettier -c ."
+  },
+  "engines": {
+    "node": "^24.21.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.21.0",
+      "onFail": "error"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.7.0",
+      "onFail": "error"
+    }
+  },
+  "devDependencies": {
+    "@angular/build": "catalog:angular",
+    "@angular/cli": "catalog:angular",
+    "@angular/common": "catalog:angular",
+    "@angular/compiler": "catalog:angular",
+    "@angular/compiler-cli": "catalog:angular",
+    "@angular/core": "catalog:angular",
+    "@angular/platform-browser": "catalog:angular",
+    "@commitlint/cli": "catalog:commitlint",
+    "@dnd-mapp/changelog-tools": "catalog:",
+    "@dnd-mapp/config-commitlint": "catalog:commitlint",
+    "@dnd-mapp/config-eslint": "catalog:eslint",
+    "@dnd-mapp/config-markdown": "catalog:markdown",
+    "@dnd-mapp/config-prettier": "catalog:prettier",
+    "@dnd-mapp/config-typescript": "catalog:",
+    "@dnd-mapp/design-tokens": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/browser-playwright": "catalog:vitest",
+    "@vitest/coverage-v8": "catalog:vitest",
+    "@vitest/ui": "catalog:vitest",
+    "angular-eslint": "catalog:eslint",
+    "eslint": "catalog:eslint",
+    "lefthook": "catalog:commitlint",
+    "markdownlint-cli2": "catalog:markdown",
+    "ng-packagr": "catalog:angular",
+    "playwright": "catalog:vitest",
+    "prettier": "catalog:prettier",
+    "prettier-plugin-organize-imports": "catalog:prettier",
+    "rxjs": "catalog:angular",
+    "tslib": "catalog:angular",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:eslint",
+    "vitest": "catalog:vitest"
+  }
+}

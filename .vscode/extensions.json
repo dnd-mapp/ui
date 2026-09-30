@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "angular.ng-template",
+        "esbenp.prettier-vscode",
+        "editorconfig.editorconfig",
+        "davidanson.vscode-markdownlint",
+        "dbaeumer.vscode-eslint",
+        "github.vscode-github-actions"
+    ]
+}
