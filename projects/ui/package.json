@@ -18,7 +18,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dnd-mapp/ui.git"
+    "url": "git+https://github.com/dnd-mapp/ui.git",
+    "directory": "projects/ui"
   },
   "publishConfig": {
     "access": "public"
