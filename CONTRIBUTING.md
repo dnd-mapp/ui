@@ -65,14 +65,15 @@ Every component is presentational. It receives its data through inputs, reports 
 
 - Build each component after its Figma component, with the same variants, sizes, and states.
 - Give selectors the `dma` prefix, such as `dma-badge`, or an attribute selector such as `button[dma-button]` for a component that enhances a native element.
+- Name files and classes after the [2016 Angular style guide](https://v19.angular.dev/style-guide): put the type in both, such as `ButtonComponent` in `button.component.ts`. A harness follows the same pattern, such as `ButtonHarness` in `button.harness.ts`. ESLint checks the class suffixes of components and directives.
 - Write the styles in SCSS. Take colors, spacing, radii, and text styles from the custom properties of the design tokens, such as `var(--dma-spacing-16)`. Only hard code a value when no token fits.
 - Keep the components accessible. ESLint checks the templates against the accessibility rules of angular-eslint.
 - Export every component from `projects/ui/src/components/index.ts`.
-- Write a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component in `projects/ui/src/components/testing/harnesses`, and export it from `projects/ui/src/components/testing/index.ts`. Name it after the component, such as `ButtonHarness`, and test it in a spec of its own.
+- Write a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component in `projects/ui/src/components/testing/harnesses`, and export it from `projects/ui/src/components/testing/index.ts`. Test it in a spec of its own.
 - Write stories for every component in a `<name>.stories.ts` file next to it. Mirror the page of its Figma component: every variant, size, and state, in the light and the dark theme.
 - Document every component in a `<name>.mdx` file next to its stories: when to use it, how to use it, its states, its accessibility, and its harness.
 
-Generate a component with the Angular CLI, which writes a TypeScript, a template, an SCSS, and a spec file:
+Generate a component with the Angular CLI. The schematic defaults in `angular.json` apply the 2016 naming, so it writes `<name>.component.ts`, `.html`, `.scss`, and `.spec.ts` files:
 
 ```bash
 pnpm ng generate component <name> --project ui --path projects/ui/src/components

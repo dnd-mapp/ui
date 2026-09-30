@@ -35,24 +35,24 @@ The components follow the `color-scheme` of the page, just like the tokens. See 
 
 Import the components from `@dnd-mapp/ui/src/components`.
 
-| Component | Selector             | Harness         | Use for                       |
-|:----------|:---------------------|:----------------|:------------------------------|
-| `Button`  | `button[dma-button]` | `ButtonHarness` | The one main action in a view |
+| Component         | Selector             | Harness         | Use for                       |
+|:------------------|:---------------------|:----------------|:------------------------------|
+| `ButtonComponent` | `button[dma-button]` | `ButtonHarness` | The one main action in a view |
 
 ### Button
 
-Put `dma-button` on a native `button` element, and import `Button` into the component that uses it. The content of the element is the label.
+Put `dma-button` on a native `button` element, and import `ButtonComponent` into the component that uses it. The content of the element is the label.
 
 ```ts
 import { Component } from '@angular/core';
-import { Button } from '@dnd-mapp/ui/src/components';
+import { ButtonComponent } from '@dnd-mapp/ui/src/components';
 
 @Component({
     selector: 'app-map-toolbar',
-    imports: [Button],
+    imports: [ButtonComponent],
     template: `<button dma-button type="button" (click)="save()">Save map</button>`,
 })
-export class MapToolbar {
+export class MapToolbarComponent {
     save() {}
 }
 ```
