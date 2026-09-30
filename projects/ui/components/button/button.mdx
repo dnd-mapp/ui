@@ -14,7 +14,16 @@ A button starts an action, such as saving a map. It's built after the `Button` c
 
 ## When to use
 
-The button has the `Primary` variant in the `Medium` size so far. Use it for the one main action in a view. The `Secondary`, `Ghost`, and `Danger` variants, the `Small` and `Large` sizes, and the icon slots will follow.
+Pick the variant after the weight of the action. The button has the `Medium` size so far. The `Small` and `Large` sizes and the icon slots will follow.
+
+| Variant     | Look                                | Use for                                                        |
+| :---------- | :---------------------------------- | :------------------------------------------------------------- |
+| `primary`   | The accent fill                     | The one main action in a view, such as "Save map"              |
+| `secondary` | A 1px border, with no fill          | Other actions beside the main one, such as "Export map"        |
+| `ghost`     | No border and no fill               | Minor actions that should stay quiet, such as toolbar actions  |
+| `danger`    | The danger fill, in the `red` scale | Actions that destroy or remove something, such as "Delete map" |
+
+Keep to one `primary` button in a view, so the main action stands out. A `danger` button replaces the `primary` one when the main action destroys something, such as in a dialog that confirms a delete.
 
 ## Usage
 
@@ -34,28 +43,38 @@ export class MapToolbarComponent {
 }
 ```
 
+Set the variant with the `variant` input. It takes `primary`, `secondary`, `ghost`, or `danger`, and defaults to `primary`. The `ButtonVariants` constant holds the values, and the `ButtonVariant` type is their union.
+
+```html
+<button dma-button type="button" variant="danger" (click)="delete()">Delete map</button>
+```
+
 The button enhances the native element, so it keeps the keyboard support, the form behavior, and the `button` role of the browser. Set `type="button"` unless the button submits a form.
 
 ## States
 
-| State    | How it's triggered                               | Look                                           |
-| :------- | :----------------------------------------------- | :--------------------------------------------- |
-| Default  | The button is enabled, and nothing happens to it | The accent fill, with the `on-accent` label    |
-| Hover    | The pointer is over the button                   | The `accent-hover` fill                        |
-| Pressed  | The button is held down                          | The `accent-pressed` fill                      |
-| Focus    | The button has keyboard focus                    | An amber ring, 2px outside the button          |
-| Disabled | The native `disabled` attribute is set           | The `disabled` fill and label, and no response |
+| State    | How it's triggered                               | `primary` and `danger`                                                   | `secondary` and `ghost`                                                      |
+| :------- | :----------------------------------------------- | :----------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
+| Default  | The button is enabled, and nothing happens to it | The `accent` or `danger` fill, with the `on-accent` or `on-danger` label | No fill, with the `default` label                                            |
+| Hover    | The pointer is over the button                   | The `accent-hover` or `danger-hover` fill                                | The `neutral-hover` fill                                                     |
+| Pressed  | The button is held down                          | The `accent-pressed` or `danger-pressed` fill                            | The `neutral-pressed` fill                                                   |
+| Focus    | The button has keyboard focus                    | An amber ring, 2px outside the button                                    | An amber ring, 2px outside the button                                        |
+| Disabled | The native `disabled` attribute is set           | The `disabled` fill and label                                            | No fill, with the `disabled` label, and the `disabled` border on `secondary` |
+
+A `secondary` button keeps its `default` border in every state except Disabled, where the border takes the `disabled` color. A disabled `secondary` or `ghost` button has no fill, because the `disabled` fill matches the hover tint and would look hovered. A disabled `danger` button looks like a disabled `primary` one, because a button that can't act needs no warning color.
 
 The focus ring shows on keyboard focus only, through `:focus-visible`. A disabled button never shows it, because the native `disabled` attribute keeps the button from taking focus. Hover and pressed never apply to a disabled button either.
 
-<Canvas of={ButtonStories.Disabled} />
+<Canvas of={ButtonStories.States} />
 
 Switch between the light and the dark theme with the paintbrush in the toolbar.
 
 ## Accessibility
 
 - The label is the accessible name of the button, so keep it a short verb phrase, such as "Save map".
-- The label passes 4.5:1 against its fill, and the focus ring passes 3:1 against the page, in both themes.
+- The label passes 4.5:1 against its fill in every variant, and the focus ring passes 3:1 against the page, in both themes.
+- A focused `ghost` button shows no fill, so the focus ring alone marks its edge.
+- Don't rely on the `danger` color alone to warn the user. Say in the label what the action destroys, such as "Delete map".
 - A disabled button leaves the tab order and ignores clicks, like any native button.
 
 ## Testing
@@ -72,4 +91,4 @@ const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }))
 await button.click();
 ```
 
-Find a button by its `text`, which takes a string or a regular expression, or by whether it's `disabled`. The harness can click the button, read its label, tell whether it's disabled, and move focus to or away from it.
+Find a button by its `text`, which takes a string or a regular expression, by whether it's `disabled`, or by its `variant`. The harness can click the button, read its label and its variant, tell whether it's disabled, and move focus to or away from it.
