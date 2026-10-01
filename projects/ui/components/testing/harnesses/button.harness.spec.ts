@@ -14,6 +14,7 @@ import { ButtonHarness } from './button.harness';
             Add map
             <dma-icon-chevron-down />
         </button>
+        <button dma-button type="button" variant="ghost" loading>Load map</button>
     `,
     imports: [ButtonComponent, IconChevronDownComponent, IconPlusComponent],
 })
@@ -32,7 +33,7 @@ describe('ButtonHarness', () => {
     it('finds every button', async () => {
         const { loader } = setup();
 
-        expect(await loader.getAllHarnesses(ButtonHarness)).toHaveLength(3);
+        expect(await loader.getAllHarnesses(ButtonHarness)).toHaveLength(4);
     });
 
     it('finds a button by its label', async () => {
@@ -95,6 +96,25 @@ describe('ButtonHarness', () => {
 
         expect(await saveButton.isDisabled()).toBe(false);
         expect(await deleteButton.isDisabled()).toBe(true);
+    });
+
+    it('finds a button by whether it is loading', async () => {
+        const { loader } = setup();
+
+        const button = await loader.getHarness(ButtonHarness.with({ loading: true }));
+
+        expect(await button.getText()).toBe('Load map');
+        expect(await loader.getAllHarnesses(ButtonHarness.with({ loading: false }))).toHaveLength(3);
+    });
+
+    it('reports whether a button is loading', async () => {
+        const { loader } = setup();
+
+        const saveButton = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }));
+        const loadButton = await loader.getHarness(ButtonHarness.with({ text: 'Load map' }));
+
+        expect(await saveButton.isLoading()).toBe(false);
+        expect(await loadButton.isLoading()).toBe(true);
     });
 
     it('clicks a button', async () => {

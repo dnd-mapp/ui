@@ -1,0 +1,14 @@
+.cdk-visually-hidden {
+    position: absolute;
+    inset-inline-start: 0;
+    overflow: hidden;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    white-space: nowrap;
+    outline: 0;
+    clip-path: inset(50%);
+    appearance: none;
+}

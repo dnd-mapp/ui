@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { tokens } from '@dnd-mapp/design-tokens';
 import { IconHarness } from '@dnd-mapp/ui/icons/testing';
 import { getFrame, resolveFrame, resolveStyle } from '@dnd-mapp/ui/testing';
+import { cdp } from 'vitest/browser';
 import { IconChevronDownComponent } from './glyphs/icon-chevron-down.component';
 import { IconCircleNotchComponent } from './glyphs/icon-circle-notch.component';
 import { IconPlusComponent } from './glyphs/icon-plus.component';
@@ -49,6 +50,44 @@ class BareSizeTestHostComponent {}
 })
 class SizedTestHostComponent {
     public readonly size = signal<IconSize>(IconSizes.small);
+}
+
+@Component({
+    template: `<dma-icon-circle-notch [spin]="spin()" />`,
+    imports: [IconCircleNotchComponent],
+})
+class SpinTestHostComponent {
+    public readonly spin = signal(true);
+}
+
+@Component({
+    template: `<dma-icon-circle-notch spin />`,
+    imports: [IconCircleNotchComponent],
+})
+class BareSpinTestHostComponent {}
+
+/**
+ * Returns how far the icon inside `context` has turned once its animation has run for `time` milliseconds, such as
+ * `'90deg'`, or `'none'` when it doesn't spin.
+ */
+function getTurnAfter(context: HTMLElement, time: number) {
+    const icon = context.querySelector('.dma-icon');
+    const animation = icon?.getAnimations()[0];
+
+    if (!icon || !animation) {
+        return 'none';
+    }
+    animation.pause();
+    animation.currentTime = time;
+
+    return getComputedStyle(icon).rotate;
+}
+
+/** Turns the `prefers-reduced-motion: reduce` media feature on or off in the browser that runs the specs. */
+async function emulateReducedMotion(reduce: boolean) {
+    await cdp().send('Emulation.setEmulatedMedia', {
+        features: [{ name: 'prefers-reduced-motion', value: reduce ? 'reduce' : '' }],
+    });
 }
 
 describe('Icons', () => {
@@ -157,6 +196,54 @@ describe('Icons', () => {
         expect(await getFrame(await icon.host())).toEqual(
             resolveFrame(tokens.text.label.large['line-height'], element),
         );
+    });
+
+    describe('when it spins', () => {
+        afterEach(async () => {
+            await emulateReducedMotion(false);
+        });
+
+        it('stands still when it sets no spin', async () => {
+            const { element } = await setup(NoSizeTestHostComponent);
+
+            expect(getTurnAfter(element, 250)).toBe('none');
+        });
+
+        it('turns once per second at a steady speed', async () => {
+            const { element, loader } = await setup(SpinTestHostComponent);
+            const icon = await loader.getHarness(IconHarness);
+
+            expect(await icon.isSpinning()).toBe(true);
+            expect(getTurnAfter(element, 250)).toBe('90deg');
+            expect(getTurnAfter(element, 750)).toBe('270deg');
+        });
+
+        it('spins when it sets the spin attribute without a value', async () => {
+            const { element, loader } = await setup(BareSpinTestHostComponent);
+            const icon = await loader.getHarness(IconHarness);
+
+            expect(await icon.isSpinning()).toBe(true);
+            expect(getTurnAfter(element, 250)).toBe('90deg');
+        });
+
+        it('turns once every 3 seconds under reduced motion, so it never looks frozen', async () => {
+            await emulateReducedMotion(true);
+            const { element, loader } = await setup(SpinTestHostComponent);
+            const icon = await loader.getHarness(IconHarness);
+
+            expect(await icon.isSpinning()).toBe(true);
+            expect(getTurnAfter(element, 750)).toBe('90deg');
+        });
+
+        it('stands still once it stops spinning', async () => {
+            const { fixture, element, loader } = await setup(SpinTestHostComponent);
+            const icon = await loader.getHarness(IconHarness);
+
+            fixture.componentInstance.spin.set(false);
+
+            expect(await icon.isSpinning()).toBe(false);
+            expect(getTurnAfter(element, 250)).toBe('none');
+        });
     });
 
     describe.each<{ size: IconSize; lineHeight: string }>([

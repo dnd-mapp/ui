@@ -11,12 +11,12 @@ A presentational component only renders what it's given. It takes its data throu
 
 - Angular 22.2 or later, with `@angular/core` and `@angular/common`.
 - `@dnd-mapp/design-tokens` 1.0 or later.
-- `@angular/cdk` 22.2 or later, only to use the component harnesses.
+- `@angular/cdk` 22.2 or later, for the live region that announces a loading button, and for the component harnesses.
 
 ## Installation
 
 ```bash
-pnpm add @dnd-mapp/ui @dnd-mapp/design-tokens
+pnpm add @dnd-mapp/ui @dnd-mapp/design-tokens @angular/cdk
 ```
 
 ## Usage
@@ -85,6 +85,16 @@ Put an icon from `@dnd-mapp/ui/icons` before the label, after it, or both, and i
 <button dma-button type="button" variant="secondary" (click)="openExportMenu()">Export map<dma-icon-chevron-down /></button>
 ```
 
+Set the `loading` input while the action that the button started runs, such as saving a map, and turn it off once the action ends. A loading button blocks clicks through `aria-disabled="true"` rather than the native `disabled` attribute, so it keeps keyboard focus. It keeps its width and its colors too.
+
+After 300ms, a loading button shows a spinning `circle-notch` in place of its label and icons. The spinner stays at least 500ms, so a fast action shows none and a slow one never flashes it. The button blocks clicks until the spinner hides.
+
+Once the spinner shows, screen readers announce "Loading" through a polite live region. Set the `loadingLabel` input to announce another word, such as "Saving".
+
+```html
+<button dma-button type="button" [loading]="saving()" loadingLabel="Saving" (click)="save()">Save map</button>
+```
+
 ## Icons
 
 Import the icons from `@dnd-mapp/ui/icons`. Each glyph has a component of its own, so the bundle of your app holds only the glyphs it imports. The glyphs come from Font Awesome Free, and ship inside this package, so you don't install Font Awesome.
@@ -114,6 +124,12 @@ Set the `size` input to `small`, `medium`, or `large`, to match the `Label/Small
 <dma-icon-xmark size="small" />
 ```
 
+Set the `spin` input to turn an icon, such as `circle-notch` in a control that is busy. It turns once per second at a steady speed. When the user prefers reduced motion, it slows to one turn every 3 seconds instead of stopping, because a spinner that stands still looks frozen.
+
+```html
+<dma-icon-circle-notch spin />
+```
+
 To size the icons inside a control of your own after its size, provide the `ICON_SIZE` injection token on the control with a signal of the size.
 
 ```ts
@@ -134,11 +150,7 @@ An icon takes the color of the text around it. It's hidden from assistive techno
 
 ## Testing
 
-The `@dnd-mapp/ui/components/testing` entry point has a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component, and `@dnd-mapp/ui/icons/testing` has the `IconHarness` for the icons. Use them to test the components of your app that use them. The harnesses need `@angular/cdk`, so install it to use them.
-
-```bash
-pnpm add -D @angular/cdk
-```
+The `@dnd-mapp/ui/components/testing` entry point has a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component, and `@dnd-mapp/ui/icons/testing` has the `IconHarness` for the icons. Use them to test the components of your app that use them.
 
 Load a harness through the harness environment of the CDK.
 
@@ -152,7 +164,7 @@ const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }))
 await button.click();
 ```
 
-`ButtonHarness.getIcons()` returns an `IconHarness` for each icon in a button, in the order they show, so a test can check the glyph and the size of each one.
+`ButtonHarness.getIcons()` returns an `IconHarness` for each icon in the slots of a button, in the order they show, so a test can check the glyph and the size of each one. `ButtonHarness.isLoading()` tells whether a button is loading, and the `loading` filter finds a button by it.
 
 The `@dnd-mapp/ui/testing` entry point has `resolveStyle()`, to check that a component of your app is styled with the design tokens. It resolves a CSS value that names tokens to what the browser computes for it inside an element, in the color scheme of that element. It doesn't need `@angular/cdk`.
 

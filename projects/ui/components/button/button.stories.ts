@@ -1,3 +1,4 @@
+import { signal, type WritableSignal } from '@angular/core';
 import { IconChevronDownComponent, IconPlusComponent } from '@dnd-mapp/ui/icons';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular-vite';
 import { ButtonSizes, DEFAULT_BUTTON_SIZE, type ButtonSize } from './button-size';
@@ -9,6 +10,8 @@ interface ButtonArgs {
     variant: ButtonVariant;
     size: ButtonSize;
     disabled: boolean;
+    loading: boolean;
+    loadingLabel: string;
     leadingIcon: boolean;
     trailingIcon: boolean;
 }
@@ -56,6 +59,23 @@ const meta: Meta<ButtonArgs> = {
                 defaultValue: { summary: 'false' },
             },
         },
+        loading: {
+            description:
+                'Whether the button is busy with the action it started, such as saving a map. A loading button blocks clicks but keeps focus. After 300ms, it shows a spinning `circle-notch` in place of its label and icons for at least 500ms.',
+            control: 'boolean',
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: 'false' },
+            },
+        },
+        loadingLabel: {
+            description: 'The word that screen readers announce once the spinner shows, such as "Saving".',
+            control: 'text',
+            table: {
+                type: { summary: 'string' },
+                defaultValue: { summary: `'Loading'` },
+            },
+        },
         leadingIcon: {
             description:
                 'Shows an icon before the label, like the `Leading icon` switch of the Figma component. In code, put an icon component before the label, such as `dma-icon-plus`. An icon that sets no `size` takes the size of the button.',
@@ -78,7 +98,15 @@ const meta: Meta<ButtonArgs> = {
     render: (args) => ({
         props: args,
         template: `
-            <button dma-button type="button" [variant]="variant" [size]="size" [disabled]="disabled">
+            <button
+                dma-button
+                type="button"
+                [variant]="variant"
+                [size]="size"
+                [disabled]="disabled"
+                [loading]="loading"
+                [loadingLabel]="loadingLabel"
+            >
                 @if (leadingIcon) {
                     <dma-icon-plus />
                 }
@@ -97,13 +125,15 @@ export default meta;
 type Story = StoryObj<ButtonArgs>;
 
 // The stories of a single button set their args as literals, so Storybook can show them in the code snippet.
-// `States`, `Sizes`, and `Icons` set none, because their templates don't use them.
+// `States`, `Sizes`, `Icons`, and `Loading` set none, because their templates don't use them.
 export const Primary: Story = {
     args: {
         label: 'Save map',
         variant: 'primary',
         size: 'medium',
         disabled: false,
+        loading: false,
+        loadingLabel: 'Loading',
         leadingIcon: false,
         trailingIcon: false,
     },
@@ -115,6 +145,8 @@ export const Secondary: Story = {
         variant: 'secondary',
         size: 'medium',
         disabled: false,
+        loading: false,
+        loadingLabel: 'Loading',
         leadingIcon: false,
         trailingIcon: false,
     },
@@ -126,6 +158,8 @@ export const Ghost: Story = {
         variant: 'ghost',
         size: 'medium',
         disabled: false,
+        loading: false,
+        loadingLabel: 'Loading',
         leadingIcon: false,
         trailingIcon: false,
     },
@@ -137,14 +171,16 @@ export const Danger: Story = {
         variant: 'danger',
         size: 'medium',
         disabled: false,
+        loading: false,
+        loadingLabel: 'Loading',
         leadingIcon: false,
         trailingIcon: false,
     },
 };
 
 /**
- * Every variant in its Default and its Disabled state. Hover, Pressed, and Focus show when you point at, hold,
- * or tab to a button.
+ * Every variant in its Default, its Disabled, and its Loading state. Hover, Pressed, and Focus show when you point
+ * at, hold, or tab to a button. A loading button shows its spinner after 300ms.
  */
 export const States: Story = {
     parameters: {
@@ -152,15 +188,19 @@ export const States: Story = {
     },
     // The template spells out every button, so Storybook can show it in the code snippet.
     render: () => ({
-        template: `<div style="display: grid; grid-template-columns: repeat(2, max-content); gap: var(--dma-spacing-16)">
+        template: `<div style="display: grid; grid-template-columns: repeat(3, max-content); gap: var(--dma-spacing-16)">
             <button dma-button type="button" variant="primary">Save map</button>
             <button dma-button type="button" variant="primary" disabled>Save map</button>
+            <button dma-button type="button" variant="primary" loading>Save map</button>
             <button dma-button type="button" variant="secondary">Export map</button>
             <button dma-button type="button" variant="secondary" disabled>Export map</button>
+            <button dma-button type="button" variant="secondary" loading>Export map</button>
             <button dma-button type="button" variant="ghost">Rename map</button>
             <button dma-button type="button" variant="ghost" disabled>Rename map</button>
+            <button dma-button type="button" variant="ghost" loading>Rename map</button>
             <button dma-button type="button" variant="danger">Delete map</button>
             <button dma-button type="button" variant="danger" disabled>Delete map</button>
+            <button dma-button type="button" variant="danger" loading>Delete map</button>
         </div>`,
     }),
 };
@@ -211,6 +251,34 @@ export const Icons: Story = {
             <button dma-button type="button" variant="primary" size="large"><dma-icon-plus />Add map</button>
             <button dma-button type="button" variant="secondary" size="large">Export map<dma-icon-chevron-down /></button>
             <button dma-button type="button" variant="ghost" size="large"><dma-icon-plus />Add layer<dma-icon-chevron-down /></button>
+        </div>`,
+    }),
+};
+
+/**
+ * Click a button to start an action that takes as long as its label says. The slow one shows its spinner after
+ * 300ms. The fast one ends within 300ms, so it shows none.
+ */
+export const Loading: Story = {
+    parameters: {
+        controls: { disable: true },
+    },
+    render: () => ({
+        props: {
+            slow: signal(false),
+            fast: signal(false),
+            run: (loading: WritableSignal<boolean>, duration: number) => {
+                loading.set(true);
+                setTimeout(() => loading.set(false), duration);
+            },
+        },
+        template: `<div style="display: flex; gap: var(--dma-spacing-16)">
+            <button dma-button type="button" [loading]="slow()" loadingLabel="Saving" (click)="run(slow, 2000)">
+                Save map in 2s
+            </button>
+            <button dma-button type="button" variant="secondary" [loading]="fast()" (click)="run(fast, 200)">
+                Save map in 0.2s
+            </button>
         </div>`,
     }),
 };

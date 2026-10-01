@@ -1,10 +1,13 @@
+import type { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, signal, type Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { tokens } from '@dnd-mapp/design-tokens';
 import { ButtonHarness } from '@dnd-mapp/ui/components/testing';
 import { IconChevronDownComponent, IconPlusComponent } from '@dnd-mapp/ui/icons';
+import { IconHarness } from '@dnd-mapp/ui/icons/testing';
 import { getFrame, resolveFrame, resolveStyle } from '@dnd-mapp/ui/testing';
+import { userEvent } from 'vitest/browser';
 import { ButtonSizes, DEFAULT_BUTTON_SIZE, type ButtonSize } from './button-size';
 import { ButtonVariants, DEFAULT_BUTTON_VARIANT, type ButtonVariant } from './button-variant';
 import { ButtonComponent } from './button.component';
@@ -56,6 +59,35 @@ class BareSizeTestHostComponent {}
 class IconsTestHostComponent {
     public readonly size = signal<ButtonSize>(DEFAULT_BUTTON_SIZE);
 }
+
+@Component({
+    template: `<form (submit)="$event.preventDefault(); submits.set(submits() + 1)">
+        <button
+            dma-button
+            [variant]="variant()"
+            [size]="size()"
+            [loading]="loading()"
+            loadingLabel="Saving"
+            (click)="clicks.set(clicks() + 1)"
+        >
+            <dma-icon-plus />Save map<dma-icon-chevron-down />
+        </button>
+    </form>`,
+    imports: [ButtonComponent, IconChevronDownComponent, IconPlusComponent],
+})
+class LoadingTestHostComponent {
+    public readonly variant = signal<ButtonVariant>(DEFAULT_BUTTON_VARIANT);
+    public readonly size = signal<ButtonSize>(DEFAULT_BUTTON_SIZE);
+    public readonly loading = signal(false);
+    public readonly clicks = signal(0);
+    public readonly submits = signal(0);
+}
+
+@Component({
+    template: `<button dma-button type="button" loading>Save map</button>`,
+    imports: [ButtonComponent],
+})
+class BareLoadingTestHostComponent {}
 
 /**
  * The color tokens of a button in one state, such as `tokens.color.background.accent`. A `null` fill or border
@@ -163,13 +195,19 @@ const primaryLook: Look = {
     label: tokens.color.text['on-accent'],
 };
 
+/** Returns the live region that announces to screen readers, if there is one. */
+function getLiveRegion() {
+    return document.querySelector('[aria-live="polite"]');
+}
+
 describe('ButtonComponent', () => {
     async function setup<T>(host: Type<T>) {
         const fixture = TestBed.createComponent(host);
         const element = fixture.nativeElement as HTMLElement;
-        const button = await TestbedHarnessEnvironment.loader(fixture).getHarness(ButtonHarness);
+        const loader = TestbedHarnessEnvironment.loader(fixture);
+        const button = await loader.getHarness(ButtonHarness);
 
-        return { fixture, element, button };
+        return { fixture, element, loader, button };
     }
 
     it('shows its content as the label', async () => {
@@ -334,6 +372,271 @@ describe('ButtonComponent', () => {
         });
     });
 
+    describe('when loading', () => {
+        beforeEach(() => {
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+        });
+
+        afterEach(() => {
+            vi.useRealTimers();
+        });
+
+        async function setupLoading() {
+            const { fixture, element, loader, button } = await setup(LoadingTestHostComponent);
+
+            fixture.componentInstance.loading.set(true);
+
+            expect(await button.isLoading()).toBe(true);
+
+            return { fixture, element, loader, button };
+        }
+
+        /** Lets `time` milliseconds pass, then returns the spinner of the button, or `null` while it shows none. */
+        async function getSpinnerAfter(loader: HarnessLoader, time: number) {
+            vi.advanceTimersByTime(time);
+
+            return loader.getHarnessOrNull(IconHarness.with({ glyph: 'circle-notch' }));
+        }
+
+        it('is loading when it sets the loading attribute without a value', async () => {
+            const { button } = await setup(BareLoadingTestHostComponent);
+
+            expect(await button.isLoading()).toBe(true);
+        });
+
+        it('is not loading when it sets no loading', async () => {
+            const { button } = await setup(TestHostComponent);
+
+            expect(await button.isLoading()).toBe(false);
+            expect(await (await button.host()).getAttribute('aria-disabled')).toBeNull();
+        });
+
+        it('uses aria-disabled rather than the disabled attribute from the moment it starts', async () => {
+            const { button } = await setupLoading();
+
+            expect(await (await button.host()).getAttribute('aria-disabled')).toBe('true');
+            expect(await button.isDisabled()).toBe(false);
+        });
+
+        it('blocks clicks, so it never starts its action twice', async () => {
+            const { fixture, button } = await setupLoading();
+
+            await button.click();
+
+            expect(fixture.componentInstance.clicks()).toBe(0);
+        });
+
+        it("doesn't submit its form", async () => {
+            const { fixture, button } = await setupLoading();
+
+            await button.click();
+
+            expect(fixture.componentInstance.submits()).toBe(0);
+        });
+
+        it('keeps keyboard focus, and can take it', async () => {
+            const { fixture, button } = await setup(LoadingTestHostComponent);
+
+            await button.focus();
+            fixture.componentInstance.loading.set(true);
+
+            expect(await button.isLoading()).toBe(true);
+            expect(await button.isFocused()).toBe(true);
+
+            await button.blur();
+            await button.focus();
+
+            expect(await button.isFocused()).toBe(true);
+        });
+
+        it('shows no spinner for its first 300ms, so a fast action shows none', async () => {
+            const { loader } = await setupLoading();
+
+            expect(await getSpinnerAfter(loader, 299)).toBeNull();
+        });
+
+        it('shows a spinning circle-notch in the size of the button after 300ms', async () => {
+            const { fixture, loader } = await setupLoading();
+
+            fixture.componentInstance.size.set(ButtonSizes.large);
+
+            const spinner = await getSpinnerAfter(loader, 300);
+
+            expect(spinner).not.toBeNull();
+            expect(await spinner?.isSpinning()).toBe(true);
+            expect(await spinner?.getSize()).toBe('large');
+        });
+
+        it('leaves the spinner out of the icons in its slots', async () => {
+            const { loader, button } = await setupLoading();
+
+            expect(await getSpinnerAfter(loader, 300)).not.toBeNull();
+
+            const icons = await button.getIcons();
+
+            expect(await Promise.all(icons.map(async (icon) => icon.getGlyph()))).toEqual(['plus', 'chevron-down']);
+        });
+
+        it('hides its label and icons at opacity 0, and keeps its width and its label', async () => {
+            const { fixture, element, loader, button } = await setup(LoadingTestHostComponent);
+            const width = (await (await button.host()).getDimensions()).width;
+
+            fixture.componentInstance.loading.set(true);
+
+            expect(await getSpinnerAfter(loader, 300)).not.toBeNull();
+            expect((await (await button.host()).getDimensions()).width).toBe(width);
+            expect(await button.getText()).toBe('Save map');
+
+            const content = element.querySelector('.content');
+
+            expect(content && getComputedStyle(content).opacity).toBe('0');
+            expect(content && getComputedStyle(content).visibility).toBe('visible');
+        });
+
+        it('centers the spinner in the button', async () => {
+            const { loader, button } = await setupLoading();
+
+            const spinner = await getSpinnerAfter(loader, 300);
+            const box = await (await button.host()).getDimensions();
+            const spinnerBox = await (await spinner?.host())?.getDimensions();
+
+            expect(spinnerBox && spinnerBox.left + spinnerBox.width / 2).toBeCloseTo(box.left + box.width / 2, 1);
+            expect(spinnerBox && spinnerBox.top + spinnerBox.height / 2).toBeCloseTo(box.top + box.height / 2, 1);
+        });
+
+        it('fills the spinner with the color of its label', async () => {
+            const { loader, button } = await setupLoading();
+
+            const spinner = await getSpinnerAfter(loader, 300);
+
+            expect(await (await spinner?.host())?.getCssValue('fill')).toBe(
+                await (await button.host()).getCssValue('color'),
+            );
+        });
+
+        it('stops loading without a spinner when it ends within 300ms', async () => {
+            const { fixture, loader, button } = await setupLoading();
+
+            vi.advanceTimersByTime(299);
+            fixture.componentInstance.loading.set(false);
+
+            expect(await button.isLoading()).toBe(false);
+            expect(await (await button.host()).getAttribute('aria-disabled')).toBeNull();
+            expect(await getSpinnerAfter(loader, 1000)).toBeNull();
+        });
+
+        it('keeps the spinner for at least 500ms, so it never flashes', async () => {
+            const { fixture, loader, button } = await setupLoading();
+
+            expect(await getSpinnerAfter(loader, 300)).not.toBeNull();
+
+            vi.advanceTimersByTime(100);
+            fixture.componentInstance.loading.set(false);
+
+            expect(await getSpinnerAfter(loader, 399)).not.toBeNull();
+            expect(await button.isLoading()).toBe(true);
+
+            await button.click();
+
+            expect(fixture.componentInstance.clicks()).toBe(0);
+            expect(await getSpinnerAfter(loader, 1)).toBeNull();
+            expect(await button.isLoading()).toBe(false);
+            expect(await (await button.host()).getAttribute('aria-disabled')).toBeNull();
+
+            await button.click();
+
+            expect(fixture.componentInstance.clicks()).toBe(1);
+        });
+
+        it('hides the spinner at once when it ends after 500ms', async () => {
+            const { fixture, loader, button } = await setupLoading();
+
+            expect(await getSpinnerAfter(loader, 800)).not.toBeNull();
+
+            fixture.componentInstance.loading.set(false);
+            fixture.detectChanges();
+
+            expect(await getSpinnerAfter(loader, 0)).toBeNull();
+            expect(await button.isLoading()).toBe(false);
+        });
+
+        it('keeps the spinner when it starts loading again before the spinner hides', async () => {
+            const { fixture, loader, button } = await setupLoading();
+
+            expect(await getSpinnerAfter(loader, 300)).not.toBeNull();
+
+            fixture.componentInstance.loading.set(false);
+
+            expect(await getSpinnerAfter(loader, 100)).not.toBeNull();
+
+            fixture.componentInstance.loading.set(true);
+
+            expect(await getSpinnerAfter(loader, 1000)).not.toBeNull();
+            expect(await button.isLoading()).toBe(true);
+        });
+
+        it('announces its loading label politely once the spinner shows', async () => {
+            const { loader } = await setupLoading();
+
+            expect(await getSpinnerAfter(loader, 299)).toBeNull();
+            expect(getLiveRegion()?.textContent ?? '').toBe('');
+            expect(await getSpinnerAfter(loader, 1)).not.toBeNull();
+
+            // The live announcer of the CDK waits 100ms before it changes the text of the live region.
+            vi.advanceTimersByTime(100);
+
+            expect(getLiveRegion()?.textContent).toBe('Saving');
+        });
+
+        it('announces Loading when it sets no loading label', async () => {
+            await setup(BareLoadingTestHostComponent);
+
+            vi.advanceTimersByTime(400);
+
+            expect(getLiveRegion()?.textContent).toBe('Loading');
+        });
+
+        it('announces nothing when it stops loading within 300ms', async () => {
+            const { fixture, button } = await setupLoading();
+
+            vi.advanceTimersByTime(200);
+            fixture.componentInstance.loading.set(false);
+
+            expect(await button.isLoading()).toBe(false);
+
+            vi.advanceTimersByTime(1000);
+
+            expect(getLiveRegion()?.textContent ?? '').toBe('');
+        });
+
+        it('keeps the live region out of sight', async () => {
+            await setup(BareLoadingTestHostComponent);
+
+            vi.advanceTimersByTime(400);
+
+            const region = getLiveRegion()?.getBoundingClientRect();
+
+            expect(region?.width).toBe(1);
+            expect(region?.height).toBe(1);
+        });
+    });
+
+    it('shows no hover fill while loading', async () => {
+        const { fixture, element, button } = await setup(LoadingTestHostComponent);
+        const host = await button.host();
+
+        await userEvent.hover(element.querySelector('button') ?? element);
+
+        expect(await host.getCssValue('background-color')).toBe(
+            resolveColor(tokens.color.background['accent-hover'], element),
+        );
+
+        fixture.componentInstance.loading.set(true);
+
+        expect(await button.isLoading()).toBe(true);
+        expect(await host.getCssValue('background-color')).toBe(resolveColor(tokens.color.background.accent, element));
+    });
+
     describe.each<{ variant: ButtonVariant; enabled: Look; disabled: Look }>([
         {
             variant: ButtonVariants.primary,
@@ -377,6 +680,16 @@ describe('ButtonComponent', () => {
 
             expect(await button.isDisabled()).toBe(true);
             expect(await getColors(button)).toEqual(toColors(disabled, element));
+        });
+
+        it('keeps the colors of its Default state while loading, so the user sees which action runs', async () => {
+            const { fixture, element, button } = await setup(LoadingTestHostComponent);
+
+            fixture.componentInstance.variant.set(variant);
+            fixture.componentInstance.loading.set(true);
+
+            expect(await button.isLoading()).toBe(true);
+            expect(await getColors(button)).toEqual(toColors(enabled, element));
         });
     });
 });

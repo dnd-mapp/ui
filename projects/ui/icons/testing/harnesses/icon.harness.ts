@@ -10,6 +10,9 @@ export interface IconHarnessFilters extends BaseHarnessFilters {
 
     /** Only find icons in this size. */
     size?: IconSize;
+
+    /** Only find icons that spin, or only the ones that don't. */
+    spinning?: boolean;
 }
 
 /**
@@ -24,7 +27,12 @@ export class IconHarness extends ComponentHarness {
     public static with(options: IconHarnessFilters = {}): HarnessPredicate<IconHarness> {
         return new HarnessPredicate(IconHarness, options)
             .addOption('glyph', options.glyph, async (harness, glyph) => (await harness.getGlyph()) === glyph)
-            .addOption('size', options.size, async (harness, size) => (await harness.getSize()) === size);
+            .addOption('size', options.size, async (harness, size) => (await harness.getSize()) === size)
+            .addOption(
+                'spinning',
+                options.spinning,
+                async (harness, spinning) => (await harness.isSpinning()) === spinning,
+            );
     }
 
     /** Returns the glyph that the icon shows. */
@@ -35,5 +43,10 @@ export class IconHarness extends ComponentHarness {
     /** Returns the size of the icon. */
     public async getSize(): Promise<IconSize> {
         return (await (await this.host()).getAttribute('data-size')) as IconSize;
+    }
+
+    /** Returns whether the icon spins. */
+    public async isSpinning(): Promise<boolean> {
+        return (await (await this.host()).getAttribute('data-spin')) !== null;
     }
 }

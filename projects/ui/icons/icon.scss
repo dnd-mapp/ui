@@ -25,6 +25,21 @@
     block-size: var(--dma-text-label-large-line-height);
 }
 
+// A spinning icon keeps turning under reduced motion, only slower, because a spinner that stands still looks frozen.
+:host([data-spin]) {
+    animation: spin 1s linear infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation-duration: 3s;
+    }
+}
+
+@keyframes spin {
+    to {
+        rotate: 1turn;
+    }
+}
+
 svg {
     display: block;
     inline-size: 100%;
