@@ -52,6 +52,8 @@ The repository is an Angular workspace with a single project, the `ui` library i
 | `projects/ui/src/index.ts`       | The primary entry point of the package, `@dnd-mapp/ui`, which exports nothing yet              |
 | `projects/ui/components`         | The `@dnd-mapp/ui/components` entry point, with each component in a directory of its own       |
 | `projects/ui/components/testing` | The `@dnd-mapp/ui/components/testing` entry point, with the component harnesses in `harnesses` |
+| `projects/ui/icons`              | The `@dnd-mapp/ui/icons` entry point, with a component for each glyph in `glyphs`              |
+| `projects/ui/icons/testing`      | The `@dnd-mapp/ui/icons/testing` entry point, with the icon harness in `harnesses`             |
 | `vitest.config.ts`               | The Vitest options that the test target in `angular.json` has no builder option for            |
 | `.storybook`                     | The Storybook config, its TypeScript project, and the introduction page                        |
 
@@ -118,7 +120,7 @@ The `storybook` script serves Storybook on port 6006 and updates it as you edit.
 
 MDX leaves out GitHub Flavored Markdown, so `.storybook/main.ts` adds [remark-gfm](https://github.com/remarkjs/remark-gfm) to the docs addon. Tables and the other GitHub extensions work in the MDX docs as they do in the Markdown files.
 
-Stories and MDX docs live next to their component in `projects/ui/components`, and stay out of the package, the specs, and the coverage. An MDX doc attaches itself to the stories of its component through `<Meta of={...} />`, so it shows as the `Docs` page of that component. The `.storybook/tsconfig.json` project type checks them together with the library and `.storybook/preview.ts`.
+Stories and MDX docs live next to the component or the icon they show, in `projects/ui/components` or `projects/ui/icons`. They stay out of the package, the specs, and the coverage. An MDX doc attaches itself to the stories of its component through `<Meta of={...} />`, so it shows as the `Docs` page of that component. The `.storybook/tsconfig.json` project type checks them together with the library and `.storybook/preview.ts`.
 
 The `build-storybook` job builds Storybook apart from the `ci` job, so a deploy doesn't wait for the tests. The `deploy-storybook` job of the [push workflow](.github/workflows/push-main.yaml) deploys the Storybook of every push to `main` to [GitHub Pages](https://dnd-mapp.github.io/ui/main/). It reuses the build of the `build-storybook` job, and publishes it through the `deploy-storybook` action in `.github/actions`.
 
