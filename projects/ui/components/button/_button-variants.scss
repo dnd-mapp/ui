@@ -1,0 +1,72 @@
+// The colors of the variants of `Button` in every state, and the focus ring. `Icon button` shares them, so both
+// stay in step, like the Figma spec asks.
+//
+// `$disabled` is the selector of a disabled control, such as `:disabled` for a control that uses the native
+// attribute. Hover and pressed never apply to a disabled or a loading control.
+@mixin variants($disabled) {
+    :host([data-variant='primary']) {
+        color: var(--dma-color-text-on-accent);
+        background-color: var(--dma-color-background-accent);
+    }
+
+    :host([data-variant='primary']:hover:not(#{$disabled}, [data-loading])) {
+        background-color: var(--dma-color-background-accent-hover);
+    }
+
+    :host([data-variant='primary']:active:not(#{$disabled}, [data-loading])) {
+        background-color: var(--dma-color-background-accent-pressed);
+    }
+
+    :host([data-variant='secondary']) {
+        border-color: var(--dma-color-border-default);
+    }
+
+    :host([data-variant='secondary']),
+    :host([data-variant='ghost']) {
+        color: var(--dma-color-text-default);
+    }
+
+    :host([data-variant='secondary']:hover:not(#{$disabled}, [data-loading])),
+    :host([data-variant='ghost']:hover:not(#{$disabled}, [data-loading])) {
+        background-color: var(--dma-color-background-neutral-hover);
+    }
+
+    :host([data-variant='secondary']:active:not(#{$disabled}, [data-loading])),
+    :host([data-variant='ghost']:active:not(#{$disabled}, [data-loading])) {
+        background-color: var(--dma-color-background-neutral-pressed);
+    }
+
+    :host([data-variant='danger']) {
+        color: var(--dma-color-text-on-danger);
+        background-color: var(--dma-color-background-danger);
+    }
+
+    :host([data-variant='danger']:hover:not(#{$disabled}, [data-loading])) {
+        background-color: var(--dma-color-background-danger-hover);
+    }
+
+    :host([data-variant='danger']:active:not(#{$disabled}, [data-loading])) {
+        background-color: var(--dma-color-background-danger-pressed);
+    }
+
+    // The ring sits 2px outside the control, so the page color keeps it apart from the fill or the border.
+    :host(:focus-visible) {
+        outline: 2px solid var(--dma-color-border-focus);
+        outline-offset: 2px;
+    }
+
+    :host(#{$disabled}) {
+        color: var(--dma-color-text-disabled);
+        cursor: not-allowed;
+    }
+
+    // `secondary` and `ghost` keep no fill when disabled, because the disabled fill matches the hover tint.
+    :host([data-variant='primary']#{$disabled}),
+    :host([data-variant='danger']#{$disabled}) {
+        background-color: var(--dma-color-background-disabled);
+    }
+
+    :host([data-variant='secondary']#{$disabled}) {
+        border-color: var(--dma-color-border-disabled);
+    }
+}
