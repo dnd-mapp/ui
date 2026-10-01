@@ -9,6 +9,7 @@ import { DEFAULT_ICON_SIZE, IconSizes, type IconSize } from './icon-size';
 interface IconArgs {
     glyph: IconGlyph;
     size: IconSize;
+    spin: boolean;
 }
 
 const meta: Meta<IconArgs> = {
@@ -41,10 +42,19 @@ const meta: Meta<IconArgs> = {
                 defaultValue: { summary: `'${DEFAULT_ICON_SIZE}'` },
             },
         },
+        spin: {
+            description:
+                'Whether the icon spins, such as `circle-notch` in a control that is busy. It turns once per second at a steady speed, or once every 3 seconds when the user prefers reduced motion.',
+            control: 'boolean',
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: 'false' },
+            },
+        },
     },
-    render: ({ glyph, size }) => ({
-        props: { size },
-        template: `<dma-icon-${glyph} [size]="size" />`,
+    render: ({ glyph, size, spin }) => ({
+        props: { size, spin },
+        template: `<dma-icon-${glyph} [size]="size" [spin]="spin" />`,
     }),
 };
 
@@ -52,12 +62,13 @@ export default meta;
 
 type Story = StoryObj<IconArgs>;
 
-// The story of a single icon sets its args as literals, so Storybook can show them in the code snippet. `Sizes`
-// and `Glyphs` set none, because their templates don't use them.
+// The story of a single icon sets its args as literals, so Storybook can show them in the code snippet. `Sizes`,
+// `Spinning`, and `Glyphs` set none, because their templates don't use them.
 export const Icon: Story = {
     args: {
         glyph: 'plus',
         size: 'medium',
+        spin: false,
     },
 };
 
@@ -78,6 +89,24 @@ export const Sizes: Story = {
             <span style="display: inline-flex; align-items: center; gap: var(--dma-spacing-8); font: var(--dma-text-label-medium-font)"><dma-icon-plus size="medium" />Add map</span>
             <dma-icon-plus size="large" />
             <span style="display: inline-flex; align-items: center; gap: var(--dma-spacing-12); font: var(--dma-text-label-large-font)"><dma-icon-plus size="large" />Add map</span>
+        </div>`,
+    }),
+};
+
+/**
+ * `circle-notch` spinning in every size. It turns once per second, or once every 3 seconds when the user prefers
+ * reduced motion.
+ */
+export const Spinning: Story = {
+    parameters: {
+        controls: { disable: true },
+    },
+    // The template spells out every icon, so Storybook can show it in the code snippet.
+    render: () => ({
+        template: `<div style="display: flex; align-items: center; gap: var(--dma-spacing-16)">
+            <dma-icon-circle-notch size="small" spin />
+            <dma-icon-circle-notch size="medium" spin />
+            <dma-icon-circle-notch size="large" spin />
         </div>`,
     }),
 };

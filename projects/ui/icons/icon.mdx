@@ -59,6 +59,14 @@ Set the size with the `size` input. It takes `small`, `medium`, or `large`. The 
 <dma-icon-xmark size="small" />
 ```
 
+Set the `spin` input to turn the icon, such as `circle-notch` in a control that is busy. It turns once per second at a steady speed. A button that is loading spins its `circle-notch` this way.
+
+```html
+<dma-icon-circle-notch spin />
+```
+
+<Canvas of={IconStories.Spinning} />
+
 The icon takes the color of the text around it, through `currentColor`. Set the color on the element that holds the icon and its label, and both follow it. The `IconGlyphs` constant lists the glyph names, and the `IconGlyph` type is their union.
 
 ## Accessibility
@@ -66,6 +74,7 @@ The icon takes the color of the text around it, through `currentColor`. Set the 
 - Every icon has `aria-hidden="true"`, because the label or the control beside it carries the meaning. Assistive technology skips the icon.
 - An icon never names a control by itself. When a control shows only an icon, give the control an accessible name, such as through `aria-label`.
 - The icon takes the color of its label, so it passes the same contrast as the label. In forced colors mode, it takes the system text color.
+- When the user prefers reduced motion, a spinning icon slows to one turn every 3 seconds. It keeps turning, because a spinner that stands still looks frozen.
 
 ## Testing
 
@@ -81,7 +90,7 @@ const icon = await loader.getHarness(IconHarness.with({ glyph: 'plus' }));
 expect(await icon.getSize()).toBe('medium');
 ```
 
-Find an icon by its `glyph` or by its `size`. The harness can read the glyph and the size of an icon.
+Find an icon by its `glyph`, by its `size`, or by whether it's `spinning`. The harness can read the glyph and the size of an icon, and tell whether it spins.
 
 ## Credit
 
