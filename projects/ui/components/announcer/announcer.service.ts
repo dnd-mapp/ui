@@ -21,6 +21,8 @@ export class AnnouncerService {
 
     /** Announces the message once screen readers finish what they're reading, such as `'Saving'`. */
     public announce(message: string): void {
+        // The promise only resolves once the CDK writes the message, and never rejects. Nothing waits for that, so
+        // `void` marks it as deliberately not awaited.
         void this.liveAnnouncer.announce(message, 'polite');
     }
 }
