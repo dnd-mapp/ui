@@ -1,25 +1,9 @@
-import {
-    booleanAttribute,
-    Component,
-    computed,
-    DestroyRef,
-    effect,
-    ElementRef,
-    inject,
-    input,
-    Renderer2,
-    signal,
-} from '@angular/core';
+import { booleanAttribute, Component, inject, input } from '@angular/core';
 import { ICON_SIZE, IconCircleNotchComponent } from '@dnd-mapp/ui/icons';
-import { AnnouncerService } from '../announcer/announcer.service';
+import { blockClicksWhile } from '../click-blocking/block-clicks';
+import { injectLoadingState } from '../loading/loading-state';
 import { buttonSizeAttribute, DEFAULT_BUTTON_SIZE } from './button-size';
 import { buttonVariantAttribute, DEFAULT_BUTTON_VARIANT } from './button-variant';
-
-/** How long a button loads before it shows its spinner, so a fast action shows none. */
-const SPINNER_DELAY = 300;
-
-/** How long a spinner shows at least, so it never flashes. */
-const SPINNER_MINIMUM = 500;
 
 /**
  * A button that starts an action, such as saving a map. Put it on a native `button` element, and give it a
@@ -66,52 +50,15 @@ export class ButtonComponent {
     /** The word that screen readers announce once the spinner shows, such as `'Saving'`. */
     public readonly loadingLabel = input('Loading');
 
-    /** When the spinner started to show, or `null` while it's hidden. */
-    private readonly spinnerShownAt = signal<number | null>(null);
+    private readonly loadingState = injectLoadingState(this.loading, this.loadingLabel);
 
     /** Whether the button shows its spinner in place of its label and icons. */
-    protected readonly spinnerShown = computed(() => this.spinnerShownAt() !== null);
+    protected readonly spinnerShown = this.loadingState.spinnerShown;
 
     /** Whether the button blocks clicks: from the moment it starts loading until its spinner hides. */
-    protected readonly busy = computed(() => this.loading() || this.spinnerShown());
-
-    private readonly announcer = inject(AnnouncerService);
+    protected readonly busy = this.loadingState.busy;
 
     public constructor() {
-        // Shows the spinner once the button has loaded for 300ms, and hides it once it stops loading, but only after
-        // the spinner has shown for 500ms.
-        effect((onCleanup) => {
-            const loading = this.loading();
-            const shownAt = this.spinnerShownAt();
-
-            if (loading === (shownAt !== null)) {
-                return;
-            }
-            const timeout = shownAt === null ? SPINNER_DELAY : shownAt + SPINNER_MINIMUM - Date.now();
-            const timer = setTimeout(() => (loading ? this.showSpinner() : this.spinnerShownAt.set(null)), timeout);
-
-            onCleanup(() => clearTimeout(timer));
-        });
-
-        // A busy button keeps focus, so it can't use the disabled attribute. It stops clicks itself instead, before
-        // they reach the listeners of the app or submit a form.
-        const stopListening = inject(Renderer2).listen(
-            inject<ElementRef<HTMLElement>>(ElementRef).nativeElement,
-            'click',
-            (event: Event) => {
-                if (this.busy()) {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-                }
-            },
-            { capture: true },
-        );
-
-        inject(DestroyRef).onDestroy(stopListening);
-    }
-
-    private showSpinner() {
-        this.spinnerShownAt.set(Date.now());
-        this.announcer.announce(this.loadingLabel());
+        blockClicksWhile(this.busy);
     }
 }
