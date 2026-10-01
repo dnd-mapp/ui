@@ -14,7 +14,7 @@ A button starts an action, such as saving a map. It's built after the `Button` c
 
 ## When to use
 
-Pick the variant after the weight of the action. The icon slots will follow.
+Pick the variant after the weight of the action.
 
 | Variant     | Look                                | Use for                                                        |
 | :---------- | :---------------------------------- | :------------------------------------------------------------- |
@@ -27,11 +27,11 @@ Keep to one `primary` button in a view, so the main action stands out. A `danger
 
 Pick the size after the space around the button. Keep the buttons in one row to one size, so they line up.
 
-| Size     | Height | Padding      | Radius      | Text style     | Use for                                                 |
-| :------- | -----: | :----------- | :---------- | :------------- | :------------------------------------------------------ |
-| `small`  |   32px | `spacing/12` | `radius/4`  | `Label/Small`  | Dense layouts, such as table rows and panel headers     |
-| `medium` |   40px | `spacing/16` | `radius/8`  | `Label/Medium` | Most actions, such as the ones in toolbars and dialogs  |
-| `large`  |   48px | `spacing/24` | `radius/12` | `Label/Large`  | Actions that lead a sparse view, such as an empty state |
+| Size     | Height | Padding      | Radius      | Text style     | Icon gap     | Use for                                                 |
+| :------- | -----: | :----------- | :---------- | :------------- | :----------- | :------------------------------------------------------ |
+| `small`  |   32px | `spacing/12` | `radius/4`  | `Label/Small`  | `spacing/4`  | Dense layouts, such as table rows and panel headers     |
+| `medium` |   40px | `spacing/16` | `radius/8`  | `Label/Medium` | `spacing/8`  | Most actions, such as the ones in toolbars and dialogs  |
+| `large`  |   48px | `spacing/24` | `radius/12` | `Label/Large`  | `spacing/12` | Actions that lead a sparse view, such as an empty state |
 
 <Canvas of={ButtonStories.Sizes} />
 
@@ -67,6 +67,19 @@ Set the size with the `size` input. It takes `small`, `medium`, or `large`, and 
 
 The button enhances the native element, so it keeps the keyboard support, the form behavior, and the `button` role of the browser. Set `type="button"` unless the button submits a form.
 
+## Icons
+
+Put an icon from `@dnd-mapp/ui/icons` before the label, after it, or both, like the `Leading icon` and `Trailing icon` switches of the Figma component. Import the icon component next to `ButtonComponent`. An icon before the label shows what the action does, such as `plus` for "Add map". An icon after it shows what happens next, such as `chevron-down` for a button that opens a menu.
+
+```html
+<button dma-button type="button" (click)="add()"><dma-icon-plus />Add map</button>
+<button dma-button type="button" variant="secondary" (click)="openExportMenu()">Export map<dma-icon-chevron-down /></button>
+```
+
+An icon that sets no `size` takes the size of the button, through the `ICON_SIZE` injection token that the button provides. The gap between the label and an icon grows with the size, like the padding and the radius. The padding stays the same with or without an icon. An icon takes the color of the label in every variant and state.
+
+<Canvas of={ButtonStories.Icons} />
+
 ## States
 
 | State    | How it's triggered                               | `primary` and `danger`                                                   | `secondary` and `ghost`                                                      |
@@ -88,6 +101,7 @@ Switch between the light and the dark theme with the paintbrush in the toolbar.
 ## Accessibility
 
 - The label is the accessible name of the button, so keep it a short verb phrase, such as "Save map".
+- The icons in the slots are hidden from assistive technology, so the label stays the accessible name. Keep the label when you add an icon.
 - The label passes 4.5:1 against its fill in every variant, and the focus ring passes 3:1 against the page, in both themes.
 - A focused `ghost` button shows no fill, so the focus ring alone marks its edge.
 - Don't rely on the `danger` color alone to warn the user. Say in the label what the action destroys, such as "Delete map".
@@ -107,4 +121,4 @@ const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }))
 await button.click();
 ```
 
-Find a button by its `text`, which takes a string or a regular expression, by whether it's `disabled`, by its `variant`, or by its `size`. The harness can click the button, read its label, its variant, and its size, tell whether it's disabled, and move focus to or away from it.
+Find a button by its `text`, which takes a string or a regular expression, by whether it's `disabled`, by its `variant`, or by its `size`. The harness can click the button, read its label, its variant, and its size, tell whether it's disabled, and move focus to or away from it. Its `getIcons()` method returns an `IconHarness` for each icon in the button, in the order they show, and takes the filters of `IconHarness`, such as `glyph`.

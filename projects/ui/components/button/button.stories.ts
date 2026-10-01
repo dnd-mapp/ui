@@ -1,3 +1,4 @@
+import { IconChevronDownComponent, IconPlusComponent } from '@dnd-mapp/ui/icons';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular-vite';
 import { ButtonSizes, DEFAULT_BUTTON_SIZE, type ButtonSize } from './button-size';
 import { ButtonVariants, DEFAULT_BUTTON_VARIANT, type ButtonVariant } from './button-variant';
@@ -8,12 +9,14 @@ interface ButtonArgs {
     variant: ButtonVariant;
     size: ButtonSize;
     disabled: boolean;
+    leadingIcon: boolean;
+    trailingIcon: boolean;
 }
 
 const meta: Meta<ButtonArgs> = {
     title: 'Components/Button',
     component: ButtonComponent,
-    decorators: [moduleMetadata({ imports: [ButtonComponent] })],
+    decorators: [moduleMetadata({ imports: [ButtonComponent, IconChevronDownComponent, IconPlusComponent] })],
     argTypes: {
         label: {
             description:
@@ -36,7 +39,7 @@ const meta: Meta<ButtonArgs> = {
         },
         size: {
             description:
-                'The size of the button, which sets its height, padding, radius, and text style. Use `medium` unless the layout around the button calls for a `small` or a `large` one.',
+                'The size of the button, which sets its height, padding, radius, text style, and icon gap. Its icons take it too. Use `medium` unless the layout around the button calls for a `small` or a `large` one.',
             options: Object.values(ButtonSizes),
             control: 'select',
             table: {
@@ -53,10 +56,28 @@ const meta: Meta<ButtonArgs> = {
                 defaultValue: { summary: 'false' },
             },
         },
+        leadingIcon: {
+            description:
+                'Shows an icon before the label, like the `Leading icon` switch of the Figma component. In code, put an icon component before the label, such as `dma-icon-plus`. An icon that sets no `size` takes the size of the button.',
+            control: 'boolean',
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: 'false' },
+            },
+        },
+        trailingIcon: {
+            description:
+                'Shows an icon after the label, like the `Trailing icon` switch of the Figma component. In code, put an icon component after the label, such as `dma-icon-chevron-down`. An icon that sets no `size` takes the size of the button.',
+            control: 'boolean',
+            table: {
+                type: { summary: 'boolean' },
+                defaultValue: { summary: 'false' },
+            },
+        },
     },
     render: (args) => ({
         props: args,
-        template: `<button dma-button type="button" [variant]="variant" [size]="size" [disabled]="disabled">{{ label }}</button>`,
+        template: `<button dma-button type="button" [variant]="variant" [size]="size" [disabled]="disabled">@if (leadingIcon) {<dma-icon-plus />}{{ label }}@if (trailingIcon) {<dma-icon-chevron-down />}</button>`,
     }),
 };
 
@@ -65,13 +86,15 @@ export default meta;
 type Story = StoryObj<ButtonArgs>;
 
 // The stories of a single button set their args as literals, so Storybook can show them in the code snippet.
-// `States` and `Sizes` set none, because their templates don't use them.
+// `States`, `Sizes`, and `Icons` set none, because their templates don't use them.
 export const Primary: Story = {
     args: {
         label: 'Save map',
         variant: 'primary',
         size: 'medium',
         disabled: false,
+        leadingIcon: false,
+        trailingIcon: false,
     },
 };
 
@@ -81,6 +104,8 @@ export const Secondary: Story = {
         variant: 'secondary',
         size: 'medium',
         disabled: false,
+        leadingIcon: false,
+        trailingIcon: false,
     },
 };
 
@@ -90,6 +115,8 @@ export const Ghost: Story = {
         variant: 'ghost',
         size: 'medium',
         disabled: false,
+        leadingIcon: false,
+        trailingIcon: false,
     },
 };
 
@@ -99,6 +126,8 @@ export const Danger: Story = {
         variant: 'danger',
         size: 'medium',
         disabled: false,
+        leadingIcon: false,
+        trailingIcon: false,
     },
 };
 
@@ -147,6 +176,30 @@ export const Sizes: Story = {
             <button dma-button type="button" variant="danger" size="small">Delete map</button>
             <button dma-button type="button" variant="danger" size="medium">Delete map</button>
             <button dma-button type="button" variant="danger" size="large">Delete map</button>
+        </div>`,
+    }),
+};
+
+/**
+ * Every size with a leading icon, a trailing icon, and both. The icons take the size of the button, and the gap
+ * between the label and an icon grows with the size.
+ */
+export const Icons: Story = {
+    parameters: {
+        controls: { disable: true },
+    },
+    // The template spells out every button, so Storybook can show it in the code snippet.
+    render: () => ({
+        template: `<div style="display: grid; grid-template-columns: repeat(3, max-content); align-items: center; justify-items: start; gap: var(--dma-spacing-16)">
+            <button dma-button type="button" variant="primary" size="small"><dma-icon-plus />Add map</button>
+            <button dma-button type="button" variant="secondary" size="small">Export map<dma-icon-chevron-down /></button>
+            <button dma-button type="button" variant="ghost" size="small"><dma-icon-plus />Add layer<dma-icon-chevron-down /></button>
+            <button dma-button type="button" variant="primary" size="medium"><dma-icon-plus />Add map</button>
+            <button dma-button type="button" variant="secondary" size="medium">Export map<dma-icon-chevron-down /></button>
+            <button dma-button type="button" variant="ghost" size="medium"><dma-icon-plus />Add layer<dma-icon-chevron-down /></button>
+            <button dma-button type="button" variant="primary" size="large"><dma-icon-plus />Add map</button>
+            <button dma-button type="button" variant="secondary" size="large">Export map<dma-icon-chevron-down /></button>
+            <button dma-button type="button" variant="ghost" size="large"><dma-icon-plus />Add layer<dma-icon-chevron-down /></button>
         </div>`,
     }),
 };
