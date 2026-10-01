@@ -4,9 +4,71 @@
       "id": "components-button",
       "name": "ButtonComponent",
       "path": "./projects/ui/components/button/button.stories.ts",
-      "description": "A button that starts an action, such as saving a map. Put it on a native `button` element, and give it a\nlabel as its content.\n\nIt has the variants and the sizes of the `Button` Figma component. Use `primary` for the one main action in a\nview, `secondary` for other actions beside it, `ghost` for minor actions that should stay quiet, and `danger`\nfor actions that destroy or remove something. Use `medium` unless the layout around the button calls for a\n`small` or a `large` one.\n\nPut an icon before the label, after it, or both, like the `Leading icon` and `Trailing icon` switches of the\nFigma component. An icon that sets no `size` takes the size of the button.",
+      "description": "A button that starts an action, such as saving a map. Put it on a native `button` element, and give it a\nlabel as its content.\n\nIt has the variants and the sizes of the `Button` Figma component. Use `primary` for the one main action in a\nview, `secondary` for other actions beside it, `ghost` for minor actions that should stay quiet, and `danger`\nfor actions that destroy or remove something. Use `medium` unless the layout around the button calls for a\n`small` or a `large` one.\n\nPut an icon before the label, after it, or both, like the `Leading icon` and `Trailing icon` switches of the\nFigma component. An icon that sets no `size` takes the size of the button.\n\nSet `loading` while the action it started runs. The button then blocks clicks but keeps focus, and after 300ms\nit shows a spinner in place of its label and icons, and announces its `loadingLabel` to screen readers.",
       "jsDocTags": {},
       "argTypes": {
+        "busy": {
+          "name": "busy",
+          "description": "Whether the button blocks clicks: from the moment it starts loading until its spinner hides.",
+          "type": {
+            "name": "other",
+            "value": "empty-enum"
+          },
+          "table": {
+            "category": "properties",
+            "type": {
+              "summary": "Signal<boolean>"
+            },
+            "defaultValue": {}
+          }
+        },
+        "spinnerShown": {
+          "name": "spinnerShown",
+          "description": "Whether the button shows its spinner in place of its label and icons.",
+          "type": {
+            "name": "other",
+            "value": "empty-enum"
+          },
+          "table": {
+            "category": "properties",
+            "type": {
+              "summary": "Signal<boolean>"
+            },
+            "defaultValue": {}
+          }
+        },
+        "loading": {
+          "name": "loading",
+          "description": "Whether the button is busy with the action it started, such as saving a map. Turn it on when the action\nstarts, and off when it ends.",
+          "type": {
+            "name": "boolean"
+          },
+          "table": {
+            "category": "inputs",
+            "type": {
+              "summary": "boolean"
+            },
+            "defaultValue": {
+              "summary": false
+            }
+          }
+        },
+        "loadingLabel": {
+          "name": "loadingLabel",
+          "description": "The word that screen readers announce once the spinner shows, such as `'Saving'`.",
+          "type": {
+            "name": "string"
+          },
+          "table": {
+            "category": "inputs",
+            "type": {
+              "summary": "string"
+            },
+            "defaultValue": {
+              "summary": "Loading"
+            }
+          }
+        },
         "size": {
           "name": "size",
           "description": "The size of the button, which sets its height, padding, radius, text style, and icon gap. Its icons take it too.",
@@ -38,13 +100,15 @@
           }
         }
       },
-      "apiDescription": "## Inputs\n\n```\nexport type ButtonComponentInputs = {\n  /** The size of the button, which sets its height, padding, radius, text style, and icon gap. Its icons take it too. */\n  size?: \"\" | ButtonSize;\n  /** The variant of the button, which sets its colors. */\n  variant?: \"\" | ButtonVariant;\n}\n```",
+      "apiDescription": "## Inputs\n\n```\nexport type ButtonComponentInputs = {\n  /**\n   * Whether the button is busy with the action it started, such as saving a map. Turn it on when the action\n   * starts, and off when it ends.\n   *\n   * @default false\n   */\n  loading?: boolean;\n  /**\n   * The word that screen readers announce once the spinner shows, such as `'Saving'`.\n   *\n   * @default Loading\n   */\n  loadingLabel?: string;\n  /** The size of the button, which sets its height, padding, radius, text style, and icon gap. Its icons take it too. */\n  size?: \"\" | ButtonSize;\n  /** The variant of the button, which sets its colors. */\n  variant?: \"\" | ButtonVariant;\n}\n```",
       "renderer": "angular",
       "angularComponentMeta": {
         "name": "ButtonComponent",
         "selector": "button[dma-button]",
         "standalone": true,
         "inputs": [
+          "loading",
+          "loadingLabel",
           "size",
           "variant"
         ],
