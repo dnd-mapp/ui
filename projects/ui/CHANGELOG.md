@@ -19,6 +19,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The `size` filter and the `getSize()` method of `ButtonHarness`, to find a button by its size and read it.
 - The `getIcons()` method of `ButtonHarness`, which returns an `IconHarness` for each icon in the slots of the button, in the order they show. It leaves out the spinner of a loading button. It takes the filters of `IconHarness`, such as `glyph`.
 - The `loading` filter and the `isLoading()` method of `ButtonHarness`, to find a button by whether it's loading and read it.
+- The `IconButtonComponent`, with the `button[dma-icon-button]` selector, for an action with only an icon. Import it from `@dnd-mapp/ui/components`. Its icon is its content, and takes its size.
+- The required `aria-label` input of `IconButtonComponent`, its accessible name.
+- The `variant`, `size`, `loading`, and `loadingLabel` inputs of `IconButtonComponent`, with the values and the defaults of `ButtonComponent`.
+- The `disabled` input of `IconButtonComponent`. A disabled icon button uses `aria-disabled` rather than the native `disabled` attribute, so it stays focusable, and it blocks clicks itself.
+- The `IconButtonHarness` component harness, in the `@dnd-mapp/ui/components/testing` entry point, with the `label`, `disabled`, `variant`, `size`, and `loading` filters, and a `getIcon()` method that returns the `IconHarness` of its icon.
 - `@angular/cdk` 22.2 or later as a peer dependency, for the live region that announces a loading button, and for the component harnesses.
 - The `@dnd-mapp/ui/icons` entry point, with a component for each glyph: `IconChevronDownComponent`, `IconCircleNotchComponent`, `IconPlusComponent`, and `IconXmarkComponent`, with the `dma-icon-chevron-down`, `dma-icon-circle-notch`, `dma-icon-plus`, and `dma-icon-xmark` selectors. The glyphs come from Font Awesome Free 7.3.1, under CC BY 4.0, and the `IconGlyphs` constant and the `IconGlyph` type list their names.
 - The `size` input of the icons, with the `small`, `medium`, and `large` sizes. Without it, or with the bare `size` attribute, an icon takes the size of the control around it, or `medium` outside one. The `IconSizes` constant, the `IconSize` type, and `DEFAULT_ICON_SIZE` list the values.
