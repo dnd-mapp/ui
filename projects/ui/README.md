@@ -35,9 +35,10 @@ The components follow the `color-scheme` of the page, just like the tokens. See 
 
 Import the components from `@dnd-mapp/ui/components`.
 
-| Component         | Selector             | Harness         | Use for                         |
-|:------------------|:---------------------|:----------------|:--------------------------------|
-| `ButtonComponent` | `button[dma-button]` | `ButtonHarness` | An action, such as saving a map |
+| Component             | Selector                  | Harness             | Use for                                              |
+|:----------------------|:--------------------------|:--------------------|:-----------------------------------------------------|
+| `ButtonComponent`     | `button[dma-button]`      | `ButtonHarness`     | An action, such as saving a map                      |
+| `IconButtonComponent` | `button[dma-icon-button]` | `IconButtonHarness` | An action with only an icon, such as closing a panel |
 
 ### Button
 
@@ -94,6 +95,20 @@ Once the spinner shows, screen readers announce "Loading" through a polite live 
 ```html
 <button dma-button type="button" [loading]="saving()" loadingLabel="Saving" (click)="save()">Save map</button>
 ```
+
+### Icon button
+
+Put `dma-icon-button` on a native `button` element, give it an icon from `@dnd-mapp/ui/icons` as its content, and name it with the required `aria-label` input. Import `IconButtonComponent` next to the component of the icon. Use it where space is tight, such as toolbars and panel headers, and only for well-known icons, such as `xmark` for close.
+
+```html
+<button dma-icon-button type="button" aria-label="Close panel" variant="ghost" (click)="close()">
+    <dma-icon-xmark />
+</button>
+```
+
+It takes the `variant`, `size`, `loading`, and `loadingLabel` inputs of `ButtonComponent`, with the same values and defaults. Each size is a square as high as the button of that size, and the icon takes the size of the icon button.
+
+Set the `disabled` input to disable it. A disabled icon button uses `aria-disabled="true"` rather than the native `disabled` attribute, so it stays focusable and can show its tooltip, and it blocks clicks itself. The `disabled` attribute in a template works too: the icon button removes it from the element.
 
 ## Icons
 
@@ -163,6 +178,8 @@ const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }))
 
 await button.click();
 ```
+
+`IconButtonHarness.getIcon()` returns the `IconHarness` of the icon of an icon button, and the `label` filter finds an icon button by its `aria-label`.
 
 `ButtonHarness.getIcons()` returns an `IconHarness` for each icon in the slots of a button, in the order they show, so a test can check the glyph and the size of each one. `ButtonHarness.isLoading()` tells whether a button is loading, and the `loading` filter finds a button by it.
 
