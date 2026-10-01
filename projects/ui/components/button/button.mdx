@@ -80,19 +80,38 @@ An icon that sets no `size` takes the size of the button, through the `ICON_SIZE
 
 <Canvas of={ButtonStories.Icons} />
 
+## Loading
+
+Set the `loading` input while the action that the button started runs, such as saving a map, and turn it off once the action ends.
+
+```html
+<button dma-button type="button" [loading]="saving()" loadingLabel="Saving" (click)="save()">Save map</button>
+```
+
+- From the moment it starts loading, the button blocks clicks through `aria-disabled="true"`, so it never starts its action twice. It doesn't use the native `disabled` attribute, so it keeps keyboard focus.
+- After 300ms, it shows a spinning `circle-notch` in place of its label and icons, in the color of the label. A fast action ends before then and shows no spinner.
+- The spinner stays at least 500ms, so it never flashes. The button blocks clicks until the spinner hides.
+- The label and the icons stay in the layout at opacity 0 while the spinner shows, so the button keeps its width.
+- When it stops loading, the button returns to its Focus state if it still has focus, and to its Default state if it doesn't.
+
+<Canvas of={ButtonStories.Loading} />
+
 ## States
 
-| State    | How it's triggered                               | `primary` and `danger`                                                   | `secondary` and `ghost`                                                      |
-| :------- | :----------------------------------------------- | :----------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| Default  | The button is enabled, and nothing happens to it | The `accent` or `danger` fill, with the `on-accent` or `on-danger` label | No fill, with the `default` label                                            |
-| Hover    | The pointer is over the button                   | The `accent-hover` or `danger-hover` fill                                | The `neutral-hover` fill                                                     |
-| Pressed  | The button is held down                          | The `accent-pressed` or `danger-pressed` fill                            | The `neutral-pressed` fill                                                   |
-| Focus    | The button has keyboard focus                    | An amber ring, 2px outside the button                                    | An amber ring, 2px outside the button                                        |
-| Disabled | The native `disabled` attribute is set           | The `disabled` fill and label                                            | No fill, with the `disabled` label, and the `disabled` border on `secondary` |
+| State    | How it's triggered                               | `primary` and `danger`                                                    | `secondary` and `ghost`                                                      |
+| :------- | :----------------------------------------------- | :------------------------------------------------------------------------ | :--------------------------------------------------------------------------- |
+| Default  | The button is enabled, and nothing happens to it | The `accent` or `danger` fill, with the `on-accent` or `on-danger` label  | No fill, with the `default` label                                            |
+| Hover    | The pointer is over the button                   | The `accent-hover` or `danger-hover` fill                                 | The `neutral-hover` fill                                                     |
+| Pressed  | The button is held down                          | The `accent-pressed` or `danger-pressed` fill                             | The `neutral-pressed` fill                                                   |
+| Focus    | The button has keyboard focus                    | An amber ring, 2px outside the button                                     | An amber ring, 2px outside the button                                        |
+| Disabled | The native `disabled` attribute is set           | The `disabled` fill and label                                             | No fill, with the `disabled` label, and the `disabled` border on `secondary` |
+| Loading  | The `loading` input is set                       | The look of Default, with a spinning `circle-notch` in place of the label | The look of Default, with a spinning `circle-notch` in place of the label    |
 
 A `secondary` button keeps its `default` border in every state except Disabled, where the border takes the `disabled` color. A disabled `secondary` or `ghost` button has no fill, because the `disabled` fill matches the hover tint and would look hovered. A disabled `danger` button looks like a disabled `primary` one, because a button that can't act needs no warning color.
 
 The focus ring shows on keyboard focus only, through `:focus-visible`. A disabled button never shows it, because the native `disabled` attribute keeps the button from taking focus. Hover and pressed never apply to a disabled button either.
+
+A loading button keeps the colors of its Default state in every variant, so the user sees which action runs. It keeps the focus ring while it has focus, and hover and pressed never apply to it.
 
 <Canvas of={ButtonStories.States} />
 
@@ -106,6 +125,10 @@ Switch between the light and the dark theme with the paintbrush in the toolbar.
 - A focused `ghost` button shows no fill, so the focus ring alone marks its edge.
 - Don't rely on the `danger` color alone to warn the user. Say in the label what the action destroys, such as "Delete map".
 - A disabled button leaves the tab order and ignores clicks, like any native button.
+- A loading button stays in the tab order, and screen readers report it as unavailable through `aria-disabled="true"`.
+- Once the spinner shows, screen readers announce "Loading" through a polite live region outside the button. Set `loadingLabel` to announce another word, such as "Saving". The spinner itself is hidden from assistive technology.
+- The label hides with `opacity: 0` rather than `visibility: hidden`, so it stays the accessible name of the button while the spinner shows.
+- When the user prefers reduced motion, the spinner slows to one turn every 3 seconds. It keeps turning, because a spinner that stands still looks frozen.
 
 ## Testing
 
@@ -121,4 +144,4 @@ const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }))
 await button.click();
 ```
 
-Find a button by its `text`, which takes a string or a regular expression, by whether it's `disabled`, by its `variant`, or by its `size`. The harness can click the button, read its label, its variant, and its size, tell whether it's disabled, and move focus to or away from it. Its `getIcons()` method returns an `IconHarness` for each icon in the button, in the order they show, and takes the filters of `IconHarness`, such as `glyph`.
+Find a button by its `text`, which takes a string or a regular expression, by whether it's `disabled` or `loading`, by its `variant`, or by its `size`. The harness can click the button, read its label, its variant, and its size, tell whether it's disabled or loading, and move focus to or away from it. Its `getIcons()` method returns an `IconHarness` for each icon in the slots of the button, in the order they show, and takes the filters of `IconHarness`, such as `glyph`. It leaves out the spinner of a loading button.
