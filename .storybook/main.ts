@@ -2,7 +2,7 @@ import type { StorybookConfig } from '@storybook/angular-vite';
 import remarkGfm from 'remark-gfm';
 
 const config: StorybookConfig = {
-    stories: ['./introduction.mdx', '../projects/ui/components/**/*.mdx', '../projects/ui/components/**/*.stories.ts'],
+    stories: ['./introduction.mdx', '../projects/ui/**/*.mdx', '../projects/ui/**/*.stories.ts'],
     addons: [
         {
             name: '@storybook/addon-docs',

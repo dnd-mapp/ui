@@ -1,0 +1,34 @@
+// The styles of every glyph component. A glyph fills a 640 by 640 viewBox with a 64 unit margin on each side, so it's
+// 0.8 times the frame, like the glyphs in Figma.
+:host {
+    display: inline-block;
+    flex-shrink: 0;
+    vertical-align: middle;
+    // The glyph takes the color of the text around it, such as the label of a button.
+    fill: currentColor;
+}
+
+// Each frame matches the line height of the label style that the size pairs with, so an icon never changes the
+// height of a control.
+:host([data-size='small']) {
+    inline-size: var(--dma-text-label-small-line-height);
+    block-size: var(--dma-text-label-small-line-height);
+}
+
+:host([data-size='medium']) {
+    inline-size: var(--dma-text-label-medium-line-height);
+    block-size: var(--dma-text-label-medium-line-height);
+}
+
+:host([data-size='large']) {
+    inline-size: var(--dma-text-label-large-line-height);
+    block-size: var(--dma-text-label-large-line-height);
+}
+
+svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    // Some glyphs reach past their viewBox, such as the lid of `trash-can`. Font Awesome shows the overhang too.
+    overflow: visible;
+}

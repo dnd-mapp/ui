@@ -52,6 +52,9 @@ The repository is an Angular workspace with a single project, the `ui` library i
 | `projects/ui/src/index.ts`       | The primary entry point of the package, `@dnd-mapp/ui`, which exports nothing yet              |
 | `projects/ui/components`         | The `@dnd-mapp/ui/components` entry point, with each component in a directory of its own       |
 | `projects/ui/components/testing` | The `@dnd-mapp/ui/components/testing` entry point, with the component harnesses in `harnesses` |
+| `projects/ui/icons`              | The `@dnd-mapp/ui/icons` entry point, with a component for each glyph in `glyphs`              |
+| `projects/ui/icons/testing`      | The `@dnd-mapp/ui/icons/testing` entry point, with the icon harness in `harnesses`             |
+| `projects/ui/testing`            | The `@dnd-mapp/ui/testing` entry point, with `resolveStyle()` to check styles with the tokens  |
 | `vitest.config.ts`               | The Vitest options that the test target in `angular.json` has no builder option for            |
 | `.storybook`                     | The Storybook config, its TypeScript project, and the introduction page                        |
 
@@ -69,7 +72,7 @@ Every component is presentational. It receives its data through inputs, reports 
 - Write the styles in SCSS. Take colors, spacing, radii, and text styles from the custom properties of the design tokens, such as `var(--dma-spacing-16)`. Only hard code a value when no token fits.
 - Keep the components accessible. ESLint checks the templates against the accessibility rules of angular-eslint.
 - Export every component from `projects/ui/components/index.ts`.
-- Write a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component in `projects/ui/components/testing/harnesses`, and export it from `projects/ui/components/testing/index.ts`. Test it in a spec of its own, and test the component through it, so its spec interacts with the component the way a consumer's tests do. Use the `TestElement` of the harness host, such as `getCssValue()`, for what the harness doesn't cover.
+- Write a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component in `projects/ui/components/testing/harnesses`, and export it from `projects/ui/components/testing/index.ts`. Test it in a spec of its own, and test the component through it, so its spec interacts with the component the way a consumer's tests do. Use the `TestElement` of the harness host, such as `getCssValue()`, for what the harness doesn't cover. Compare styles with the tokens through `resolveStyle()` from `@dnd-mapp/ui/testing`.
 - Write stories for every component in a `<name>.stories.ts` file next to it. Mirror the page of its Figma component: every variant, size, and state, in the light and the dark theme. Give every arg a description, a type, and its default when it has one, in the `argTypes` of the stories, so the docs table explains it.
 - Document every component in a `<name>.mdx` file next to its stories: when to use it, how to use it, its states, its accessibility, and its harness.
 
@@ -118,7 +121,7 @@ The `storybook` script serves Storybook on port 6006 and updates it as you edit.
 
 MDX leaves out GitHub Flavored Markdown, so `.storybook/main.ts` adds [remark-gfm](https://github.com/remarkjs/remark-gfm) to the docs addon. Tables and the other GitHub extensions work in the MDX docs as they do in the Markdown files.
 
-Stories and MDX docs live next to their component in `projects/ui/components`, and stay out of the package, the specs, and the coverage. An MDX doc attaches itself to the stories of its component through `<Meta of={...} />`, so it shows as the `Docs` page of that component. The `.storybook/tsconfig.json` project type checks them together with the library and `.storybook/preview.ts`.
+Stories and MDX docs live next to the component or the icon they show, in `projects/ui/components` or `projects/ui/icons`. They stay out of the package, the specs, and the coverage. An MDX doc attaches itself to the stories of its component through `<Meta of={...} />`, so it shows as the `Docs` page of that component. The `.storybook/tsconfig.json` project type checks them together with the library and `.storybook/preview.ts`.
 
 The `build-storybook` job builds Storybook apart from the `ci` job, so a deploy doesn't wait for the tests. The `deploy-storybook` job of the [push workflow](.github/workflows/push-main.yaml) deploys the Storybook of every push to `main` to [GitHub Pages](https://dnd-mapp.github.io/ui/main/). It reuses the build of the `build-storybook` job, and publishes it through the `deploy-storybook` action in `.github/actions`.
 

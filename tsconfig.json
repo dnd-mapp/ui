@@ -16,7 +16,10 @@
         "paths": {
             "@dnd-mapp/ui": ["./projects/ui/src/index.ts"],
             "@dnd-mapp/ui/components": ["./projects/ui/components/index.ts"],
-            "@dnd-mapp/ui/components/testing": ["./projects/ui/components/testing/index.ts"]
+            "@dnd-mapp/ui/components/testing": ["./projects/ui/components/testing/index.ts"],
+            "@dnd-mapp/ui/icons": ["./projects/ui/icons/index.ts"],
+            "@dnd-mapp/ui/icons/testing": ["./projects/ui/icons/testing/index.ts"],
+            "@dnd-mapp/ui/testing": ["./projects/ui/testing/index.ts"]
         }
     },
     "angularCompilerOptions": {

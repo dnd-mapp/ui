@@ -69,7 +69,7 @@
                         "browsers": ["chromium"],
                         "headless": true,
                         "coverage": true,
-                        "coverageInclude": ["projects/ui/src/**/*.{ts,html}", "projects/ui/components/**/*.{ts,html}"],
+                        "coverageInclude": ["projects/ui/**/*.{ts,html}"],
                         "coverageExclude": ["projects/ui/**/index.ts", "projects/ui/**/*.stories.ts"],
                         "coverageReporters": ["text-summary", "html"],
                         "coverageThresholds": {

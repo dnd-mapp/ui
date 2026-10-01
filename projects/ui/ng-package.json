@@ -1,7 +1,7 @@
 {
     "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
     "dest": "../../dist/ui",
-    "assets": ["CHANGELOG.md"],
+    "assets": ["CHANGELOG.md", "THIRD_PARTY_NOTICES.md"],
     "inlineStyleLanguage": "scss",
     "lib": {
         "entryFile": "src/index.ts"

@@ -1,7 +1,7 @@
 {
     "$schema": "https://json.schemastore.org/tsconfig",
     "extends": "../tsconfig.json",
-    "include": ["preview.ts", "../projects/ui/src/**/*.ts", "../projects/ui/components/**/*.ts"],
+    "include": ["preview.ts", "../projects/ui/**/*.ts"],
     "exclude": ["../projects/ui/**/*.spec.ts"],
     "compilerOptions": {
         "composite": true,
