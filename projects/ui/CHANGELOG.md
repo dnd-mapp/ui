@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The `variant` filter and the `getVariant()` method of `ButtonHarness`, to find a button by its variant and read it.
 - The `size` filter and the `getSize()` method of `ButtonHarness`, to find a button by its size and read it.
 - The `getIcons()` method of `ButtonHarness`, which returns an `IconHarness` for each icon in the button, in the order they show. It takes the filters of `IconHarness`, such as `glyph`.
-- `@angular/cdk` 22.2 or later as an optional peer dependency, for the component harnesses.
+- `@angular/cdk` 22.2 or later as a peer dependency, for the live region that announces a loading button, and for the component harnesses.
 - The `@dnd-mapp/ui/icons` entry point, with a component for each glyph: `IconChevronDownComponent`, `IconCircleNotchComponent`, `IconPlusComponent`, and `IconXmarkComponent`, with the `dma-icon-chevron-down`, `dma-icon-circle-notch`, `dma-icon-plus`, and `dma-icon-xmark` selectors. The glyphs come from Font Awesome Free 7.3.1, under CC BY 4.0, and the `IconGlyphs` constant and the `IconGlyph` type list their names.
 - The `size` input of the icons, with the `small`, `medium`, and `large` sizes. Without it, or with the bare `size` attribute, an icon takes the size of the control around it, or `medium` outside one. The `IconSizes` constant, the `IconSize` type, and `DEFAULT_ICON_SIZE` list the values.
 - The `spin` input of the icons, which turns an icon once per second at a steady speed, or once every 3 seconds when the user prefers reduced motion. Use it on `circle-notch` for a control that is busy.
