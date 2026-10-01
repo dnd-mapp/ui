@@ -1,0 +1,40 @@
+{
+  "components": {
+    "icons-icon": {
+      "id": "icons-icon",
+      "name": "IconPlusComponent",
+      "path": "./projects/ui/icons/icon.stories.ts",
+      "description": "The `plus` icon, for an action that adds or creates something, such as a new map.",
+      "jsDocTags": {},
+      "argTypes": {
+        "size": {
+          "name": "size",
+          "description": "The size of the icon, which sets its frame. Match it to the size of the label beside it.",
+          "type": {
+            "name": "other",
+            "value": "empty-enum"
+          },
+          "table": {
+            "category": "inputs",
+            "type": {
+              "summary": "\"\" | IconSize"
+            },
+            "defaultValue": {}
+          }
+        }
+      },
+      "apiDescription": "## Inputs\n\n```\nexport type IconPlusComponentInputs = {\n  /** The size of the icon, which sets its frame. Match it to the size of the label beside it. */\n  size?: \"\" | IconSize;\n}\n```",
+      "renderer": "angular",
+      "angularComponentMeta": {
+        "name": "IconPlusComponent",
+        "selector": "dma-icon-plus",
+        "standalone": true,
+        "inputs": [
+          "size"
+        ],
+        "outputs": [],
+        "enums": []
+      }
+    }
+  }
+}
