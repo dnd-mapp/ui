@@ -82,7 +82,7 @@ Generate a component with the Angular CLI. The schematic defaults in `angular.js
 pnpm ng generate component <name> --project ui --path projects/ui/components
 ```
 
-The harnesses build on the testing APIs of `@angular/cdk`. The package lists it as an optional peer dependency, because only the testing entry point needs it.
+The harnesses build on the testing APIs of `@angular/cdk`. The components use it too, such as the `LiveAnnouncer` that announces a loading button, so the package lists it as a required peer dependency.
 
 ## Building and testing
 

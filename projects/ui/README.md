@@ -11,12 +11,12 @@ A presentational component only renders what it's given. It takes its data throu
 
 - Angular 22.2 or later, with `@angular/core` and `@angular/common`.
 - `@dnd-mapp/design-tokens` 1.0 or later.
-- `@angular/cdk` 22.2 or later, only to use the component harnesses.
+- `@angular/cdk` 22.2 or later, for the live region that announces a loading button, and for the component harnesses.
 
 ## Installation
 
 ```bash
-pnpm add @dnd-mapp/ui @dnd-mapp/design-tokens
+pnpm add @dnd-mapp/ui @dnd-mapp/design-tokens @angular/cdk
 ```
 
 ## Usage
@@ -134,11 +134,7 @@ An icon takes the color of the text around it. It's hidden from assistive techno
 
 ## Testing
 
-The `@dnd-mapp/ui/components/testing` entry point has a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component, and `@dnd-mapp/ui/icons/testing` has the `IconHarness` for the icons. Use them to test the components of your app that use them. The harnesses need `@angular/cdk`, so install it to use them.
-
-```bash
-pnpm add -D @angular/cdk
-```
+The `@dnd-mapp/ui/components/testing` entry point has a [component harness](https://angular.dev/guide/testing/component-harnesses-overview) for every component, and `@dnd-mapp/ui/icons/testing` has the `IconHarness` for the icons. Use them to test the components of your app that use them.
 
 Load a harness through the harness environment of the CDK.
 
