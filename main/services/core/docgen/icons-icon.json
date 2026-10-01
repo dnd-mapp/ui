@@ -7,9 +7,24 @@
       "description": "The `plus` icon, for an action that adds or creates something, such as a new map.",
       "jsDocTags": {},
       "argTypes": {
+        "resolvedSize": {
+          "name": "resolvedSize",
+          "description": "The size that the icon shows: its own, then the one of the control around it, then the default.",
+          "type": {
+            "name": "other",
+            "value": "empty-enum"
+          },
+          "table": {
+            "category": "properties",
+            "type": {
+              "summary": "Signal<IconSize>"
+            },
+            "defaultValue": {}
+          }
+        },
         "size": {
           "name": "size",
-          "description": "The size of the icon, which sets its frame. Match it to the size of the label beside it.",
+          "description": "The size of the icon, which sets its frame. Match it to the size of the label beside it. Without one, the icon\ntakes the size of the control around it, such as a button, or `medium` outside one.",
           "type": {
             "name": "other",
             "value": "empty-enum"
@@ -17,13 +32,13 @@
           "table": {
             "category": "inputs",
             "type": {
-              "summary": "\"\" | IconSize"
+              "summary": "IconSize | \"\" | undefined"
             },
             "defaultValue": {}
           }
         }
       },
-      "apiDescription": "## Inputs\n\n```\nexport type IconPlusComponentInputs = {\n  /** The size of the icon, which sets its frame. Match it to the size of the label beside it. */\n  size?: \"\" | IconSize;\n}\n```",
+      "apiDescription": "## Inputs\n\n```\nexport type IconPlusComponentInputs = {\n  /**\n   * The size of the icon, which sets its frame. Match it to the size of the label beside it. Without one, the icon\n   * takes the size of the control around it, such as a button, or `medium` outside one.\n   */\n  size?: IconSize | \"\" | undefined;\n}\n```",
       "renderer": "angular",
       "angularComponentMeta": {
         "name": "IconPlusComponent",
