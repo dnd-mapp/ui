@@ -53,7 +53,7 @@ import { IconPlusComponent } from '@dnd-mapp/ui/icons';
 export class MapListHeaderComponent {}
 ```
 
-Set the size with the `size` input. It takes `small`, `medium`, or `large`, and defaults to `medium`. The `IconSizes` constant holds the values, and the `IconSize` type is their union.
+Set the size with the `size` input. It takes `small`, `medium`, or `large`. The `IconSizes` constant holds the values, and the `IconSize` type is their union. Without it, the icon takes the size of the control around it, such as a button, or `medium` outside one. A control provides that size through the `ICON_SIZE` injection token.
 
 ```html
 <dma-icon-xmark size="small" />

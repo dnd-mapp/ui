@@ -33,7 +33,7 @@ const meta: Meta<IconArgs> = {
         },
         size: {
             description:
-                'The size of the icon, which sets its frame. Match it to the size of the label beside it, so the icon never changes the height of a control.',
+                'The size of the icon, which sets its frame. Match it to the size of the label beside it, so the icon never changes the height of a control. Without it, the icon takes the size of the control around it, such as a button, or `medium` outside one.',
             options: Object.values(IconSizes),
             control: 'select',
             table: {

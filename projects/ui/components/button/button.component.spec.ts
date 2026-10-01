@@ -3,7 +3,8 @@ import { Component, signal, type Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { tokens } from '@dnd-mapp/design-tokens';
 import { ButtonHarness } from '@dnd-mapp/ui/components/testing';
-import { resolveStyle } from '@dnd-mapp/ui/testing';
+import { IconChevronDownComponent, IconPlusComponent } from '@dnd-mapp/ui/icons';
+import { getFrame, resolveFrame, resolveStyle } from '@dnd-mapp/ui/testing';
 import { ButtonSizes, DEFAULT_BUTTON_SIZE, type ButtonSize } from './button-size';
 import { ButtonVariants, DEFAULT_BUTTON_VARIANT, type ButtonVariant } from './button-variant';
 import { ButtonComponent } from './button.component';
@@ -45,6 +46,16 @@ class BareVariantTestHostComponent {}
     imports: [ButtonComponent],
 })
 class BareSizeTestHostComponent {}
+
+@Component({
+    template: `<button dma-button type="button" [size]="size()">
+        <dma-icon-plus />Add map<dma-icon-chevron-down />
+    </button>`,
+    imports: [ButtonComponent, IconChevronDownComponent, IconPlusComponent],
+})
+class IconsTestHostComponent {
+    public readonly size = signal<ButtonSize>(DEFAULT_BUTTON_SIZE);
+}
 
 /**
  * The color tokens of a button in one state, such as `tokens.color.background.accent`. A `null` fill or border
@@ -116,6 +127,28 @@ async function getColors(button: ButtonHarness) {
     };
 }
 
+/** Returns the box of the label of the button inside `context`, which is its only text. */
+function getLabelBox(context: HTMLElement) {
+    const label = document.createTreeWalker(context, NodeFilter.SHOW_TEXT).nextNode();
+    const range = document.createRange();
+
+    if (label) {
+        range.selectNodeContents(label);
+    }
+    return range.getBoundingClientRect();
+}
+
+/** Returns the space between the label of the button and each of its icons, in pixels. */
+async function getIconGaps(button: ButtonHarness, context: HTMLElement) {
+    const icons = await Promise.all((await button.getIcons()).map(async (icon) => (await icon.host()).getDimensions()));
+    // The harness renders the changes of the test before it measures the icons, so measure the label after them.
+    const label = getLabelBox(context);
+
+    return icons.map((icon) =>
+        icon.left < label.left ? label.left - (icon.left + icon.width) : icon.left - label.right,
+    );
+}
+
 const mediumDimensions: Dimensions = {
     height: 40,
     padding: tokens.spacing['16'],
@@ -143,6 +176,12 @@ describe('ButtonComponent', () => {
         const { button } = await setup(TestHostComponent);
 
         expect(await button.getText()).toBe('Save map');
+    });
+
+    it('keeps its label as its text when it shows icons', async () => {
+        const { button } = await setup(IconsTestHostComponent);
+
+        expect(await button.getText()).toBe('Add map');
     });
 
     it('reports a click to its host', async () => {
@@ -204,7 +243,7 @@ describe('ButtonComponent', () => {
         expect(await getDimensions(button)).toEqual(toDimensions(mediumDimensions, element));
     });
 
-    describe.each<{ size: ButtonSize; dimensions: Dimensions }>([
+    describe.each<{ size: ButtonSize; dimensions: Dimensions; iconGap: string }>([
         {
             size: ButtonSizes.small,
             dimensions: {
@@ -214,10 +253,12 @@ describe('ButtonComponent', () => {
                 fontSize: tokens.text.label.small['font-size'],
                 lineHeight: tokens.text.label.small['line-height'],
             },
+            iconGap: tokens.spacing['4'],
         },
         {
             size: ButtonSizes.medium,
             dimensions: mediumDimensions,
+            iconGap: tokens.spacing['8'],
         },
         {
             size: ButtonSizes.large,
@@ -228,8 +269,9 @@ describe('ButtonComponent', () => {
                 fontSize: tokens.text.label.large['font-size'],
                 lineHeight: tokens.text.label.large['line-height'],
             },
+            iconGap: tokens.spacing['12'],
         },
-    ])('in the $size size', ({ size, dimensions }) => {
+    ])('in the $size size', ({ size, dimensions, iconGap }) => {
         it('has the height, padding, radius, and text style of its size', async () => {
             const { fixture, element, button } = await setup(TestHostComponent);
 
@@ -237,6 +279,45 @@ describe('ButtonComponent', () => {
 
             expect(await button.getText()).toBe('Save map');
             expect(await getDimensions(button)).toEqual(toDimensions(dimensions, element));
+        });
+
+        it('keeps its height and padding when it shows icons', async () => {
+            const { fixture, element, button } = await setup(IconsTestHostComponent);
+
+            fixture.componentInstance.size.set(size);
+
+            expect(await button.getText()).toBe('Add map');
+            expect(await getDimensions(button)).toEqual(toDimensions(dimensions, element));
+        });
+
+        it('sizes the icons in its slots after its size', async () => {
+            const { fixture, element, button } = await setup(IconsTestHostComponent);
+
+            fixture.componentInstance.size.set(size);
+
+            const icons = await button.getIcons();
+
+            expect(icons).toHaveLength(2);
+
+            for (const icon of icons) {
+                expect(await icon.getSize()).toBe(size);
+                expect(await getFrame(await icon.host())).toEqual(resolveFrame(dimensions.lineHeight, element));
+            }
+        });
+
+        it('puts the icon gap of its size between its label and each icon', async () => {
+            const { fixture, element, button } = await setup(IconsTestHostComponent);
+
+            fixture.componentInstance.size.set(size);
+
+            const gaps = await getIconGaps(button, element);
+            const expected = parseFloat(resolveStyle('column-gap', iconGap, element));
+
+            expect(gaps).toHaveLength(2);
+
+            for (const gap of gaps) {
+                expect(gap).toBeCloseTo(expected, 1);
+            }
         });
 
         it('keeps its size in every variant', async () => {

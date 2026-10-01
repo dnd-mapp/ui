@@ -1,15 +1,15 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Component, signal, type Type } from '@angular/core';
+import { Component, inject, signal, type Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { tokens } from '@dnd-mapp/design-tokens';
 import { IconHarness } from '@dnd-mapp/ui/icons/testing';
-import { resolveStyle } from '@dnd-mapp/ui/testing';
+import { getFrame, resolveFrame, resolveStyle } from '@dnd-mapp/ui/testing';
 import { IconChevronDownComponent } from './glyphs/icon-chevron-down.component';
 import { IconCircleNotchComponent } from './glyphs/icon-circle-notch.component';
 import { IconPlusComponent } from './glyphs/icon-plus.component';
 import { IconXmarkComponent } from './glyphs/icon-xmark.component';
 import { IconGlyphs } from './icon-glyph';
-import { DEFAULT_ICON_SIZE, IconSizes, type IconSize } from './icon-size';
+import { DEFAULT_ICON_SIZE, ICON_SIZE, IconSizes, type IconSize } from './icon-size';
 
 const glyphComponents = [IconChevronDownComponent, IconCircleNotchComponent, IconPlusComponent, IconXmarkComponent];
 
@@ -38,18 +38,17 @@ class NoSizeTestHostComponent {}
 })
 class BareSizeTestHostComponent {}
 
-/** Returns the frame of an icon, as the width and the height that the browser computes for it. */
-async function getFrame(icon: IconHarness) {
-    const host = await icon.host();
-
-    return { width: await host.getCssValue('width'), height: await host.getCssValue('height') };
-}
-
-/** Returns the frame that the line height token of a label style resolves to inside `context`. */
-function toFrame(lineHeight: string, context: HTMLElement) {
-    const size = resolveStyle('height', lineHeight, context);
-
-    return { width: size, height: size };
+@Component({
+    template: `
+        <dma-icon-xmark />
+        <dma-icon-plus size />
+        <dma-icon-chevron-down size="large" />
+    `,
+    imports: [IconChevronDownComponent, IconPlusComponent, IconXmarkComponent],
+    providers: [{ provide: ICON_SIZE, useFactory: () => inject(SizedTestHostComponent).size }],
+})
+class SizedTestHostComponent {
+    public readonly size = signal<IconSize>(IconSizes.small);
 }
 
 describe('Icons', () => {
@@ -108,7 +107,9 @@ describe('Icons', () => {
         const icon = await loader.getHarness(IconHarness);
 
         expect(await icon.getSize()).toBe('medium');
-        expect(await getFrame(icon)).toEqual(toFrame(tokens.text.label.medium['line-height'], element));
+        expect(await getFrame(await icon.host())).toEqual(
+            resolveFrame(tokens.text.label.medium['line-height'], element),
+        );
     });
 
     it('has the Medium size when it sets the size attribute without a value', async () => {
@@ -116,7 +117,46 @@ describe('Icons', () => {
         const icon = await loader.getHarness(IconHarness);
 
         expect(await icon.getSize()).toBe('medium');
-        expect(await getFrame(icon)).toEqual(toFrame(tokens.text.label.medium['line-height'], element));
+        expect(await getFrame(await icon.host())).toEqual(
+            resolveFrame(tokens.text.label.medium['line-height'], element),
+        );
+    });
+
+    it('takes the size that the control around it provides when it sets no size', async () => {
+        const { fixture, element, loader } = await setup(SizedTestHostComponent);
+        const icon = await loader.getHarness(IconHarness.with({ glyph: 'xmark' }));
+
+        expect(await icon.getSize()).toBe('small');
+        expect(await getFrame(await icon.host())).toEqual(
+            resolveFrame(tokens.text.label.small['line-height'], element),
+        );
+
+        fixture.componentInstance.size.set(IconSizes.large);
+
+        expect(await icon.getSize()).toBe('large');
+        expect(await getFrame(await icon.host())).toEqual(
+            resolveFrame(tokens.text.label.large['line-height'], element),
+        );
+    });
+
+    it('takes the size that the control around it provides when it sets the size attribute without a value', async () => {
+        const { element, loader } = await setup(SizedTestHostComponent);
+        const icon = await loader.getHarness(IconHarness.with({ glyph: 'plus' }));
+
+        expect(await icon.getSize()).toBe('small');
+        expect(await getFrame(await icon.host())).toEqual(
+            resolveFrame(tokens.text.label.small['line-height'], element),
+        );
+    });
+
+    it('keeps its own size over the size that the control around it provides', async () => {
+        const { element, loader } = await setup(SizedTestHostComponent);
+        const icon = await loader.getHarness(IconHarness.with({ glyph: 'chevron-down' }));
+
+        expect(await icon.getSize()).toBe('large');
+        expect(await getFrame(await icon.host())).toEqual(
+            resolveFrame(tokens.text.label.large['line-height'], element),
+        );
     });
 
     describe.each<{ size: IconSize; lineHeight: string }>([
@@ -131,7 +171,7 @@ describe('Icons', () => {
 
             for (const icon of icons) {
                 expect(await icon.getSize()).toBe(size);
-                expect(await getFrame(icon)).toEqual(toFrame(lineHeight, element));
+                expect(await getFrame(await icon.host())).toEqual(resolveFrame(lineHeight, element));
             }
         });
 

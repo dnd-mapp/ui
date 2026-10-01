@@ -2,14 +2,20 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ButtonComponent } from '@dnd-mapp/ui/components';
+import { IconChevronDownComponent, IconPlusComponent } from '@dnd-mapp/ui/icons';
 import { ButtonHarness } from './button.harness';
 
 @Component({
     template: `
         <button dma-button type="button" (click)="clicks.set(clicks() + 1)">Save map</button>
         <button dma-button type="button" variant="danger" size="small" disabled>Delete map</button>
+        <button dma-button type="button" variant="secondary">
+            <dma-icon-plus />
+            Add map
+            <dma-icon-chevron-down />
+        </button>
     `,
-    imports: [ButtonComponent],
+    imports: [ButtonComponent, IconChevronDownComponent, IconPlusComponent],
 })
 class TestHostComponent {
     public readonly clicks = signal(0);
@@ -26,7 +32,7 @@ describe('ButtonHarness', () => {
     it('finds every button', async () => {
         const { loader } = setup();
 
-        expect(await loader.getAllHarnesses(ButtonHarness)).toHaveLength(2);
+        expect(await loader.getAllHarnesses(ButtonHarness)).toHaveLength(3);
     });
 
     it('finds a button by its label', async () => {
@@ -110,5 +116,31 @@ describe('ButtonHarness', () => {
 
         await button.blur();
         expect(await button.isFocused()).toBe(false);
+    });
+
+    it('reports the icons of a button, in the order they show', async () => {
+        const { loader } = setup();
+
+        const button = await loader.getHarness(ButtonHarness.with({ text: 'Add map' }));
+        const icons = await button.getIcons();
+
+        expect(await Promise.all(icons.map(async (icon) => icon.getGlyph()))).toEqual(['plus', 'chevron-down']);
+    });
+
+    it('finds the icons of a button by their glyph', async () => {
+        const { loader } = setup();
+
+        const button = await loader.getHarness(ButtonHarness.with({ text: 'Add map' }));
+        const icons = await button.getIcons({ glyph: 'chevron-down' });
+
+        expect(await Promise.all(icons.map(async (icon) => icon.getGlyph()))).toEqual(['chevron-down']);
+    });
+
+    it('reports no icons for a button without them', async () => {
+        const { loader } = setup();
+
+        const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }));
+
+        expect(await button.getIcons()).toEqual([]);
     });
 });
