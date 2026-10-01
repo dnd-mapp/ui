@@ -1,5 +1,6 @@
-import { booleanAttribute, Component, DestroyRef, ElementRef, inject, input, Renderer2 } from '@angular/core';
+import { booleanAttribute, Component, inject, input } from '@angular/core';
 import { ICON_SIZE, IconCircleNotchComponent } from '@dnd-mapp/ui/icons';
+import { blockClicksWhile } from '../click-blocking/block-clicks';
 import { injectLoadingState } from '../loading/loading-state';
 import { buttonSizeAttribute, DEFAULT_BUTTON_SIZE } from './button-size';
 import { buttonVariantAttribute, DEFAULT_BUTTON_VARIANT } from './button-variant';
@@ -58,20 +59,6 @@ export class ButtonComponent {
     protected readonly busy = this.loadingState.busy;
 
     public constructor() {
-        // A busy button keeps focus, so it can't use the disabled attribute. It stops clicks itself instead, before
-        // they reach the listeners of the app or submit a form.
-        const stopListening = inject(Renderer2).listen(
-            inject<ElementRef<HTMLElement>>(ElementRef).nativeElement,
-            'click',
-            (event: Event) => {
-                if (this.busy()) {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-                }
-            },
-            { capture: true },
-        );
-
-        inject(DestroyRef).onDestroy(stopListening);
+        blockClicksWhile(this.busy);
     }
 }
