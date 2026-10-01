@@ -1,5 +1,6 @@
 import { ComponentHarness, HarnessPredicate, type BaseHarnessFilters } from '@angular/cdk/testing';
 import type { ButtonSize, ButtonVariant } from '@dnd-mapp/ui/components';
+import { IconHarness, type IconHarnessFilters } from '@dnd-mapp/ui/icons/testing';
 
 /**
  * The criteria to find a `ButtonHarness` by.
@@ -62,6 +63,14 @@ export class ButtonHarness extends ComponentHarness {
     /** Returns the size of the button. */
     public async getSize(): Promise<ButtonSize> {
         return (await (await this.host()).getAttribute('data-size')) as ButtonSize;
+    }
+
+    /**
+     * Returns the icons in the slots of the button, in the order they show, so a leading icon comes first. Pass
+     * filters to only return the icons that match them.
+     */
+    public async getIcons(filters: IconHarnessFilters = {}): Promise<IconHarness[]> {
+        return this.locatorForAll(IconHarness.with(filters))();
     }
 
     /** Moves focus to the button. */
