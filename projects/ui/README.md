@@ -129,6 +129,21 @@ const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }))
 await button.click();
 ```
 
+The `@dnd-mapp/ui/testing` entry point has `resolveStyle()`, to check that a component of your app is styled with the design tokens. It resolves a CSS value that names tokens to what the browser computes for it inside an element, in the color scheme of that element. It doesn't need `@angular/cdk`.
+
+```ts
+import { tokens } from '@dnd-mapp/design-tokens';
+import { resolveStyle } from '@dnd-mapp/ui/testing';
+
+const header = fixture.nativeElement as HTMLElement;
+
+expect(getComputedStyle(header).paddingInlineStart).toBe(
+    resolveStyle('padding-inline-start', tokens.spacing['16'], header),
+);
+```
+
+It throws when the value names a custom property that nothing defines inside the element, so a misspelled token fails the test.
+
 ## Changelog
 
 Notable changes for consumers of this package are listed in the [changelog](CHANGELOG.md).
