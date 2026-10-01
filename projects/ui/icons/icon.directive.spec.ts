@@ -3,6 +3,7 @@ import { Component, signal, type Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { tokens } from '@dnd-mapp/design-tokens';
 import { IconHarness } from '@dnd-mapp/ui/icons/testing';
+import { resolveStyle } from '@dnd-mapp/ui/testing';
 import { IconChevronDownComponent } from './glyphs/icon-chevron-down.component';
 import { IconCircleNotchComponent } from './glyphs/icon-circle-notch.component';
 import { IconPlusComponent } from './glyphs/icon-plus.component';
@@ -36,28 +37,6 @@ class NoSizeTestHostComponent {}
     imports: [IconXmarkComponent],
 })
 class BareSizeTestHostComponent {}
-
-/**
- * Resolves `value` to what the browser computes for the CSS `property` inside `context`. The value can name
- * tokens, such as `var(--dma-text-label-medium-line-height)`.
- */
-function resolveStyle(property: string, value: string, context: HTMLElement) {
-    for (const [name] of value.matchAll(/--[\w-]+/g)) {
-        if (getComputedStyle(context).getPropertyValue(name) === '') {
-            throw new Error(`The design tokens don't define ${name}.`);
-        }
-    }
-    const probe = document.createElement('span');
-
-    probe.style.setProperty(property, value);
-    context.append(probe);
-
-    const resolved = getComputedStyle(probe).getPropertyValue(property);
-
-    probe.remove();
-
-    return resolved;
-}
 
 /** Returns the frame of an icon, as the width and the height that the browser computes for it. */
 async function getFrame(icon: IconHarness) {

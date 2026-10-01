@@ -3,6 +3,7 @@ import { Component, signal, type Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { tokens } from '@dnd-mapp/design-tokens';
 import { ButtonHarness } from '@dnd-mapp/ui/components/testing';
+import { resolveStyle } from '@dnd-mapp/ui/testing';
 import { ButtonSizes, DEFAULT_BUTTON_SIZE, type ButtonSize } from './button-size';
 import { ButtonVariants, DEFAULT_BUTTON_VARIANT, type ButtonVariant } from './button-variant';
 import { ButtonComponent } from './button.component';
@@ -67,28 +68,6 @@ interface Dimensions {
 }
 
 const transparent = 'rgba(0, 0, 0, 0)';
-
-/**
- * Resolves `value` to what the browser computes for the CSS `property` inside `context`. The value can name
- * tokens, such as `var(--dma-color-background-accent)` or `calc(var(--dma-spacing-16) - 1px)`.
- */
-function resolveStyle(property: string, value: string, context: HTMLElement) {
-    for (const [name] of value.matchAll(/--[\w-]+/g)) {
-        if (getComputedStyle(context).getPropertyValue(name) === '') {
-            throw new Error(`The design tokens don't define ${name}.`);
-        }
-    }
-    const probe = document.createElement('span');
-
-    probe.style.setProperty(property, value);
-    context.append(probe);
-
-    const resolved = getComputedStyle(probe).getPropertyValue(property);
-
-    probe.remove();
-
-    return resolved;
-}
 
 /** Resolves a color token to the color that the browser computes for it inside `context`. */
 function resolveColor(token: string | null, context: HTMLElement) {
