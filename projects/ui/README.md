@@ -85,6 +85,16 @@ Put an icon from `@dnd-mapp/ui/icons` before the label, after it, or both, and i
 <button dma-button type="button" variant="secondary" (click)="openExportMenu()">Export map<dma-icon-chevron-down /></button>
 ```
 
+Set the `loading` input while the action that the button started runs, such as saving a map, and turn it off once the action ends. A loading button blocks clicks through `aria-disabled="true"` rather than the native `disabled` attribute, so it keeps keyboard focus. It keeps its width and its colors too.
+
+After 300ms, a loading button shows a spinning `circle-notch` in place of its label and icons. The spinner stays at least 500ms, so a fast action shows none and a slow one never flashes it. The button blocks clicks until the spinner hides.
+
+Once the spinner shows, screen readers announce "Loading" through a polite live region. Set the `loadingLabel` input to announce another word, such as "Saving".
+
+```html
+<button dma-button type="button" [loading]="saving()" loadingLabel="Saving" (click)="save()">Save map</button>
+```
+
 ## Icons
 
 Import the icons from `@dnd-mapp/ui/icons`. Each glyph has a component of its own, so the bundle of your app holds only the glyphs it imports. The glyphs come from Font Awesome Free, and ship inside this package, so you don't install Font Awesome.
@@ -154,7 +164,7 @@ const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }))
 await button.click();
 ```
 
-`ButtonHarness.getIcons()` returns an `IconHarness` for each icon in a button, in the order they show, so a test can check the glyph and the size of each one.
+`ButtonHarness.getIcons()` returns an `IconHarness` for each icon in the slots of a button, in the order they show, so a test can check the glyph and the size of each one. `ButtonHarness.isLoading()` tells whether a button is loading, and the `loading` filter finds a button by it.
 
 The `@dnd-mapp/ui/testing` entry point has `resolveStyle()`, to check that a component of your app is styled with the design tokens. It resolves a CSS value that names tokens to what the browser computes for it inside an element, in the color scheme of that element. It doesn't need `@angular/cdk`.
 
