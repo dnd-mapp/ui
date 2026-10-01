@@ -2,7 +2,6 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--dma-spacing-8);
     box-sizing: border-box;
     margin: 0;
     padding-block: 0;
@@ -13,6 +12,14 @@
     cursor: pointer;
 }
 
+// The label and the icons sit in one wrapper, which takes the icon gap of the size from the host. The padding stays
+// the same with or without an icon, like in Figma.
+.content {
+    display: inline-flex;
+    align-items: center;
+    gap: inherit;
+}
+
 // The heights of the sizes have no tokens. The border sits inside the padding, like the inside stroke in Figma,
 // so every variant has the same size.
 :host([data-size='small']) {
@@ -21,6 +28,7 @@
     border-radius: var(--dma-radius-4);
     font: var(--dma-text-label-small-font);
     letter-spacing: var(--dma-text-label-small-letter-spacing);
+    gap: var(--dma-spacing-4);
 }
 
 :host([data-size='medium']) {
@@ -29,6 +37,7 @@
     border-radius: var(--dma-radius-8);
     font: var(--dma-text-label-medium-font);
     letter-spacing: var(--dma-text-label-medium-letter-spacing);
+    gap: var(--dma-spacing-8);
 }
 
 :host([data-size='large']) {
@@ -37,6 +46,7 @@
     border-radius: var(--dma-radius-12);
     font: var(--dma-text-label-large-font);
     letter-spacing: var(--dma-text-label-large-letter-spacing);
+    gap: var(--dma-spacing-12);
 }
 
 :host([data-variant='primary']) {
