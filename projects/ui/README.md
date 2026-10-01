@@ -114,6 +114,12 @@ Set the `size` input to `small`, `medium`, or `large`, to match the `Label/Small
 <dma-icon-xmark size="small" />
 ```
 
+Set the `spin` input to turn an icon, such as `circle-notch` in a control that is busy. It turns once per second at a steady speed. When the user prefers reduced motion, it slows to one turn every 3 seconds instead of stopping, because a spinner that stands still looks frozen.
+
+```html
+<dma-icon-circle-notch spin />
+```
+
 To size the icons inside a control of your own after its size, provide the `ICON_SIZE` injection token on the control with a signal of the size.
 
 ```ts
