@@ -1,2 +1,8 @@
-<!-- The label and the icons in its slots share one wrapper, which lays them out with the icon gap. -->
-<span class="content"><ng-content /></span>
+<!--
+    The label and the icons in its slots share one wrapper, which lays them out with the icon gap. While the spinner
+    shows, the wrapper stays in the layout at opacity 0, so the button keeps its width and its accessible name.
+-->
+<span class="content" [class.faded]="spinnerShown()"><ng-content /></span>
+@if (spinnerShown()) {
+    <dma-icon-circle-notch class="spinner" spin />
+}

@@ -17,6 +17,9 @@ export interface ButtonHarnessFilters extends BaseHarnessFilters {
 
     /** Only find buttons in this size. */
     size?: ButtonSize;
+
+    /** Only find buttons that are loading, or only the ones that aren't. */
+    loading?: boolean;
 }
 
 /**
@@ -37,7 +40,8 @@ export class ButtonHarness extends ComponentHarness {
                 async (harness, disabled) => (await harness.isDisabled()) === disabled,
             )
             .addOption('variant', options.variant, async (harness, variant) => (await harness.getVariant()) === variant)
-            .addOption('size', options.size, async (harness, size) => (await harness.getSize()) === size);
+            .addOption('size', options.size, async (harness, size) => (await harness.getSize()) === size)
+            .addOption('loading', options.loading, async (harness, loading) => (await harness.isLoading()) === loading);
     }
 
     /** Clicks the button. */
@@ -55,6 +59,14 @@ export class ButtonHarness extends ComponentHarness {
         return (await this.host()).getProperty<boolean>('disabled');
     }
 
+    /**
+     * Returns whether the button is loading, from the moment its `loading` input turns on until its spinner hides. It
+     * blocks clicks all that time.
+     */
+    public async isLoading(): Promise<boolean> {
+        return (await (await this.host()).getAttribute('data-loading')) !== null;
+    }
+
     /** Returns the variant of the button. */
     public async getVariant(): Promise<ButtonVariant> {
         return (await (await this.host()).getAttribute('data-variant')) as ButtonVariant;
@@ -66,11 +78,11 @@ export class ButtonHarness extends ComponentHarness {
     }
 
     /**
-     * Returns the icons in the slots of the button, in the order they show, so a leading icon comes first. Pass
-     * filters to only return the icons that match them.
+     * Returns the icons in the slots of the button, in the order they show, so a leading icon comes first. The spinner
+     * of a loading button isn't one of them. Pass filters to only return the icons that match them.
      */
     public async getIcons(filters: IconHarnessFilters = {}): Promise<IconHarness[]> {
-        return this.locatorForAll(IconHarness.with(filters))();
+        return (await this.locatorFactory.harnessLoaderFor('.content')).getAllHarnesses(IconHarness.with(filters));
     }
 
     /** Moves focus to the button. */

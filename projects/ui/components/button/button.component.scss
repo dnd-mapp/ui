@@ -1,4 +1,6 @@
 :host {
+    // The spinner of a loading button sits on top of the label, in the middle of the button.
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -18,6 +20,18 @@
     display: inline-flex;
     align-items: center;
     gap: inherit;
+}
+
+// The label and the icons of a loading button stay in the layout, so the button keeps its width. `opacity` hides
+// them from sight only, while `visibility: hidden` would take the label out of the accessible name too.
+.content.faded {
+    opacity: 0;
+}
+
+.spinner {
+    position: absolute;
+    inset: 0;
+    margin: auto;
 }
 
 // The heights of the sizes have no tokens. The border sits inside the padding, like the inside stroke in Figma,
@@ -54,11 +68,11 @@
     background-color: var(--dma-color-background-accent);
 }
 
-:host([data-variant='primary']:hover:not(:disabled)) {
+:host([data-variant='primary']:hover:not(:disabled, [data-loading])) {
     background-color: var(--dma-color-background-accent-hover);
 }
 
-:host([data-variant='primary']:active:not(:disabled)) {
+:host([data-variant='primary']:active:not(:disabled, [data-loading])) {
     background-color: var(--dma-color-background-accent-pressed);
 }
 
@@ -71,13 +85,13 @@
     color: var(--dma-color-text-default);
 }
 
-:host([data-variant='secondary']:hover:not(:disabled)),
-:host([data-variant='ghost']:hover:not(:disabled)) {
+:host([data-variant='secondary']:hover:not(:disabled, [data-loading])),
+:host([data-variant='ghost']:hover:not(:disabled, [data-loading])) {
     background-color: var(--dma-color-background-neutral-hover);
 }
 
-:host([data-variant='secondary']:active:not(:disabled)),
-:host([data-variant='ghost']:active:not(:disabled)) {
+:host([data-variant='secondary']:active:not(:disabled, [data-loading])),
+:host([data-variant='ghost']:active:not(:disabled, [data-loading])) {
     background-color: var(--dma-color-background-neutral-pressed);
 }
 
@@ -86,11 +100,11 @@
     background-color: var(--dma-color-background-danger);
 }
 
-:host([data-variant='danger']:hover:not(:disabled)) {
+:host([data-variant='danger']:hover:not(:disabled, [data-loading])) {
     background-color: var(--dma-color-background-danger-hover);
 }
 
-:host([data-variant='danger']:active:not(:disabled)) {
+:host([data-variant='danger']:active:not(:disabled, [data-loading])) {
     background-color: var(--dma-color-background-danger-pressed);
 }
 
