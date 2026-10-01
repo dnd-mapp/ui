@@ -78,6 +78,13 @@ Set the `size` input to `small`, `medium`, or `large`. It defaults to `medium`, 
 
 Set the native `disabled` attribute to disable the button.
 
+Put an icon from `@dnd-mapp/ui/icons` before the label, after it, or both, and import its component next to `ButtonComponent`. An icon that sets no `size` takes the size of the button. The gap between the label and an icon grows with the size.
+
+```html
+<button dma-button type="button" (click)="add()"><dma-icon-plus />Add map</button>
+<button dma-button type="button" variant="secondary" (click)="openExportMenu()">Export map<dma-icon-chevron-down /></button>
+```
+
 ## Icons
 
 Import the icons from `@dnd-mapp/ui/icons`. Each glyph has a component of its own, so the bundle of your app holds only the glyphs it imports. The glyphs come from Font Awesome Free, and ship inside this package, so you don't install Font Awesome.
@@ -101,10 +108,26 @@ import { IconPlusComponent } from '@dnd-mapp/ui/icons';
 export class MapListHeaderComponent {}
 ```
 
-Set the `size` input to `small`, `medium`, or `large`, to match the `Label/Small`, `Label/Medium`, or `Label/Large` text style beside the icon. It defaults to `medium`. Each size is as high as the line height of its label, so an icon never changes the height of a control.
+Set the `size` input to `small`, `medium`, or `large`, to match the `Label/Small`, `Label/Medium`, or `Label/Large` text style beside the icon. Without it, an icon takes the size of the control around it, such as a button, or `medium` outside one. Each size is as high as the line height of its label, so an icon never changes the height of a control.
 
 ```html
 <dma-icon-xmark size="small" />
+```
+
+To size the icons inside a control of your own after its size, provide the `ICON_SIZE` injection token on the control with a signal of the size.
+
+```ts
+import { Component, inject, input } from '@angular/core';
+import { ICON_SIZE, type IconSize } from '@dnd-mapp/ui/icons';
+
+@Component({
+    selector: 'app-chip',
+    providers: [{ provide: ICON_SIZE, useFactory: () => inject(ChipComponent).size }],
+    template: `<ng-content />`,
+})
+export class ChipComponent {
+    readonly size = input<IconSize>('medium');
+}
 ```
 
 An icon takes the color of the text around it. It's hidden from assistive technology with `aria-hidden="true"`, so give a control that shows only an icon an accessible name of its own.
@@ -128,6 +151,8 @@ const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }))
 
 await button.click();
 ```
+
+`ButtonHarness.getIcons()` returns an `IconHarness` for each icon in a button, in the order they show, so a test can check the glyph and the size of each one.
 
 The `@dnd-mapp/ui/testing` entry point has `resolveStyle()`, to check that a component of your app is styled with the design tokens. It resolves a CSS value that names tokens to what the browser computes for it inside an element, in the color scheme of that element. It doesn't need `@angular/cdk`.
 
