@@ -77,7 +77,18 @@ const meta: Meta<ButtonArgs> = {
     },
     render: (args) => ({
         props: args,
-        template: `<button dma-button type="button" [variant]="variant" [size]="size" [disabled]="disabled">@if (leadingIcon) {<dma-icon-plus />}{{ label }}@if (trailingIcon) {<dma-icon-chevron-down />}</button>`,
+        template: `
+            <button dma-button type="button" [variant]="variant" [size]="size" [disabled]="disabled">
+                @if (leadingIcon) {
+                    <dma-icon-plus />
+                }
+                {{ label }}
+
+                @if (trailingIcon) {
+                    <dma-icon-chevron-down />
+                }
+            </button>
+        `,
     }),
 };
 
