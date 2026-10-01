@@ -1,0 +1,132 @@
+import { Canvas, Controls, Meta } from '@storybook/addon-docs/blocks';
+
+import * as IconButtonStories from './icon-button.stories';
+
+<Meta of={IconButtonStories} />
+
+# Icon button
+
+An icon button starts an action with an icon and no visible label, such as closing a panel. It's built after the `Icon button` component in the `Design system` Figma file, and shares the variants, the sizes, and the states of [`Button`](?path=/docs/components-button--docs).
+
+<Canvas of={IconButtonStories.Primary} />
+
+<Controls of={IconButtonStories.Primary} />
+
+## When to use
+
+Use an icon button where space is tight, such as toolbars and panel headers, and only for well-known icons, such as `xmark` for close. When the icon alone doesn't say what the action does, use a `Button` with a label instead.
+
+Pick the variant after the weight of the action, like for `Button`: `primary` for the one main action in a view, `secondary` for other actions beside it, `ghost` for minor actions that should stay quiet, and `danger` for actions that destroy or remove something.
+
+Pick the size after the space around the icon button. Each size matches the height and the corners of the `Button` in the same size, so the two line up in one row.
+
+| Size     | Square | Icon size | Radius      | Use for                                                 |
+| :------- | -----: | :-------- | :---------- | :------------------------------------------------------ |
+| `small`  |   32px | `small`   | `radius/4`  | Dense layouts, such as table rows and panel headers     |
+| `medium` |   40px | `medium`  | `radius/8`  | Most actions, such as the ones in toolbars and dialogs  |
+| `large`  |   48px | `large`   | `radius/12` | Actions that lead a sparse view, such as an empty state |
+
+<Canvas of={IconButtonStories.Sizes} />
+
+## Usage
+
+Put `dma-icon-button` on a native `button` element, and import `IconButtonComponent` into the component that uses it, next to the component of its icon. The content of the element is the icon, and the `aria-label` input is its accessible name.
+
+```ts
+import { Component } from '@angular/core';
+import { IconButtonComponent } from '@dnd-mapp/ui/components';
+import { IconXmarkComponent } from '@dnd-mapp/ui/icons';
+
+@Component({
+    selector: 'app-layer-panel-header',
+    imports: [IconButtonComponent, IconXmarkComponent],
+    template: `
+        <button dma-icon-button type="button" aria-label="Close panel" variant="ghost" (click)="close()">
+            <dma-icon-xmark />
+        </button>
+    `,
+})
+export class LayerPanelHeaderComponent {
+    close() {}
+}
+```
+
+Set the variant with the `variant` input, and the size with the `size` input. They take the same values and defaults as on `Button`: the `ButtonVariants` and `ButtonSizes` constants hold them, and `variant` defaults to `primary` and `size` to `medium`. An icon that sets no `size` takes the size of the icon button.
+
+The icon button enhances the native element, so it keeps the keyboard support, the form behavior, and the `button` role of the browser. Set `type="button"` unless the icon button submits a form.
+
+## Disabled
+
+Set the `disabled` input to disable the icon button. It sets `aria-disabled="true"` rather than the native `disabled` attribute, because a disabled icon button still shows its tooltip, and a tooltip needs focus and hover.
+
+```html
+<button dma-icon-button type="button" aria-label="Remove layer" variant="danger" [disabled]="locked()" (click)="remove()">
+    <dma-icon-xmark />
+</button>
+```
+
+- A disabled icon button stays in the tab order, and blocks clicks itself, so its click handler never runs and it never submits its form.
+- It shows the focus ring on keyboard focus, as WCAG 2.4.7 requires.
+- The `disabled` attribute in a template sets the input too. The icon button then removes the native attribute from the element.
+
+## Loading
+
+Set the `loading` input while the action that the icon button started runs, and turn it off once the action ends. It works like the `Loading` state of [`Button`](?path=/docs/components-button--docs).
+
+```html
+<button dma-icon-button type="button" aria-label="Add layer" [loading]="adding()" loadingLabel="Adding" (click)="add()">
+    <dma-icon-plus />
+</button>
+```
+
+- From the moment it starts loading, the icon button blocks clicks through `aria-disabled="true"`, but keeps keyboard focus.
+- After 300ms, it shows a spinning `circle-notch` in place of its icon, in the color of the icon. A fast action ends before then and shows no spinner.
+- The spinner stays at least 500ms, so it never flashes. The icon button blocks clicks until the spinner hides.
+- Its `aria-label` stays its accessible name while it loads.
+
+<Canvas of={IconButtonStories.Loading} />
+
+## States
+
+An icon button has the states of `Button`, with the same fills, borders, and icon colors as the label of a `Button`.
+
+| State    | How it's triggered                                    | Look                                                                     |
+| :------- | :---------------------------------------------------- | :----------------------------------------------------------------------- |
+| Default  | The icon button is enabled, and nothing happens to it | The fill, the border, and the icon color of the variant                  |
+| Hover    | The pointer is over the icon button                   | The hover fill of the variant                                            |
+| Pressed  | The icon button is held down                          | The pressed fill of the variant                                          |
+| Focus    | The icon button has keyboard focus                    | An amber ring, 2px outside the icon button                               |
+| Disabled | The `disabled` input is set                           | The `disabled` fill and icon, and the `disabled` border on `secondary`   |
+| Loading  | The `loading` input is set                            | The look of Default, with a spinning `circle-notch` in place of the icon |
+
+Hover and pressed never apply to a disabled or a loading icon button. Unlike a disabled `Button`, a disabled icon button keeps focus, so it shows the focus ring on keyboard focus.
+
+<Canvas of={IconButtonStories.States} />
+
+Switch between the light and the dark theme with the paintbrush in the toolbar.
+
+## Accessibility
+
+- Every icon button needs an accessible name, so `aria-label` is required. Keep it a short verb phrase, such as "Close panel".
+- Every icon button needs a tooltip too, whose text matches its `aria-label`. `@dnd-mapp/ui` has no tooltip yet, so the icon button takes its name from `aria-label` until it does.
+- The icon is hidden from assistive technology, so `aria-label` stays the accessible name.
+- The icon takes the label colors of `Button`, which pass 4.5:1 against their fills, above the 3:1 that graphics need. The focus ring passes 3:1 against the page, in both themes.
+- A disabled or a loading icon button stays in the tab order, and screen readers report it as unavailable through `aria-disabled="true"`.
+- Once the spinner shows, screen readers announce "Loading" through a polite live region outside the icon button. Set `loadingLabel` to announce another word, such as "Adding".
+- When the user prefers reduced motion, the spinner slows to one turn every 3 seconds.
+
+## Testing
+
+The `@dnd-mapp/ui/components/testing` entry point has an `IconButtonHarness` for tests of the components that use the icon button. It needs `@angular/cdk`.
+
+```ts
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { IconButtonHarness } from '@dnd-mapp/ui/components/testing';
+
+const loader = TestbedHarnessEnvironment.loader(fixture);
+const button = await loader.getHarness(IconButtonHarness.with({ label: 'Close panel' }));
+
+await button.click();
+```
+
+Find an icon button by its `label`, which takes a string or a regular expression, by whether it's `disabled` or `loading`, by its `variant`, or by its `size`. The harness can click the icon button, read its accessible name, its variant, and its size, tell whether it's disabled or loading, and move focus to or away from it. Its `getIcon()` method returns an `IconHarness` for its icon, and takes the filters of `IconHarness`, such as `glyph`. It leaves out the spinner of a loading icon button.
