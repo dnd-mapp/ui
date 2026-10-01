@@ -4,8 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { tokens } from '@dnd-mapp/design-tokens';
 import { ButtonHarness } from '@dnd-mapp/ui/components/testing';
 import { IconChevronDownComponent, IconPlusComponent } from '@dnd-mapp/ui/icons';
-import type { IconHarness } from '@dnd-mapp/ui/icons/testing';
-import { resolveStyle } from '@dnd-mapp/ui/testing';
+import { getFrame, resolveFrame, resolveStyle } from '@dnd-mapp/ui/testing';
 import { ButtonSizes, DEFAULT_BUTTON_SIZE, type ButtonSize } from './button-size';
 import { ButtonVariants, DEFAULT_BUTTON_VARIANT, type ButtonVariant } from './button-variant';
 import { ButtonComponent } from './button.component';
@@ -126,20 +125,6 @@ async function getColors(button: ButtonHarness) {
         border: await host.getCssValue('border-top-color'),
         label: await host.getCssValue('color'),
     };
-}
-
-/** Returns the frame of an icon, as the width and the height that the browser computes for it. */
-async function getFrame(icon: IconHarness) {
-    const host = await icon.host();
-
-    return { width: await host.getCssValue('width'), height: await host.getCssValue('height') };
-}
-
-/** Returns the frame that the line height token of a label style resolves to inside `context`. */
-function toFrame(lineHeight: string, context: HTMLElement) {
-    const size = resolveStyle('height', lineHeight, context);
-
-    return { width: size, height: size };
 }
 
 /** Returns the box of the label of the button inside `context`, which is its only text. */
@@ -316,7 +301,7 @@ describe('ButtonComponent', () => {
 
             for (const icon of icons) {
                 expect(await icon.getSize()).toBe(size);
-                expect(await getFrame(icon)).toEqual(toFrame(dimensions.lineHeight, element));
+                expect(await getFrame(await icon.host())).toEqual(resolveFrame(dimensions.lineHeight, element));
             }
         });
 
