@@ -169,6 +169,20 @@ expect(getComputedStyle(header).paddingInlineStart).toBe(
 
 It throws when the value names a custom property that nothing defines inside the element, so a misspelled token fails the test.
 
+`getFrame()` returns the width and the height that the browser computes for an element, or for the host of a component harness. `resolveFrame()` resolves a length that names tokens to a square frame, the same way. Compare the two to check that an element is sized with the tokens, such as an icon that is as high as the line height of the label it pairs with.
+
+```ts
+import { tokens } from '@dnd-mapp/design-tokens';
+import { IconHarness } from '@dnd-mapp/ui/icons/testing';
+import { getFrame, resolveFrame } from '@dnd-mapp/ui/testing';
+
+const icon = await loader.getHarness(IconHarness.with({ glyph: 'plus' }));
+
+expect(await getFrame(await icon.host())).toEqual(
+    resolveFrame(tokens.text.label.medium['line-height'], fixture.nativeElement),
+);
+```
+
 ## Changelog
 
 Notable changes for consumers of this package are listed in the [changelog](CHANGELOG.md).
