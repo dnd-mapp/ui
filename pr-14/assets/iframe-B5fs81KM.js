@@ -1,0 +1,1 @@
+import{t as e}from"./iframe-wpxh5xfg.js";e();
