@@ -19,5 +19,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The `size` input of the icons, with the `small`, `medium`, and `large` sizes. It defaults to `medium`, and so does the bare `size` attribute. The `IconSizes` constant, the `IconSize` type, and `DEFAULT_ICON_SIZE` list the values.
 - The `IconHarness` component harness, in the `@dnd-mapp/ui/icons/testing` entry point, with the `glyph` and `size` filters and the `getGlyph()` and `getSize()` methods.
 - The `THIRD_PARTY_NOTICES.md` file, with the credit and the license of Font Awesome Free.
+- The `@dnd-mapp/ui/testing` entry point, with the `resolveStyle()` function. It resolves a CSS value that names design tokens to what the browser computes for it, to check that a component is styled with the tokens.
 
 [Unreleased]: https://github.com/dnd-mapp/ui/commits/main
