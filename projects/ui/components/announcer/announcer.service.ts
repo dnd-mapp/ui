@@ -1,40 +1,6 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import {
-    Component,
-    createComponent,
-    DestroyRef,
-    EnvironmentInjector,
-    inject,
-    Injectable,
-    ViewEncapsulation,
-} from '@angular/core';
-
-/**
- * Hides the live region of the CDK from sight. The CDK only loads these styles through a private API, or through a
- * stylesheet that an app would have to add, so the announcer loads its own copy of them.
- */
-@Component({
-    selector: 'dma-visually-hidden-styles',
-    template: '',
-    styles: `
-        .cdk-visually-hidden {
-            position: absolute;
-            inset-inline-start: 0;
-            overflow: hidden;
-            inline-size: 1px;
-            block-size: 1px;
-            margin: -1px;
-            padding: 0;
-            border: 0;
-            white-space: nowrap;
-            outline: 0;
-            clip-path: inset(50%);
-            appearance: none;
-        }
-    `,
-    encapsulation: ViewEncapsulation.None,
-})
-class VisuallyHiddenStylesComponent {}
+import { createComponent, DestroyRef, EnvironmentInjector, inject, Injectable } from '@angular/core';
+import { VisuallyHiddenStylesComponent } from './visually-hidden-styles.component';
 
 /**
  * Announces a message to screen readers through the polite live region of the CDK, which sits outside every
