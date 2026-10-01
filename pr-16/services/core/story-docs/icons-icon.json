@@ -1,0 +1,34 @@
+{
+  "components": {
+    "icons-icon": {
+      "id": "icons-icon",
+      "name": "IconPlusComponent",
+      "path": "./projects/ui/icons/icon.stories.ts",
+      "stories": {
+        "icons-icon--icon": {
+          "id": "icons-icon--icon",
+          "name": "Icon",
+          "snippet": "import { Component } from '@angular/core';\nimport { IconPlusComponent } from './glyphs/icon-plus.component';\nimport { IconChevronDownComponent } from './glyphs/icon-chevron-down.component';\nimport { IconCircleNotchComponent } from './glyphs/icon-circle-notch.component';\nimport { IconXmarkComponent } from './glyphs/icon-xmark.component';\n\n@Component({\n  selector: 'app-demo',\n  imports: [IconPlusComponent, IconChevronDownComponent, IconCircleNotchComponent, IconXmarkComponent],\n  template: `<dma-icon-plus [size]=\"size\" [spin]=\"spin\" />`,\n})\nexport class DemoComponent {\n  size = 'medium';\n  spin = false;\n}"
+        },
+        "icons-icon--sizes": {
+          "id": "icons-icon--sizes",
+          "name": "Sizes",
+          "snippet": "import { Component } from '@angular/core';\nimport { IconPlusComponent } from './glyphs/icon-plus.component';\nimport { IconChevronDownComponent } from './glyphs/icon-chevron-down.component';\nimport { IconCircleNotchComponent } from './glyphs/icon-circle-notch.component';\nimport { IconXmarkComponent } from './glyphs/icon-xmark.component';\n\n@Component({\n  selector: 'app-demo',\n  imports: [IconPlusComponent, IconChevronDownComponent, IconCircleNotchComponent, IconXmarkComponent],\n  template: `\n    <div\n        style=\"display: grid; grid-template-columns: repeat(2, max-content); align-items: center; gap: var(--dma-spacing-16) var(--dma-spacing-32)\">\n        <dma-icon-plus size=\"small\" />\n        <span\n            style=\"display: inline-flex; align-items: center; gap: var(--dma-spacing-4); font: var(--dma-text-label-small-font)\">\n            <dma-icon-plus size=\"small\" />\n            Add map\n        </span>\n        <dma-icon-plus size=\"medium\" />\n        <span\n            style=\"display: inline-flex; align-items: center; gap: var(--dma-spacing-8); font: var(--dma-text-label-medium-font)\">\n            <dma-icon-plus size=\"medium\" />\n            Add map\n        </span>\n        <dma-icon-plus size=\"large\" />\n        <span\n            style=\"display: inline-flex; align-items: center; gap: var(--dma-spacing-12); font: var(--dma-text-label-large-font)\">\n            <dma-icon-plus size=\"large\" />\n            Add map\n        </span>\n    </div>`,\n})\nexport class DemoComponent {}",
+          "description": "Every size, alone and beside a label in the text style it pairs with. The frame of each size is as high as the\nline height of that label."
+        },
+        "icons-icon--spinning": {
+          "id": "icons-icon--spinning",
+          "name": "Spinning",
+          "snippet": "import { Component } from '@angular/core';\nimport { IconPlusComponent } from './glyphs/icon-plus.component';\nimport { IconChevronDownComponent } from './glyphs/icon-chevron-down.component';\nimport { IconCircleNotchComponent } from './glyphs/icon-circle-notch.component';\nimport { IconXmarkComponent } from './glyphs/icon-xmark.component';\n\n@Component({\n  selector: 'app-demo',\n  imports: [IconPlusComponent, IconChevronDownComponent, IconCircleNotchComponent, IconXmarkComponent],\n  template: `\n    <div style=\"display: flex; align-items: center; gap: var(--dma-spacing-16)\">\n        <dma-icon-circle-notch size=\"small\" spin />\n        <dma-icon-circle-notch size=\"medium\" spin />\n        <dma-icon-circle-notch size=\"large\" spin />\n    </div>`,\n})\nexport class DemoComponent {}",
+          "description": "`circle-notch` spinning in every size. It turns once per second, or once every 3 seconds when the user prefers\nreduced motion."
+        },
+        "icons-icon--glyphs": {
+          "id": "icons-icon--glyphs",
+          "name": "Glyphs",
+          "snippet": "import { Component } from '@angular/core';\nimport { IconPlusComponent } from './glyphs/icon-plus.component';\nimport { IconChevronDownComponent } from './glyphs/icon-chevron-down.component';\nimport { IconCircleNotchComponent } from './glyphs/icon-circle-notch.component';\nimport { IconXmarkComponent } from './glyphs/icon-xmark.component';\n\n@Component({\n  selector: 'app-demo',\n  imports: [IconPlusComponent, IconChevronDownComponent, IconCircleNotchComponent, IconXmarkComponent],\n  template: `\n    <section\n        style=\"display: grid; gap: var(--dma-spacing-16); font: var(--dma-text-body-small-font)\">\n        <h2\n            style=\"margin: 0; font: var(--dma-text-heading-small-font)\">\n            Core actions\n        </h2>\n        <div\n            style=\"display: grid; grid-template-columns: repeat(4, 8rem); gap: var(--dma-spacing-16)\">\n            <figure\n                style=\"display: grid; justify-items: center; gap: var(--dma-spacing-8); margin: 0\">\n                <dma-icon-chevron-down size=\"large\" />\n                <figcaption>chevron-down</figcaption>\n            </figure>\n            <figure\n                style=\"display: grid; justify-items: center; gap: var(--dma-spacing-8); margin: 0\">\n                <dma-icon-circle-notch size=\"large\" />\n                <figcaption>circle-notch</figcaption>\n            </figure>\n            <figure\n                style=\"display: grid; justify-items: center; gap: var(--dma-spacing-8); margin: 0\">\n                <dma-icon-plus size=\"large\" />\n                <figcaption>plus</figcaption>\n            </figure>\n            <figure\n                style=\"display: grid; justify-items: center; gap: var(--dma-spacing-8); margin: 0\">\n                <dma-icon-xmark size=\"large\" />\n                <figcaption>xmark</figcaption>\n            </figure>\n        </div>\n    </section>`,\n})\nexport class DemoComponent {}",
+          "description": "Every glyph with its name, grouped like the `Glyphs` page of the `Icons` Figma file."
+        }
+      }
+    }
+  }
+}
