@@ -6,6 +6,6 @@
     "compilerOptions": {
         "composite": true,
         "outDir": "../../tsc-out/spec",
-        "types": ["vitest/globals"]
+        "types": ["vitest/globals", "@vitest/browser-playwright"]
     }
 }
