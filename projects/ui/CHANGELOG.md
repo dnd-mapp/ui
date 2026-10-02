@@ -34,5 +34,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The `THIRD_PARTY_NOTICES.md` file, with the credit and the license of Font Awesome Free.
 - The `@dnd-mapp/ui/testing` entry point, with the `resolveStyle()` function. It resolves a CSS value that names design tokens to what the browser computes for it, to check that a component is styled with the tokens.
 - The `getFrame()` and `resolveFrame()` functions and the `Frame` type, in the `@dnd-mapp/ui/testing` entry point. `getFrame()` returns the width and the height that the browser computes for an element or the host of a component harness. `resolveFrame()` resolves a length that names design tokens to a square frame, to check that an element, such as an icon, is sized with the tokens.
+- The `setupHarness()` function and the `HarnessSetup` type, in the `@dnd-mapp/ui/testing` entry point. `setupHarness()` creates a host component through the `TestBed` and loads the first component harness that a query finds inside it. It returns the fixture, the element of the host, the harness loader, and the harness.
+- The `getColors()`, `resolveColors()`, and `resolveColor()` functions, in the `@dnd-mapp/ui/testing` entry point. `getColors()` returns the colors that the browser computes for the CSS properties of an element or the host of a component harness. `resolveColors()` resolves color tokens under the same keys, to check that an element is colored with the tokens. A `null` token resolves to transparent.
+- The `getLiveRegion()` function, in the `@dnd-mapp/ui/testing` entry point, which returns the polite live region that announces to screen readers, such as the one that a loading button announces itself in.
 
 [Unreleased]: https://github.com/dnd-mapp/ui/commits/main
