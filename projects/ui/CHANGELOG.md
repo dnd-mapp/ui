@@ -19,6 +19,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The `size` filter and the `getSize()` method of `ButtonHarness`, to find a button by its size and read it.
 - The `getIcons()` method of `ButtonHarness`, which returns an `IconHarness` for each icon in the slots of the button, in the order they show. It leaves out the spinner of a loading button. It takes the filters of `IconHarness`, such as `glyph`.
 - The `loading` filter and the `isLoading()` method of `ButtonHarness`, to find a button by whether it's loading and read it.
+- The `IconButtonComponent`, with the `button[dma-icon-button]` selector, for an action with only an icon. Import it from `@dnd-mapp/ui/components`. Its icon is its content, and takes its size.
+- The required `aria-label` input of `IconButtonComponent`, its accessible name.
+- The `variant`, `size`, `loading`, and `loadingLabel` inputs of `IconButtonComponent`, with the values and the defaults of `ButtonComponent`.
+- The `disabled` input of `IconButtonComponent`. A disabled icon button uses `aria-disabled` rather than the native `disabled` attribute, so it stays focusable, and it blocks clicks itself.
+- The `IconButtonHarness` component harness, in the `@dnd-mapp/ui/components/testing` entry point, with the `label`, `disabled`, `variant`, `size`, and `loading` filters, and a `getIcon()` method that returns the `IconHarness` of its icon.
 - `@angular/cdk` 22.2 or later as a peer dependency, for the live region that announces a loading button, and for the component harnesses.
 - The `@dnd-mapp/ui/icons` entry point, with a component for each glyph: `IconChevronDownComponent`, `IconCircleNotchComponent`, `IconPlusComponent`, and `IconXmarkComponent`, with the `dma-icon-chevron-down`, `dma-icon-circle-notch`, `dma-icon-plus`, and `dma-icon-xmark` selectors. The glyphs come from Font Awesome Free 7.3.1, under CC BY 4.0, and the `IconGlyphs` constant and the `IconGlyph` type list their names.
 - The `size` input of the icons, with the `small`, `medium`, and `large` sizes. Without it, or with the bare `size` attribute, an icon takes the size of the control around it, or `medium` outside one. The `IconSizes` constant, the `IconSize` type, and `DEFAULT_ICON_SIZE` list the values.
@@ -29,5 +34,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The `THIRD_PARTY_NOTICES.md` file, with the credit and the license of Font Awesome Free.
 - The `@dnd-mapp/ui/testing` entry point, with the `resolveStyle()` function. It resolves a CSS value that names design tokens to what the browser computes for it, to check that a component is styled with the tokens.
 - The `getFrame()` and `resolveFrame()` functions and the `Frame` type, in the `@dnd-mapp/ui/testing` entry point. `getFrame()` returns the width and the height that the browser computes for an element or the host of a component harness. `resolveFrame()` resolves a length that names design tokens to a square frame, to check that an element, such as an icon, is sized with the tokens.
+- The `setupHarness()` function and the `HarnessSetup` type, in the `@dnd-mapp/ui/testing` entry point. `setupHarness()` creates a host component through the `TestBed` and loads the first component harness that a query finds inside it. It returns the fixture, the element of the host, the harness loader, and the harness.
+- The `getColors()`, `resolveColors()`, and `resolveColor()` functions, in the `@dnd-mapp/ui/testing` entry point. `getColors()` returns the colors that the browser computes for the CSS properties of an element or the host of a component harness. `resolveColors()` resolves color tokens under the same keys, to check that an element is colored with the tokens. A `null` token resolves to transparent.
+- The `getLiveRegion()` function, in the `@dnd-mapp/ui/testing` entry point, which returns the polite live region that announces to screen readers, such as the one that a loading button announces itself in.
 
 [Unreleased]: https://github.com/dnd-mapp/ui/commits/main

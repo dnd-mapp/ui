@@ -1,0 +1,51 @@
+@use '../button/button-variants';
+
+:host {
+    // The icon and the spinner of a loading icon button share one grid cell, in the middle of the square.
+    display: inline-grid;
+    place-items: center;
+    box-sizing: border-box;
+    margin: 0;
+    // The fixed square centers the icon, so it needs no padding.
+    padding: var(--dma-spacing-0);
+    // Only `secondary` shows its border. The 1px width has no token.
+    border: 1px solid transparent;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.content,
+.spinner {
+    grid-area: 1 / 1;
+}
+
+// The wrapper is as large as the icon, so the icon sits in the middle of the square.
+.content {
+    display: inline-flex;
+}
+
+.content.faded {
+    opacity: 0;
+}
+
+// The squares have no tokens. The corners match `Button`, so an icon button lines up beside a button in one row.
+:host([data-size='small']) {
+    inline-size: 2rem;
+    block-size: 2rem;
+    border-radius: var(--dma-radius-4);
+}
+
+:host([data-size='medium']) {
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border-radius: var(--dma-radius-8);
+}
+
+:host([data-size='large']) {
+    inline-size: 3rem;
+    block-size: 3rem;
+    border-radius: var(--dma-radius-12);
+}
+
+// A disabled icon button keeps focus, so it can't use `:disabled`.
+@include button-variants.variants('[data-disabled]');

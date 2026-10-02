@@ -1,0 +1,8 @@
+<!--
+    The icon sits in a wrapper, so the spinner can cover it in the same grid cell. While the spinner shows, the
+    wrapper stays in the layout at opacity 0.
+-->
+<span class="content" [class.faded]="spinnerShown()"><ng-content /></span>
+@if (spinnerShown()) {
+    <dma-icon-circle-notch class="spinner" spin />
+}

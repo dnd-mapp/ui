@@ -1,12 +1,19 @@
 import type { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component, signal, type Type } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
 import { tokens } from '@dnd-mapp/design-tokens';
 import { ButtonHarness } from '@dnd-mapp/ui/components/testing';
 import { IconChevronDownComponent, IconPlusComponent } from '@dnd-mapp/ui/icons';
 import { IconHarness } from '@dnd-mapp/ui/icons/testing';
-import { getFrame, resolveFrame, resolveStyle } from '@dnd-mapp/ui/testing';
+import {
+    getColors,
+    getFrame,
+    getLiveRegion,
+    resolveColor,
+    resolveColors,
+    resolveFrame,
+    resolveStyle,
+    setupHarness,
+} from '@dnd-mapp/ui/testing';
 import { userEvent } from 'vitest/browser';
 import { ButtonSizes, DEFAULT_BUTTON_SIZE, type ButtonSize } from './button-size';
 import { ButtonVariants, DEFAULT_BUTTON_VARIANT, type ButtonVariant } from './button-variant';
@@ -110,21 +117,6 @@ interface Dimensions {
     lineHeight: string;
 }
 
-const transparent = 'rgba(0, 0, 0, 0)';
-
-/** Resolves a color token to the color that the browser computes for it inside `context`. */
-function resolveColor(token: string | null, context: HTMLElement) {
-    return token === null ? transparent : resolveStyle('color', token, context);
-}
-
-function toColors({ fill, border, label }: Look, context: HTMLElement) {
-    return {
-        fill: resolveColor(fill, context),
-        border: resolveColor(border, context),
-        label: resolveColor(label, context),
-    };
-}
-
 /** Resolves the tokens of a size to what the browser computes for them inside `context`. */
 function toDimensions({ height, padding, radius, fontSize, lineHeight }: Dimensions, context: HTMLElement) {
     return {
@@ -137,8 +129,8 @@ function toDimensions({ height, padding, radius, fontSize, lineHeight }: Dimensi
     };
 }
 
-async function getDimensions(button: ButtonHarness) {
-    const host = await button.host();
+async function getDimensions(harness: ButtonHarness) {
+    const host = await harness.host();
 
     return {
         height: (await host.getDimensions()).height,
@@ -149,14 +141,9 @@ async function getDimensions(button: ButtonHarness) {
     };
 }
 
-async function getColors(button: ButtonHarness) {
-    const host = await button.host();
-
-    return {
-        fill: await host.getCssValue('background-color'),
-        border: await host.getCssValue('border-top-color'),
-        label: await host.getCssValue('color'),
-    };
+/** Returns the colors of the button, under the keys of a `Look`. */
+async function getLook(harness: ButtonHarness) {
+    return getColors(await harness.host(), { fill: 'background-color', border: 'border-top-color', label: 'color' });
 }
 
 /** Returns the box of the label of the button inside `context`, which is its only text. */
@@ -171,8 +158,10 @@ function getLabelBox(context: HTMLElement) {
 }
 
 /** Returns the space between the label of the button and each of its icons, in pixels. */
-async function getIconGaps(button: ButtonHarness, context: HTMLElement) {
-    const icons = await Promise.all((await button.getIcons()).map(async (icon) => (await icon.host()).getDimensions()));
+async function getIconGaps(harness: ButtonHarness, context: HTMLElement) {
+    const icons = await Promise.all(
+        (await harness.getIcons()).map(async (icon) => (await icon.host()).getDimensions()),
+    );
     // The harness renders the changes of the test before it measures the icons, so measure the label after them.
     const label = getLabelBox(context);
 
@@ -195,90 +184,80 @@ const primaryLook: Look = {
     label: tokens.color.text['on-accent'],
 };
 
-/** Returns the live region that announces to screen readers, if there is one. */
-function getLiveRegion() {
-    return document.querySelector('[aria-live="polite"]');
-}
-
 describe('ButtonComponent', () => {
     async function setup<T>(host: Type<T>) {
-        const fixture = TestBed.createComponent(host);
-        const element = fixture.nativeElement as HTMLElement;
-        const loader = TestbedHarnessEnvironment.loader(fixture);
-        const button = await loader.getHarness(ButtonHarness);
-
-        return { fixture, element, loader, button };
+        return setupHarness(host, ButtonHarness);
     }
 
     it('shows its content as the label', async () => {
-        const { button } = await setup(TestHostComponent);
+        const { harness } = await setup(TestHostComponent);
 
-        expect(await button.getText()).toBe('Save map');
+        expect(await harness.getText()).toBe('Save map');
     });
 
     it('keeps its label as its text when it shows icons', async () => {
-        const { button } = await setup(IconsTestHostComponent);
+        const { harness } = await setup(IconsTestHostComponent);
 
-        expect(await button.getText()).toBe('Add map');
+        expect(await harness.getText()).toBe('Add map');
     });
 
     it('reports a click to its host', async () => {
-        const { fixture, button } = await setup(TestHostComponent);
+        const { fixture, harness } = await setup(TestHostComponent);
 
-        await button.click();
+        await harness.click();
 
         expect(fixture.componentInstance.clicks()).toBe(1);
     });
 
     it('shows the pointer cursor', async () => {
-        const { button } = await setup(TestHostComponent);
+        const { harness } = await setup(TestHostComponent);
 
-        expect(await (await button.host()).getCssValue('cursor')).toBe('pointer');
+        expect(await (await harness.host()).getCssValue('cursor')).toBe('pointer');
     });
 
     it('shows the not-allowed cursor when disabled', async () => {
-        const { fixture, button } = await setup(TestHostComponent);
+        const { fixture, harness } = await setup(TestHostComponent);
 
         fixture.componentInstance.disabled.set(true);
 
-        expect(await button.isDisabled()).toBe(true);
-        expect(await (await button.host()).getCssValue('cursor')).toBe('not-allowed');
+        expect(await harness.isDisabled()).toBe(true);
+        expect(await (await harness.host()).getCssValue('cursor')).toBe('not-allowed');
     });
 
     it("doesn't take focus when disabled, so it never shows the focus ring", async () => {
-        const { fixture, button } = await setup(TestHostComponent);
+        const { fixture, harness } = await setup(TestHostComponent);
 
         fixture.componentInstance.disabled.set(true);
 
-        expect(await button.isDisabled()).toBe(true);
+        expect(await harness.isDisabled()).toBe(true);
 
-        await button.focus();
+        await harness.focus();
 
-        expect(await button.isFocused()).toBe(false);
+        expect(await harness.isFocused()).toBe(false);
     });
 
     it('has the Primary variant when it sets no variant', async () => {
-        const { element, button } = await setup(NoVariantTestHostComponent);
+        const { element, harness } = await setup(NoVariantTestHostComponent);
 
-        expect(await getColors(button)).toEqual(toColors(primaryLook, element));
+        expect(await getLook(harness)).toEqual(resolveColors(primaryLook, element));
     });
 
     it('has the Primary variant when it sets the variant attribute without a value', async () => {
-        const { element, button } = await setup(BareVariantTestHostComponent);
+        const { element, harness } = await setup(BareVariantTestHostComponent);
 
-        expect(await getColors(button)).toEqual(toColors(primaryLook, element));
+        expect(await getLook(harness)).toEqual(resolveColors(primaryLook, element));
     });
 
     it('has the Medium size when it sets no size', async () => {
-        const { element, button } = await setup(NoVariantTestHostComponent);
+        const { element, harness } = await setup(NoVariantTestHostComponent);
 
-        expect(await getDimensions(button)).toEqual(toDimensions(mediumDimensions, element));
+        expect(await getDimensions(harness)).toEqual(toDimensions(mediumDimensions, element));
     });
 
     it('has the Medium size when it sets the size attribute without a value', async () => {
-        const { element, button } = await setup(BareSizeTestHostComponent);
+        const { element, harness } = await setup(BareSizeTestHostComponent);
 
-        expect(await getDimensions(button)).toEqual(toDimensions(mediumDimensions, element));
+        expect(await getDimensions(harness)).toEqual(toDimensions(mediumDimensions, element));
     });
 
     describe.each<{ size: ButtonSize; dimensions: Dimensions; iconGap: string }>([
@@ -311,29 +290,29 @@ describe('ButtonComponent', () => {
         },
     ])('in the $size size', ({ size, dimensions, iconGap }) => {
         it('has the height, padding, radius, and text style of its size', async () => {
-            const { fixture, element, button } = await setup(TestHostComponent);
+            const { fixture, element, harness } = await setup(TestHostComponent);
 
             fixture.componentInstance.size.set(size);
 
-            expect(await button.getText()).toBe('Save map');
-            expect(await getDimensions(button)).toEqual(toDimensions(dimensions, element));
+            expect(await harness.getText()).toBe('Save map');
+            expect(await getDimensions(harness)).toEqual(toDimensions(dimensions, element));
         });
 
         it('keeps its height and padding when it shows icons', async () => {
-            const { fixture, element, button } = await setup(IconsTestHostComponent);
+            const { fixture, element, harness } = await setup(IconsTestHostComponent);
 
             fixture.componentInstance.size.set(size);
 
-            expect(await button.getText()).toBe('Add map');
-            expect(await getDimensions(button)).toEqual(toDimensions(dimensions, element));
+            expect(await harness.getText()).toBe('Add map');
+            expect(await getDimensions(harness)).toEqual(toDimensions(dimensions, element));
         });
 
         it('sizes the icons in its slots after its size', async () => {
-            const { fixture, element, button } = await setup(IconsTestHostComponent);
+            const { fixture, element, harness } = await setup(IconsTestHostComponent);
 
             fixture.componentInstance.size.set(size);
 
-            const icons = await button.getIcons();
+            const icons = await harness.getIcons();
 
             expect(icons).toHaveLength(2);
 
@@ -344,11 +323,11 @@ describe('ButtonComponent', () => {
         });
 
         it('puts the icon gap of its size between its label and each icon', async () => {
-            const { fixture, element, button } = await setup(IconsTestHostComponent);
+            const { fixture, element, harness } = await setup(IconsTestHostComponent);
 
             fixture.componentInstance.size.set(size);
 
-            const gaps = await getIconGaps(button, element);
+            const gaps = await getIconGaps(harness, element);
             const expected = parseFloat(resolveStyle('column-gap', iconGap, element));
 
             expect(gaps).toHaveLength(2);
@@ -359,15 +338,15 @@ describe('ButtonComponent', () => {
         });
 
         it('keeps its size in every variant', async () => {
-            const { fixture, button } = await setup(TestHostComponent);
+            const { fixture, harness } = await setup(TestHostComponent);
 
             fixture.componentInstance.size.set(size);
 
             for (const variant of Object.values(ButtonVariants)) {
                 fixture.componentInstance.variant.set(variant);
 
-                expect(await button.getText()).toBe('Save map');
-                expect((await (await button.host()).getDimensions()).height).toBe(dimensions.height);
+                expect(await harness.getText()).toBe('Save map');
+                expect((await (await harness.host()).getDimensions()).height).toBe(dimensions.height);
             }
         });
     });
@@ -382,13 +361,13 @@ describe('ButtonComponent', () => {
         });
 
         async function setupLoading() {
-            const { fixture, element, loader, button } = await setup(LoadingTestHostComponent);
+            const { fixture, element, loader, harness } = await setup(LoadingTestHostComponent);
 
             fixture.componentInstance.loading.set(true);
 
-            expect(await button.isLoading()).toBe(true);
+            expect(await harness.isLoading()).toBe(true);
 
-            return { fixture, element, loader, button };
+            return { fixture, element, loader, harness };
         }
 
         /** Lets `time` milliseconds pass, then returns the spinner of the button, or `null` while it shows none. */
@@ -399,54 +378,54 @@ describe('ButtonComponent', () => {
         }
 
         it('is loading when it sets the loading attribute without a value', async () => {
-            const { button } = await setup(BareLoadingTestHostComponent);
+            const { harness } = await setup(BareLoadingTestHostComponent);
 
-            expect(await button.isLoading()).toBe(true);
+            expect(await harness.isLoading()).toBe(true);
         });
 
         it('is not loading when it sets no loading', async () => {
-            const { button } = await setup(TestHostComponent);
+            const { harness } = await setup(TestHostComponent);
 
-            expect(await button.isLoading()).toBe(false);
-            expect(await (await button.host()).getAttribute('aria-disabled')).toBeNull();
+            expect(await harness.isLoading()).toBe(false);
+            expect(await (await harness.host()).getAttribute('aria-disabled')).toBeNull();
         });
 
         it('uses aria-disabled rather than the disabled attribute from the moment it starts', async () => {
-            const { button } = await setupLoading();
+            const { harness } = await setupLoading();
 
-            expect(await (await button.host()).getAttribute('aria-disabled')).toBe('true');
-            expect(await button.isDisabled()).toBe(false);
+            expect(await (await harness.host()).getAttribute('aria-disabled')).toBe('true');
+            expect(await harness.isDisabled()).toBe(false);
         });
 
         it('blocks clicks, so it never starts its action twice', async () => {
-            const { fixture, button } = await setupLoading();
+            const { fixture, harness } = await setupLoading();
 
-            await button.click();
+            await harness.click();
 
             expect(fixture.componentInstance.clicks()).toBe(0);
         });
 
         it("doesn't submit its form", async () => {
-            const { fixture, button } = await setupLoading();
+            const { fixture, harness } = await setupLoading();
 
-            await button.click();
+            await harness.click();
 
             expect(fixture.componentInstance.submits()).toBe(0);
         });
 
         it('keeps keyboard focus, and can take it', async () => {
-            const { fixture, button } = await setup(LoadingTestHostComponent);
+            const { fixture, harness } = await setup(LoadingTestHostComponent);
 
-            await button.focus();
+            await harness.focus();
             fixture.componentInstance.loading.set(true);
 
-            expect(await button.isLoading()).toBe(true);
-            expect(await button.isFocused()).toBe(true);
+            expect(await harness.isLoading()).toBe(true);
+            expect(await harness.isFocused()).toBe(true);
 
-            await button.blur();
-            await button.focus();
+            await harness.blur();
+            await harness.focus();
 
-            expect(await button.isFocused()).toBe(true);
+            expect(await harness.isFocused()).toBe(true);
         });
 
         it('shows no spinner for its first 300ms, so a fast action shows none', async () => {
@@ -468,24 +447,24 @@ describe('ButtonComponent', () => {
         });
 
         it('leaves the spinner out of the icons in its slots', async () => {
-            const { loader, button } = await setupLoading();
+            const { loader, harness } = await setupLoading();
 
             expect(await getSpinnerAfter(loader, 300)).not.toBeNull();
 
-            const icons = await button.getIcons();
+            const icons = await harness.getIcons();
 
             expect(await Promise.all(icons.map(async (icon) => icon.getGlyph()))).toEqual(['plus', 'chevron-down']);
         });
 
         it('hides its label and icons at opacity 0, and keeps its width and its label', async () => {
-            const { fixture, element, loader, button } = await setup(LoadingTestHostComponent);
-            const width = (await (await button.host()).getDimensions()).width;
+            const { fixture, element, loader, harness } = await setup(LoadingTestHostComponent);
+            const width = (await (await harness.host()).getDimensions()).width;
 
             fixture.componentInstance.loading.set(true);
 
             expect(await getSpinnerAfter(loader, 300)).not.toBeNull();
-            expect((await (await button.host()).getDimensions()).width).toBe(width);
-            expect(await button.getText()).toBe('Save map');
+            expect((await (await harness.host()).getDimensions()).width).toBe(width);
+            expect(await harness.getText()).toBe('Save map');
 
             const content = element.querySelector('.content');
 
@@ -494,10 +473,10 @@ describe('ButtonComponent', () => {
         });
 
         it('centers the spinner in the button', async () => {
-            const { loader, button } = await setupLoading();
+            const { loader, harness } = await setupLoading();
 
             const spinner = await getSpinnerAfter(loader, 300);
-            const box = await (await button.host()).getDimensions();
+            const box = await (await harness.host()).getDimensions();
             const spinnerBox = await (await spinner?.host())?.getDimensions();
 
             expect(spinnerBox && spinnerBox.left + spinnerBox.width / 2).toBeCloseTo(box.left + box.width / 2, 1);
@@ -505,28 +484,28 @@ describe('ButtonComponent', () => {
         });
 
         it('fills the spinner with the color of its label', async () => {
-            const { loader, button } = await setupLoading();
+            const { loader, harness } = await setupLoading();
 
             const spinner = await getSpinnerAfter(loader, 300);
 
             expect(await (await spinner?.host())?.getCssValue('fill')).toBe(
-                await (await button.host()).getCssValue('color'),
+                await (await harness.host()).getCssValue('color'),
             );
         });
 
         it('stops loading without a spinner when it ends within 300ms', async () => {
-            const { fixture, loader, button } = await setupLoading();
+            const { fixture, loader, harness } = await setupLoading();
 
             vi.advanceTimersByTime(299);
             fixture.componentInstance.loading.set(false);
 
-            expect(await button.isLoading()).toBe(false);
-            expect(await (await button.host()).getAttribute('aria-disabled')).toBeNull();
+            expect(await harness.isLoading()).toBe(false);
+            expect(await (await harness.host()).getAttribute('aria-disabled')).toBeNull();
             expect(await getSpinnerAfter(loader, 1000)).toBeNull();
         });
 
         it('keeps the spinner for at least 500ms, so it never flashes', async () => {
-            const { fixture, loader, button } = await setupLoading();
+            const { fixture, loader, harness } = await setupLoading();
 
             expect(await getSpinnerAfter(loader, 300)).not.toBeNull();
 
@@ -534,22 +513,22 @@ describe('ButtonComponent', () => {
             fixture.componentInstance.loading.set(false);
 
             expect(await getSpinnerAfter(loader, 399)).not.toBeNull();
-            expect(await button.isLoading()).toBe(true);
+            expect(await harness.isLoading()).toBe(true);
 
-            await button.click();
+            await harness.click();
 
             expect(fixture.componentInstance.clicks()).toBe(0);
             expect(await getSpinnerAfter(loader, 1)).toBeNull();
-            expect(await button.isLoading()).toBe(false);
-            expect(await (await button.host()).getAttribute('aria-disabled')).toBeNull();
+            expect(await harness.isLoading()).toBe(false);
+            expect(await (await harness.host()).getAttribute('aria-disabled')).toBeNull();
 
-            await button.click();
+            await harness.click();
 
             expect(fixture.componentInstance.clicks()).toBe(1);
         });
 
         it('hides the spinner at once when it ends after 500ms', async () => {
-            const { fixture, loader, button } = await setupLoading();
+            const { fixture, loader, harness } = await setupLoading();
 
             expect(await getSpinnerAfter(loader, 800)).not.toBeNull();
 
@@ -557,11 +536,11 @@ describe('ButtonComponent', () => {
             fixture.detectChanges();
 
             expect(await getSpinnerAfter(loader, 0)).toBeNull();
-            expect(await button.isLoading()).toBe(false);
+            expect(await harness.isLoading()).toBe(false);
         });
 
         it('keeps the spinner when it starts loading again before the spinner hides', async () => {
-            const { fixture, loader, button } = await setupLoading();
+            const { fixture, loader, harness } = await setupLoading();
 
             expect(await getSpinnerAfter(loader, 300)).not.toBeNull();
 
@@ -572,7 +551,7 @@ describe('ButtonComponent', () => {
             fixture.componentInstance.loading.set(true);
 
             expect(await getSpinnerAfter(loader, 1000)).not.toBeNull();
-            expect(await button.isLoading()).toBe(true);
+            expect(await harness.isLoading()).toBe(true);
         });
 
         it('announces its loading label politely once the spinner shows', async () => {
@@ -597,12 +576,12 @@ describe('ButtonComponent', () => {
         });
 
         it('announces nothing when it stops loading within 300ms', async () => {
-            const { fixture, button } = await setupLoading();
+            const { fixture, harness } = await setupLoading();
 
             vi.advanceTimersByTime(200);
             fixture.componentInstance.loading.set(false);
 
-            expect(await button.isLoading()).toBe(false);
+            expect(await harness.isLoading()).toBe(false);
 
             vi.advanceTimersByTime(1000);
 
@@ -622,8 +601,8 @@ describe('ButtonComponent', () => {
     });
 
     it('shows no hover fill while loading', async () => {
-        const { fixture, element, button } = await setup(LoadingTestHostComponent);
-        const host = await button.host();
+        const { fixture, element, harness } = await setup(LoadingTestHostComponent);
+        const host = await harness.host();
 
         await userEvent.hover(element.querySelector('button') ?? element);
 
@@ -633,7 +612,7 @@ describe('ButtonComponent', () => {
 
         fixture.componentInstance.loading.set(true);
 
-        expect(await button.isLoading()).toBe(true);
+        expect(await harness.isLoading()).toBe(true);
         expect(await host.getCssValue('background-color')).toBe(resolveColor(tokens.color.background.accent, element));
     });
 
@@ -660,36 +639,36 @@ describe('ButtonComponent', () => {
         },
     ])('in the $variant variant', ({ variant, enabled, disabled }) => {
         async function setupVariant() {
-            const { fixture, element, button } = await setup(TestHostComponent);
+            const { fixture, element, harness } = await setup(TestHostComponent);
 
             fixture.componentInstance.variant.set(variant);
 
-            return { fixture, element, button };
+            return { fixture, element, harness };
         }
 
         it('has the colors of its Default state', async () => {
-            const { element, button } = await setupVariant();
+            const { element, harness } = await setupVariant();
 
-            expect(await getColors(button)).toEqual(toColors(enabled, element));
+            expect(await getLook(harness)).toEqual(resolveColors(enabled, element));
         });
 
         it('has the colors of its Disabled state when disabled', async () => {
-            const { fixture, element, button } = await setupVariant();
+            const { fixture, element, harness } = await setupVariant();
 
             fixture.componentInstance.disabled.set(true);
 
-            expect(await button.isDisabled()).toBe(true);
-            expect(await getColors(button)).toEqual(toColors(disabled, element));
+            expect(await harness.isDisabled()).toBe(true);
+            expect(await getLook(harness)).toEqual(resolveColors(disabled, element));
         });
 
         it('keeps the colors of its Default state while loading, so the user sees which action runs', async () => {
-            const { fixture, element, button } = await setup(LoadingTestHostComponent);
+            const { fixture, element, harness } = await setup(LoadingTestHostComponent);
 
             fixture.componentInstance.variant.set(variant);
             fixture.componentInstance.loading.set(true);
 
-            expect(await button.isLoading()).toBe(true);
-            expect(await getColors(button)).toEqual(toColors(enabled, element));
+            expect(await harness.isLoading()).toBe(true);
+            expect(await getLook(harness)).toEqual(resolveColors(enabled, element));
         });
     });
 });
