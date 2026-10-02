@@ -11,7 +11,7 @@ A presentational component only renders what it's given. It takes its data throu
 
 - Angular 22.2 or later, with `@angular/core` and `@angular/common`.
 - `@dnd-mapp/design-tokens` 1.0 or later.
-- `@angular/cdk` 22.2 or later, for the live region that announces a loading button, and for the component harnesses.
+- `@angular/cdk` 22.2 or later, for the live region that announces a loading button, for the component harnesses, and for `setupHarness()`.
 
 ## Installation
 
@@ -179,11 +179,22 @@ const button = await loader.getHarness(ButtonHarness.with({ text: 'Save map' }))
 await button.click();
 ```
 
+`setupHarness()` from `@dnd-mapp/ui/testing` creates a host component through the `TestBed` and loads the first harness that a query finds inside it. It returns the fixture, the element of the host, the harness loader, and the harness. Configure the `TestBed` before you call it.
+
+```ts
+import { ButtonHarness } from '@dnd-mapp/ui/components/testing';
+import { setupHarness } from '@dnd-mapp/ui/testing';
+
+const { fixture, harness } = await setupHarness(SaveMapComponent, ButtonHarness.with({ text: 'Save map' }));
+
+await harness.click();
+```
+
 `IconButtonHarness.getIcon()` returns the `IconHarness` of the icon of an icon button, and the `label` filter finds an icon button by its `aria-label`.
 
 `ButtonHarness.getIcons()` returns an `IconHarness` for each icon in the slots of a button, in the order they show, so a test can check the glyph and the size of each one. `ButtonHarness.isLoading()` tells whether a button is loading, and the `loading` filter finds a button by it.
 
-The `@dnd-mapp/ui/testing` entry point has `resolveStyle()`, to check that a component of your app is styled with the design tokens. It resolves a CSS value that names tokens to what the browser computes for it inside an element, in the color scheme of that element. It doesn't need `@angular/cdk`.
+The `@dnd-mapp/ui/testing` entry point has `resolveStyle()`, to check that a component of your app is styled with the design tokens. It resolves a CSS value that names tokens to what the browser computes for it inside an element, in the color scheme of that element.
 
 ```ts
 import { tokens } from '@dnd-mapp/design-tokens';
@@ -211,6 +222,19 @@ expect(await getFrame(await icon.host())).toEqual(
     resolveFrame(tokens.text.label.medium['line-height'], fixture.nativeElement),
 );
 ```
+
+`getColors()` returns the colors that the browser computes for an element, or for the host of a component harness, one for each CSS property that you name. `resolveColors()` resolves color tokens under the same keys, and resolves `null` to transparent, for a fill or a border that an element doesn't show. Compare the two to check that an element is colored with the tokens. `resolveColor()` resolves a single token.
+
+```ts
+import { tokens } from '@dnd-mapp/design-tokens';
+import { getColors, resolveColors } from '@dnd-mapp/ui/testing';
+
+expect(await getColors(await button.host(), { fill: 'background-color', border: 'border-top-color' })).toEqual(
+    resolveColors({ fill: tokens.color.background.accent, border: null }, fixture.nativeElement),
+);
+```
+
+`getLiveRegion()` returns the polite live region that announces to screen readers, or `null` while there is none. A loading button announces its `loadingLabel` there once its spinner shows. The `LiveAnnouncer` of the CDK waits 100ms before it writes the announcement.
 
 ## Changelog
 
