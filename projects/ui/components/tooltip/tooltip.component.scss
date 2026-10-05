@@ -1,0 +1,33 @@
+:host {
+    display: block;
+    box-sizing: border-box;
+    // The tooltip is as wide as its text, and wraps past 240px. The width has no token.
+    inline-size: max-content;
+    max-inline-size: 15rem;
+    padding: var(--dma-spacing-4) var(--dma-spacing-12);
+    border-radius: var(--dma-radius-4);
+    // The inverse fill stands out from the page in both themes, so the tooltip needs no border or shadow.
+    background-color: var(--dma-color-background-inverse);
+    color: var(--dma-color-text-on-inverse);
+    font: var(--dma-text-body-small-font);
+    letter-spacing: var(--dma-text-body-small-letter-spacing);
+    overflow-wrap: break-word;
+}
+
+// The gap sits on the side that faces the trigger, so it moves along when the tooltip flips. Left and right are
+// sides of the screen, so they use physical margins.
+:host([data-placement='top']) {
+    margin-block-end: var(--dma-spacing-8);
+}
+
+:host([data-placement='bottom']) {
+    margin-block-start: var(--dma-spacing-8);
+}
+
+:host([data-placement='left']) {
+    margin-right: var(--dma-spacing-8);
+}
+
+:host([data-placement='right']) {
+    margin-left: var(--dma-spacing-8);
+}

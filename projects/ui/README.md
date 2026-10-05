@@ -11,7 +11,7 @@ A presentational component only renders what it's given. It takes its data throu
 
 - Angular 22.2 or later, with `@angular/core` and `@angular/common`.
 - `@dnd-mapp/design-tokens` 1.0 or later.
-- `@angular/cdk` 22.2 or later, for the live region that announces a loading button, for the component harnesses, and for `setupHarness()`.
+- `@angular/cdk` 22.2 or later, for the live region that announces a loading button, for the overlay of the tooltip, for the component harnesses, and for `setupHarness()`.
 
 ## Installation
 
@@ -39,6 +39,7 @@ Import the components from `@dnd-mapp/ui/components`.
 |:----------------------|:--------------------------|:--------------------|:-----------------------------------------------------|
 | `ButtonComponent`     | `button[dma-button]`      | `ButtonHarness`     | An action, such as saving a map                      |
 | `IconButtonComponent` | `button[dma-icon-button]` | `IconButtonHarness` | An action with only an icon, such as closing a panel |
+| `TooltipDirective`    | `[dmaTooltip]`            | `TooltipHarness`    | The name of a control with only an icon              |
 
 ### Button
 
@@ -109,6 +110,30 @@ Put `dma-icon-button` on a native `button` element, give it an icon from `@dnd-m
 It takes the `variant`, `size`, `loading`, and `loadingLabel` inputs of `ButtonComponent`, with the same values and defaults. Each size is a square as high as the button of that size, and the icon takes the size of the icon button.
 
 Set the `disabled` input to disable it. A disabled icon button uses `aria-disabled="true"` rather than the native `disabled` attribute, so it stays focusable and can show its tooltip, and it blocks clicks itself. The `disabled` attribute in a template works too: the icon button removes it from the element.
+
+Give every icon button a [tooltip](#tooltip) with the same text as its `aria-label`.
+
+### Tooltip
+
+Put the `dmaTooltip` directive on a control that shows only an icon, such as an icon button, and set it to the name of the control. Import `TooltipDirective` into the component that uses it. The directive creates the tooltip in an overlay of the CDK while it shows, and names the control with its text through `aria-labelledby`. The CDK adds the styles of its overlay to the page itself, so the tooltip needs no stylesheet such as `@angular/cdk/overlay-prebuilt.css`.
+
+```html
+<button dma-icon-button type="button" aria-label="Close panel" variant="ghost" dmaTooltip="Close panel" (click)="close()">
+    <dma-icon-xmark />
+</button>
+```
+
+The tooltip shows after 500ms of hover, or at once on keyboard focus, and hides 100ms after the pointer leaves or on `Escape`. After one tooltip closes, the next one shows at once for 300ms. On touch, holding the control for 500ms shows the tooltip without pressing the control, and it hides 1.5s after the finger lifts.
+
+It shows above the control by default. Set `dmaTooltipPlacement` to `bottom`, `left`, or `right` to show it on another side. When it doesn't fit there, it flips to the opposite side.
+
+```html
+<button dma-icon-button type="button" aria-label="Add layer" dmaTooltip="Add layer" dmaTooltipPlacement="right">
+    <dma-icon-plus />
+</button>
+```
+
+The tooltip needs hover and focus, so it doesn't show on a control with the native `disabled` attribute. A disabled icon button keeps both, so its tooltip still shows.
 
 ## Icons
 
@@ -191,6 +216,8 @@ await harness.click();
 ```
 
 `IconButtonHarness.getIcon()` returns the `IconHarness` of the icon of an icon button, and the `label` filter finds an icon button by its `aria-label`.
+
+`TooltipHarness` finds the control of a tooltip by the `text` of the tooltip, and reads the text whether the tooltip shows or not. `show()` moves focus to the control, which shows the tooltip at once, and `hide()` presses `Escape`. `isOpen()` tells whether the tooltip shows, and `getPlacement()` returns the side it shows on.
 
 `ButtonHarness.getIcons()` returns an `IconHarness` for each icon in the slots of a button, in the order they show, so a test can check the glyph and the size of each one. `ButtonHarness.isLoading()` tells whether a button is loading, and the `loading` filter finds a button by it.
 

@@ -108,8 +108,8 @@ Switch between the light and the dark theme with the paintbrush in the toolbar.
 ## Accessibility
 
 - Every icon button needs an accessible name, so `aria-label` is required. Keep it a short verb phrase, such as "Close panel".
-- Every icon button needs a tooltip too, whose text matches its `aria-label`. `@dnd-mapp/ui` has no tooltip yet, so the icon button takes its name from `aria-label` until it does.
-- The icon is hidden from assistive technology, so `aria-label` stays the accessible name.
+- Every icon button needs a [tooltip](?path=/docs/components-tooltip--docs) too. Put the `dmaTooltip` directive on it with the same text as its `aria-label`. The tooltip then names the icon button through `aria-labelledby`, which wins over `aria-label`.
+- The icon is hidden from assistive technology, so the tooltip or the `aria-label` stays the accessible name.
 - The icon takes the label colors of `Button`, which pass 4.5:1 against their fills, above the 3:1 that graphics need. The focus ring passes 3:1 against the page, in both themes.
 - A disabled or a loading icon button stays in the tab order, and screen readers report it as unavailable through `aria-disabled="true"`.
 - Once the spinner shows, screen readers announce "Loading" through a polite live region outside the icon button. Set `loadingLabel` to announce another word, such as "Adding".
