@@ -115,7 +115,7 @@ Give every icon button a [tooltip](#tooltip) with the same text as its `aria-lab
 
 ### Tooltip
 
-Put the `dmaTooltip` directive on a control that shows only an icon, such as an icon button, and set it to the name of the control. Import `TooltipDirective` into the component that uses it. The directive creates the tooltip in an overlay of the CDK while it shows, and names the control with its text through `aria-labelledby`.
+Put the `dmaTooltip` directive on a control that shows only an icon, such as an icon button, and set it to the name of the control. Import `TooltipDirective` into the component that uses it. The directive creates the tooltip in an overlay of the CDK while it shows, and names the control with its text through `aria-labelledby`. The CDK adds the styles of its overlay to the page itself, so the tooltip needs no stylesheet such as `@angular/cdk/overlay-prebuilt.css`.
 
 ```html
 <button dma-icon-button type="button" aria-label="Close panel" variant="ghost" dmaTooltip="Close panel" (click)="close()">

@@ -177,6 +177,9 @@ export class TooltipDirective {
             }
         });
 
+        // The subscriptions need no unsubscribing of their own. `stopMonitoring()` completes the focus changes, and
+        // `dispose()` completes the position changes and the key presses of the overlay, and removes its listeners
+        // with the pane.
         destroyRef.onDestroy(() => {
             this.hide();
             focusMonitor.stopMonitoring(this.host);
