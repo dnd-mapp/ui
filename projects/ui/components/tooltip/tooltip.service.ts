@@ -12,7 +12,7 @@ const WARM_UP_DURATION = 300;
 @Injectable({ providedIn: 'root' })
 export class TooltipService {
     /** Closes the tooltip that shows, or `null` while none does. */
-    private current: (() => void) | null = null;
+    private current: VoidFunction | null = null;
 
     /** When the last tooltip closed. */
     private closedAt = Number.NEGATIVE_INFINITY;
@@ -23,7 +23,7 @@ export class TooltipService {
     }
 
     /** Records that a tooltip shows, and closes the one that showed before it. */
-    public opened(close: () => void): void {
+    public opened(close: VoidFunction): void {
         const previous = this.current;
 
         this.current = close;
@@ -34,7 +34,7 @@ export class TooltipService {
     }
 
     /** Records that a tooltip closed, which starts the 300ms in which the next one shows at once. */
-    public closed(close: () => void): void {
+    public closed(close: VoidFunction): void {
         if (this.current === close) {
             this.current = null;
             this.closedAt = Date.now();

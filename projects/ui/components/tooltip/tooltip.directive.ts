@@ -277,7 +277,7 @@ export class TooltipDirective {
         }
     }
 
-    private schedule(action: () => void, delay: number): void {
+    private schedule(action: VoidFunction, delay: number): void {
         clearTimeout(this.timer);
         this.timer = setTimeout(action, delay);
     }
