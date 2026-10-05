@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { tokens } from '@dnd-mapp/design-tokens';
+import { tokens, values } from '@dnd-mapp/design-tokens';
 import { TooltipHarness } from '@dnd-mapp/ui/components/testing';
 import { IconPlusComponent, IconXmarkComponent } from '@dnd-mapp/ui/icons';
 import { resolveStyle, setupHarness } from '@dnd-mapp/ui/testing';
@@ -630,6 +630,26 @@ describe('TooltipDirective', () => {
 
             expect(await harness.getPlacement()).toBe('right');
             expect(measure(trigger).after).toBeCloseTo(gap(element), 0);
+        });
+
+        it('keeps spacing/8 from the edge of the viewport, at the font size of the page', async () => {
+            const root = document.documentElement;
+
+            root.style.fontSize = '20px';
+
+            try {
+                const { harness } = await setupHarness(CornerTestHostComponent, TooltipHarness);
+
+                await harness.show();
+
+                // The bubble is wider than the trigger in the corner, so centering it would cross the left edge.
+                expect(getBubble('Close panel').getBoundingClientRect().left).toBeCloseTo(
+                    parseFloat(values.spacing['8']) * 20,
+                    0,
+                );
+            } finally {
+                root.style.removeProperty('font-size');
+            }
         });
     });
 

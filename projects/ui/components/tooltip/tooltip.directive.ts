@@ -22,6 +22,7 @@ import {
     Renderer2,
     type ComponentRef,
 } from '@angular/core';
+import { values } from '@dnd-mapp/design-tokens';
 import { createTooltipLabel, removeTooltipLabel } from './tooltip-label';
 import {
     DEFAULT_TOOLTIP_PLACEMENT,
@@ -44,8 +45,8 @@ const TOUCH_HOLD_DELAY = 500;
 /** How long a tooltip stays after the finger that held its trigger lifts. */
 const TOUCH_HIDE_DELAY = 1500;
 
-/** The space that a tooltip keeps from the edges of the viewport. It's `spacing/8`, in the pixels the CDK takes. */
-const VIEWPORT_MARGIN = 8;
+/** The space that a tooltip keeps from the edges of the viewport, in `rem`. */
+const VIEWPORT_MARGIN = values.spacing['8'];
 
 let nextId = 0;
 
@@ -336,7 +337,7 @@ export class TooltipDirective {
     private createOverlay() {
         const positionStrategy = createFlexibleConnectedPositionStrategy(this.injector, this.host)
             .withFlexibleDimensions(false)
-            .withViewportMargin(VIEWPORT_MARGIN);
+            .withViewportMargin(remToPixels(VIEWPORT_MARGIN, this.document));
 
         // When the bubble flips, its gap moves to the side that faces the trigger. The bubble keeps its size, so the
         // CDK doesn't need to measure it again.
@@ -402,4 +403,12 @@ function connectedPosition(placement: TooltipPlacement, rtl: boolean): Connected
         case 'right':
             return { originX: right, originY: 'center', overlayX: left, overlayY: 'center' };
     }
+}
+
+/**
+ * Returns a length in `rem`, such as `'0.5rem'`, in the pixels that the CDK takes. It reads the font size of the page,
+ * so the length grows with the font size that the user sets in the browser.
+ */
+function remToPixels(length: string, document: Document): number {
+    return parseFloat(length) * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
