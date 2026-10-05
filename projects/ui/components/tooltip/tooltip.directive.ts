@@ -75,6 +75,13 @@ let nextId = 0;
     },
 })
 export class TooltipDirective {
+    private readonly injector = inject(Injector);
+    private readonly document = inject(DOCUMENT);
+    private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    private readonly renderer = inject(Renderer2);
+    private readonly directionality = inject(Directionality);
+    private readonly tooltipService = inject(TooltipService);
+
     /** The text of the tooltip, which is the accessible name of the control, such as `'Close panel'`. */
     public readonly text = input.required<string>({ alias: 'dmaTooltip' });
 
@@ -90,12 +97,7 @@ export class TooltipDirective {
     /** The id of the hidden label that names the control. */
     protected readonly labelId = `${this.id}-label`;
 
-    private readonly injector = inject(Injector);
-    private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-    private readonly renderer = inject(Renderer2);
-    private readonly directionality = inject(Directionality);
-    private readonly tooltipService = inject(TooltipService);
-    private readonly label = createTooltipLabel(inject(DOCUMENT), this.labelId);
+    private readonly label = createTooltipLabel(this.document, this.labelId);
 
     /** Closes the tooltip at once. The tooltip service calls it when another tooltip shows. */
     private readonly close = () => this.hide();
@@ -183,7 +185,7 @@ export class TooltipDirective {
         });
     }
 
-    protected onPointerEnter(event: PointerEvent): void {
+    protected onPointerEnter(event: PointerEvent) {
         if (event.pointerType === 'touch') {
             return;
         }
@@ -191,7 +193,7 @@ export class TooltipDirective {
         this.onPointerArrive();
     }
 
-    protected onPointerLeave(event: PointerEvent): void {
+    protected onPointerLeave(event: PointerEvent) {
         if (event.pointerType === 'touch') {
             return;
         }
@@ -199,7 +201,7 @@ export class TooltipDirective {
         this.hideWhenUnused();
     }
 
-    protected onPointerDown(event: PointerEvent): void {
+    protected onPointerDown(event: PointerEvent) {
         this.suppressClick = false;
 
         if (event.pointerType !== 'touch') {
@@ -213,7 +215,7 @@ export class TooltipDirective {
         }, TOUCH_HOLD_DELAY);
     }
 
-    protected onPointerRelease(event: PointerEvent): void {
+    protected onPointerRelease(event: PointerEvent) {
         if (event.pointerType !== 'touch') {
             return;
         }
@@ -230,19 +232,19 @@ export class TooltipDirective {
         }
     }
 
-    protected onContextMenu(event: Event): void {
+    protected onContextMenu(event: Event) {
         // Holding a control can open the context menu of the browser, which would cover the tooltip.
         if (this.touchHeld || this.touchShown) {
             event.preventDefault();
         }
     }
 
-    private onFocus(): void {
+    private onFocus() {
         this.focused = true;
         this.show();
     }
 
-    private onBlur(): void {
+    private onBlur() {
         this.focused = false;
 
         if (!this.pointerOverTrigger && !this.pointerOverTooltip) {
@@ -251,7 +253,7 @@ export class TooltipDirective {
     }
 
     /** Shows the tooltip once the pointer rests on the trigger or the bubble, or keeps it when it already shows. */
-    private onPointerArrive(): void {
+    private onPointerArrive() {
         clearTimeout(this.timer);
 
         if (this.tooltipRef !== null) {
@@ -265,7 +267,7 @@ export class TooltipDirective {
     }
 
     /** Hides the tooltip after a short delay once nothing keeps it: no pointer over it or its trigger, and no focus. */
-    private hideWhenUnused(): void {
+    private hideWhenUnused() {
         if (this.pointerOverTrigger || this.pointerOverTooltip || this.focused) {
             return;
         }
@@ -277,12 +279,12 @@ export class TooltipDirective {
         }
     }
 
-    private schedule(action: VoidFunction, delay: number): void {
+    private schedule(action: VoidFunction, delay: number) {
         clearTimeout(this.timer);
         this.timer = setTimeout(action, delay);
     }
 
-    private show(): void {
+    private show() {
         clearTimeout(this.timer);
 
         if (this.tooltipRef !== null) {
@@ -305,7 +307,7 @@ export class TooltipDirective {
         this.tooltipService.opened(this.close);
     }
 
-    private hide(): void {
+    private hide() {
         clearTimeout(this.timer);
         this.touchShown = false;
         this.suppressClick = false;
@@ -322,7 +324,7 @@ export class TooltipDirective {
     }
 
     /** Points the bubble at the side of the trigger that `placement` names, with its opposite as the fallback. */
-    private position(placement: TooltipPlacement): void {
+    private position(placement: TooltipPlacement) {
         const rtl = this.directionality.value === 'rtl';
 
         this.placements = [placement, oppositePlacement(placement)];
@@ -331,7 +333,7 @@ export class TooltipDirective {
         this.tooltipRef?.setInput('placement', placement);
     }
 
-    private createOverlay(): OverlayRef {
+    private createOverlay() {
         const positionStrategy = createFlexibleConnectedPositionStrategy(this.injector, this.host)
             .withFlexibleDimensions(false)
             .withViewportMargin(VIEWPORT_MARGIN);
