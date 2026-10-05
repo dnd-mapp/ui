@@ -29,8 +29,8 @@ import {
     tooltipPlacementAttribute,
     type TooltipPlacement,
 } from './tooltip-placement';
-import { TooltipWarmUpService } from './tooltip-warm-up.service';
 import { TooltipComponent } from './tooltip.component';
+import { TooltipService } from './tooltip.service';
 
 /** How long the pointer rests on a trigger before its tooltip shows. */
 const SHOW_DELAY = 500;
@@ -94,10 +94,10 @@ export class TooltipDirective {
     private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     private readonly renderer = inject(Renderer2);
     private readonly directionality = inject(Directionality);
-    private readonly warmUp = inject(TooltipWarmUpService);
+    private readonly tooltipService = inject(TooltipService);
     private readonly label = createTooltipLabel(inject(DOCUMENT), this.labelId);
 
-    /** Closes the tooltip at once. The warm-up service calls it when another tooltip shows. */
+    /** Closes the tooltip at once. The tooltip service calls it when another tooltip shows. */
     private readonly close = () => this.hide();
 
     private overlayRef: OverlayRef | null = null;
@@ -257,7 +257,7 @@ export class TooltipDirective {
         if (this.tooltipRef !== null) {
             return;
         }
-        if (this.warmUp.isWarm()) {
+        if (this.tooltipService.isWarm()) {
             this.show();
         } else {
             this.schedule(() => this.show(), SHOW_DELAY);
@@ -302,7 +302,7 @@ export class TooltipDirective {
         this.renderer.setAttribute(bubble, 'id', this.id);
         this.resizeObserver?.observe(bubble);
         this.tooltipRef = tooltipRef;
-        this.warmUp.opened(this.close);
+        this.tooltipService.opened(this.close);
     }
 
     private hide(): void {
@@ -318,7 +318,7 @@ export class TooltipDirective {
         this.resizeObserver?.disconnect();
         this.tooltipRef = null;
         this.overlayRef?.detach();
-        this.warmUp.closed(this.close);
+        this.tooltipService.closed(this.close);
     }
 
     /** Points the bubble at the side of the trigger that `placement` names, with its opposite as the fallback. */

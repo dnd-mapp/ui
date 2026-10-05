@@ -10,7 +10,7 @@ const WARM_UP_DURATION = 300;
  * A tooltip registers itself through the function that closes it at once.
  */
 @Injectable({ providedIn: 'root' })
-export class TooltipWarmUpService {
+export class TooltipService {
     /** Closes the tooltip that shows, or `null` while none does. */
     private current: (() => void) | null = null;
 
