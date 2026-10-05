@@ -1,0 +1,114 @@
+import { Canvas, Controls, Meta } from '@storybook/addon-docs/blocks';
+
+import * as TooltipStories from './tooltip.stories';
+
+<Meta of={TooltipStories} />
+
+# Tooltip
+
+A tooltip shows the name of a control that has no visible label, such as an [`Icon button`](?path=/docs/components-icon-button--docs). It's built after the `Tooltip` component in the `Design system` Figma file: a short name on the inverse fill, beside its control.
+
+<Canvas of={TooltipStories.Default} />
+
+<Controls of={TooltipStories.Default} />
+
+## When to use
+
+Give every icon button a tooltip, and any other control that shows only an icon. The text of the tooltip is the name of the control, so keep it short, such as "Close panel". A tooltip that wraps past 240px is probably too long for a name.
+
+Don't put a description or other content that a user needs in a tooltip. Touch users only see it when they hold the control, and screen readers read it as the name of the control.
+
+## Usage
+
+Put the `dmaTooltip` directive on the control, set it to the text of the tooltip, and import `TooltipDirective` into the component that uses it. The directive creates the tooltip next to the control while it shows, in an overlay of the CDK, so you never place the tooltip yourself.
+
+```ts
+import { Component } from '@angular/core';
+import { IconButtonComponent, TooltipDirective } from '@dnd-mapp/ui/components';
+import { IconXmarkComponent } from '@dnd-mapp/ui/icons';
+
+@Component({
+    selector: 'app-layer-panel-header',
+    imports: [IconButtonComponent, IconXmarkComponent, TooltipDirective],
+    template: `
+        <button
+            dma-icon-button
+            type="button"
+            aria-label="Close panel"
+            variant="ghost"
+            dmaTooltip="Close panel"
+            (click)="close()"
+        >
+            <dma-icon-xmark />
+        </button>
+    `,
+})
+export class LayerPanelHeaderComponent {
+    close() {}
+}
+```
+
+The tooltip shows above the control by default, centered. Set `dmaTooltipPlacement` to `bottom`, `left`, or `right` to show it on another side, such as `right` in a vertical tool palette. The `TooltipPlacements` constant holds the values. When the tooltip doesn't fit on its side, it flips to the opposite one.
+
+```html
+<button dma-icon-button type="button" aria-label="Add layer" dmaTooltip="Add layer" dmaTooltipPlacement="right">
+    <dma-icon-plus />
+</button>
+```
+
+<Canvas of={TooltipStories.Placements} />
+
+The `dma-tooltip` element is the bubble itself, with the `text` and `placement` inputs. The directive creates it, so an app only places it by hand to show a tooltip that doesn't respond to the user, as the `Examples` story below does.
+
+## Behavior
+
+| Trigger        | Shows                                                    | Hides                                                    |
+| :------------- | :------------------------------------------------------- | :------------------------------------------------------- |
+| Pointer        | After 500ms of hover over the control                    | 100ms after the pointer leaves the control and the bubble |
+| Keyboard focus | At once                                                  | When the control loses focus                             |
+| Touch          | After holding the control for 500ms                      | 1.5s after the finger lifts                              |
+| `Escape`       |                                                          | At once                                                  |
+
+- After one tooltip closes, the next one shows at once for 300ms, so the pointer can sweep along a toolbar. One tooltip shows at a time.
+- The pointer can move from the control onto the tooltip, and the tooltip stays while it's there. With `Escape` closing it, this covers WCAG 1.4.13.
+- Releasing a hold that showed the tooltip doesn't press the control. A tap that ends within 500ms presses it as usual.
+- Focus from a script shows the tooltip at once too, like keyboard focus. Focus from a click or a tap doesn't, because the pointer already rests on the control.
+- `Escape` closes the tooltip before anything else, such as a dialog that the control sits in. Pressing it again reaches the dialog.
+
+## Disabled controls
+
+A tooltip needs hover and focus, so it doesn't show on a control with the native `disabled` attribute. Disable an icon button with its `disabled` input instead, which uses `aria-disabled="true"` and keeps it focusable. The tooltip then still shows.
+
+<Canvas of={TooltipStories.DisabledTrigger} />
+
+## Examples
+
+<Canvas of={TooltipStories.Examples} />
+
+Switch between the light and the dark theme with the paintbrush in the toolbar. The inverse fill stands out from the page in both themes, so the tooltip has no border, arrow, or shadow.
+
+## Accessibility
+
+- The text of the tooltip is the accessible name of its control. The directive points `aria-labelledby` at a hidden copy of the text, so the control keeps its name while the tooltip is hidden.
+- `aria-labelledby` wins over `aria-label`. Keep the `aria-label` of an icon button the same as the text of its tooltip until the icon button takes its name from the tooltip alone.
+- The bubble is hidden from assistive technology with `aria-hidden="true"`, so screen readers don't read the name twice.
+- Name the control with the text of the tooltip only. A keyboard shortcut goes through `aria-keyshortcuts` instead.
+- The text passes 4.5:1 against the inverse fill in both themes.
+
+## Testing
+
+The `@dnd-mapp/ui/components/testing` entry point has a `TooltipHarness` for tests of the components that use the tooltip. Its host is the control with the directive, because the bubble only exists while it shows. It needs `@angular/cdk`.
+
+```ts
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { TooltipHarness } from '@dnd-mapp/ui/components/testing';
+
+const loader = TestbedHarnessEnvironment.loader(fixture);
+const tooltip = await loader.getHarness(TooltipHarness.with({ text: 'Close panel' }));
+
+await tooltip.show();
+
+expect(await tooltip.isOpen()).toBe(true);
+```
+
+Find a tooltip by its `text`, which takes a string or a regular expression. The harness reads the text whether the tooltip shows or not. Its `show()` method moves focus to the control, which shows the tooltip at once, and its `hide()` method presses `Escape` on the control. `isOpen()` tells whether the tooltip shows, and `getPlacement()` returns the side it shows on, after any flip.
