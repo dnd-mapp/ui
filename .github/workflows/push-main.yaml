@@ -29,7 +29,7 @@ jobs:
         permissions:
             contents: read
         concurrency:
-            group: ${{ github.workflow }}-${{ github.ref }}-${{ github.job }}
+            group: ${{ github.workflow }}-${{ github.ref }}-build-storybook
             cancel-in-progress: false
         steps:
             - name: Checkout repository
@@ -46,7 +46,7 @@ jobs:
         permissions:
             contents: write
         concurrency:
-            group: ${{ github.workflow }}-${{ github.job }}
+            group: ${{ github.workflow }}-deploy-storybook
             cancel-in-progress: false
         steps:
             - name: Checkout repository
@@ -71,7 +71,7 @@ jobs:
         timeout-minutes: 5
         permissions: {}
         concurrency:
-            group: ${{ github.workflow }}-${{ github.job }}
+            group: ${{ github.workflow }}-tag
             cancel-in-progress: false
         steps:
             - name: Tag the release
