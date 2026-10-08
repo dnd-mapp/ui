@@ -148,7 +148,7 @@ Say so in the changelog entry when a change is breaking, and describe what consu
 
 1. Run the [prepare release workflow](.github/workflows/prepare-release.yaml) on `main` with the part of the version to bump, for example `gh workflow run prepare-release.yaml -f bump=minor`. It bumps the version in `projects/ui/package.json`, and opens the `chore: release X.Y.Z` pull request with auto-merge on.
 2. Review and approve the pull request. Once it merges, the `tag` job of the [push workflow](.github/workflows/push-main.yaml) creates the annotated tag `vX.Y.Z` on the merge commit.
-3. The [release workflow](.github/workflows/release.yaml) runs the CI checks, verifies the tag and the changelog, builds the package, stages it on npm from `dist/ui`, and creates the GitHub Release.
+3. The [release workflow](.github/workflows/release.yaml) runs the CI checks, verifies the tag and the changelog, builds the package, stages it on npm from `dist/ui`, and creates the GitHub Release, which opens a discussion in the Announcements category.
 4. Find the staged version with `pnpm stage list` and approve it with `pnpm stage approve <id>` and 2FA.
 
 If the staged version is wrong, reject it with `pnpm stage reject <id>`. The same version cannot be staged again until then.
