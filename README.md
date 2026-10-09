@@ -32,7 +32,7 @@ pnpm run storybook
 
 ## Contributing
 
-Contributions are welcome. See the [contributing guide](CONTRIBUTING.md) for the project layout, the checks, the release steps, and the commit conventions.
+Read the [shared contributing guide](https://github.com/dnd-mapp/.github/blob/main/CONTRIBUTING.md) for how to take part and the conventions that every D&D Mapp repository follows. The [contributing guide of this repository](docs/contributing/README.md) adds its layout, its checks, and its release steps.
 
 ## License
 
