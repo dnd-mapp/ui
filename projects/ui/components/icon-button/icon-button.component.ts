@@ -1,4 +1,4 @@
-import { booleanAttribute, Component, computed, inject, input } from '@angular/core';
+import { afterNextRender, booleanAttribute, Component, computed, ElementRef, inject, input } from '@angular/core';
 import { ICON_SIZE, IconCircleNotchComponent } from '@dnd-mapp/ui/icons';
 import { buttonSizeAttribute, DEFAULT_BUTTON_SIZE } from '../button/button-size';
 import { buttonVariantAttribute, DEFAULT_BUTTON_VARIANT } from '../button/button-variant';
@@ -80,5 +80,29 @@ export class IconButtonComponent {
 
     public constructor() {
         blockClicksWhile(this.blocked);
+
+        // An optional `aria-label` can't make the compiler check that every icon button has a name, so it checks at
+        // runtime instead. Production builds drop the check, and `afterNextRender` never runs on the server.
+        if (typeof ngDevMode === 'undefined' || ngDevMode) {
+            const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+
+            afterNextRender(() => {
+                if (!hasAccessibleName(host)) {
+                    console.warn(MISSING_NAME_WARNING, host);
+                }
+            });
+        }
     }
+}
+
+/** The warning that an icon button logs in dev mode when it has no accessible name. */
+const MISSING_NAME_WARNING =
+    'An icon button needs an accessible name. Give it a `dmaTooltip`, or an `aria-label` when it has no tooltip.';
+
+/**
+ * Returns whether an icon button has an accessible name: an `aria-labelledby`, such as the one of its tooltip, or an
+ * `aria-label` with more than whitespace. Its icon is hidden from assistive technology, so its content names nothing.
+ */
+function hasAccessibleName(host: HTMLElement): boolean {
+    return host.hasAttribute('aria-labelledby') || (host.getAttribute('aria-label') ?? '').trim() !== '';
 }
