@@ -14,9 +14,10 @@ import {
     resolveStyle,
     setupHarness,
 } from '@dnd-mapp/ui/testing';
-import { userEvent } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 import { ButtonSizes, DEFAULT_BUTTON_SIZE, type ButtonSize } from '../button/button-size';
 import { ButtonVariants, DEFAULT_BUTTON_VARIANT, type ButtonVariant } from '../button/button-variant';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { IconButtonComponent } from './icon-button.component';
 
 @Component({
@@ -51,6 +52,12 @@ class TestHostComponent {
     imports: [IconButtonComponent, IconXmarkComponent],
 })
 class NoVariantTestHostComponent {}
+
+@Component({
+    template: `<button dma-icon-button type="button" dmaTooltip="Close panel"><dma-icon-xmark /></button>`,
+    imports: [IconButtonComponent, IconXmarkComponent, TooltipDirective],
+})
+class TooltipTestHostComponent {}
 
 @Component({
     template: `<button dma-icon-button type="button" aria-label="Close panel" variant size>
@@ -147,6 +154,14 @@ describe('IconButtonComponent', () => {
         fixture.componentInstance.label.set('Close map');
 
         expect(await harness.getLabel()).toBe('Close map');
+    });
+
+    it('takes its accessible name from its tooltip, with no aria-label', async () => {
+        const { harness } = await setup(TooltipTestHostComponent);
+
+        expect(await harness.getLabel()).toBe('Close panel');
+        expect(await (await harness.host()).getAttribute('aria-label')).toBeNull();
+        await expect.element(page.getByRole('button', { name: 'Close panel' })).toBeInTheDocument();
     });
 
     it('shows its content as its icon', async () => {

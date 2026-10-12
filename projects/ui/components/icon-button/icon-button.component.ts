@@ -7,7 +7,8 @@ import { injectLoadingState } from '../loading/loading-state';
 
 /**
  * A button that starts an action with an icon and no visible label, such as closing a panel. Put it on a native
- * `button` element, give it an icon as its content, and name it with `aria-label`.
+ * `button` element, give it an icon as its content, and name it with a `dmaTooltip`. The tooltip text is its
+ * accessible name. Name an icon button without a tooltip with `aria-label` instead.
  *
  * It has the variants, the sizes, and the states of `ButtonComponent`, after the `Icon button` Figma component. Use
  * it where space is tight, such as toolbars and panel headers, and only for well-known icons, such as `xmark` for
@@ -40,10 +41,10 @@ import { injectLoadingState } from '../loading/loading-state';
 })
 export class IconButtonComponent {
     /**
-     * The accessible name of the icon button, such as `'Close panel'`. Match the text of its tooltip, since the icon
-     * button shows no label.
+     * The accessible name of an icon button without a tooltip, such as `'Close panel'`. An icon button with a
+     * `dmaTooltip` needs none, because the tooltip names it through `aria-labelledby`, which wins over `aria-label`.
      */
-    public readonly ariaLabel = input.required<string>({ alias: 'aria-label' });
+    public readonly ariaLabel = input<string>(undefined, { alias: 'aria-label' });
 
     /** The variant of the icon button, which sets its colors. */
     public readonly variant = input(DEFAULT_BUTTON_VARIANT, { transform: buttonVariantAttribute });

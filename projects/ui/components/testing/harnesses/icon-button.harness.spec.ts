@@ -1,7 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Component, signal } from '@angular/core';
+import { Component, signal, type Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { IconButtonComponent } from '@dnd-mapp/ui/components';
+import { IconButtonComponent, TooltipDirective } from '@dnd-mapp/ui/components';
 import { IconPlusComponent, IconXmarkComponent } from '@dnd-mapp/ui/icons';
 import { IconButtonHarness } from './icon-button.harness';
 
@@ -26,9 +26,24 @@ class TestHostComponent {
     public readonly clicks = signal(0);
 }
 
+@Component({
+    template: `
+        <button dma-icon-button type="button" dmaTooltip="Close panel"><dma-icon-xmark /></button>
+        <button dma-icon-button type="button" aria-label="Remove" dmaTooltip="Remove layer"><dma-icon-xmark /></button>
+        <span id="add-label">Add</span>
+        <span id="layer-label">layer</span>
+        <button dma-icon-button type="button" aria-labelledby="add-label layer-label"><dma-icon-plus /></button>
+        <button dma-icon-button type="button" aria-label="Add map" aria-labelledby="missing-label">
+            <dma-icon-plus />
+        </button>
+    `,
+    imports: [IconButtonComponent, IconPlusComponent, IconXmarkComponent, TooltipDirective],
+})
+class NamingTestHostComponent {}
+
 describe('IconButtonHarness', () => {
-    function setup() {
-        const fixture = TestBed.createComponent(TestHostComponent);
+    function setup<T = TestHostComponent>(host: Type<T> = TestHostComponent as Type<T>) {
+        const fixture = TestBed.createComponent(host);
         const loader = TestbedHarnessEnvironment.loader(fixture);
 
         return { fixture, loader };
@@ -46,6 +61,39 @@ describe('IconButtonHarness', () => {
         const button = await loader.getHarness(IconButtonHarness.with({ label: /remove/i }));
 
         expect(await button.getLabel()).toBe('Remove layer');
+    });
+
+    it('finds an icon button by the text of its tooltip', async () => {
+        const { loader } = setup(NamingTestHostComponent);
+
+        const button = await loader.getHarness(IconButtonHarness.with({ label: 'Close panel' }));
+
+        expect(await button.getLabel()).toBe('Close panel');
+    });
+
+    it('reads the text of its tooltip over its aria-label, like a browser', async () => {
+        const { loader } = setup(NamingTestHostComponent);
+
+        const button = await loader.getHarness(IconButtonHarness.with({ label: 'Remove layer' }));
+
+        expect(await button.getLabel()).toBe('Remove layer');
+        expect(await loader.getHarnessOrNull(IconButtonHarness.with({ label: 'Remove' }))).toBeNull();
+    });
+
+    it('joins the text of every element that aria-labelledby points at', async () => {
+        const { loader } = setup(NamingTestHostComponent);
+
+        const button = await loader.getHarness(IconButtonHarness.with({ label: 'Add layer' }));
+
+        expect(await button.getLabel()).toBe('Add layer');
+    });
+
+    it('falls back to the aria-label when aria-labelledby points at no element', async () => {
+        const { loader } = setup(NamingTestHostComponent);
+
+        const button = await loader.getHarness(IconButtonHarness.with({ label: 'Add map' }));
+
+        expect(await button.getLabel()).toBe('Add map');
     });
 
     it('finds an icon button by whether it is disabled', async () => {

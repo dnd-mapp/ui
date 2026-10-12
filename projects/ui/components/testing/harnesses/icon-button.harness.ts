@@ -51,9 +51,20 @@ export class IconButtonHarness extends ComponentHarness {
         await (await this.host()).click();
     }
 
-    /** Returns the accessible name of the icon button, from its `aria-label`. */
+    /**
+     * Returns the accessible name of the icon button, the one that screen readers announce. Like a browser, it reads
+     * the text of the elements that `aria-labelledby` points at, such as the label of its tooltip, and falls back to
+     * the `aria-label` when `aria-labelledby` points at none.
+     */
     public async getLabel(): Promise<string | null> {
-        return (await this.host()).getAttribute('aria-label');
+        const host = await this.host();
+        const ids = (await host.getAttribute('aria-labelledby'))?.split(/\s+/).filter((id) => id !== '') ?? [];
+        const labels = (await Promise.all(ids.map((id) => this.getElementById(id)))).filter((label) => label !== null);
+
+        if (labels.length === 0) {
+            return host.getAttribute('aria-label');
+        }
+        return (await Promise.all(labels.map((label) => label.text()))).join(' ');
     }
 
     /**
@@ -105,5 +116,16 @@ export class IconButtonHarness extends ComponentHarness {
     /** Returns whether the icon button has focus. */
     public async isFocused(): Promise<boolean> {
         return (await this.host()).isFocused();
+    }
+
+    /**
+     * Returns the element with an id anywhere on the page, or `null` when there's none. The label of a tooltip sits
+     * outside the icon button, at the end of the body.
+     */
+    private async getElementById(id: string) {
+        // An attribute selector takes any id in quotes, where `#id` would need its special characters escaped.
+        const selector = `[id="${id.replace(/["\\]/g, '\\$&')}"]`;
+
+        return this.documentRootLocatorFactory().locatorForOptional(selector)();
     }
 }
