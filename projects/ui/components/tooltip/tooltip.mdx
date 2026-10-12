@@ -34,7 +34,6 @@ import { IconXmarkComponent } from '@dnd-mapp/ui/icons';
         <button
             dma-icon-button
             type="button"
-            aria-label="Close panel"
             variant="ghost"
             dmaTooltip="Close panel"
             (click)="close()"
@@ -51,7 +50,7 @@ export class LayerPanelHeaderComponent {
 The tooltip shows above the control by default, centered. Set `dmaTooltipPlacement` to `bottom`, `left`, or `right` to show it on another side, such as `right` in a vertical tool palette. The `TooltipPlacements` constant holds the values. When the tooltip doesn't fit on its side, it flips to the opposite one.
 
 ```html
-<button dma-icon-button type="button" aria-label="Add layer" dmaTooltip="Add layer" dmaTooltipPlacement="right">
+<button dma-icon-button type="button" dmaTooltip="Add layer" dmaTooltipPlacement="right">
     <dma-icon-plus />
 </button>
 ```
@@ -90,7 +89,7 @@ Switch between the light and the dark theme with the paintbrush in the toolbar. 
 ## Accessibility
 
 - The text of the tooltip is the accessible name of its control. The directive points `aria-labelledby` at a hidden copy of the text, so the control keeps its name while the tooltip is hidden.
-- `aria-labelledby` wins over `aria-label`. Keep the `aria-label` of an icon button the same as the text of its tooltip until the icon button takes its name from the tooltip alone.
+- `aria-labelledby` wins over `aria-label`, so a control with a tooltip needs no `aria-label`. An icon button takes its name from its tooltip alone.
 - The bubble is hidden from assistive technology with `aria-hidden="true"`, so screen readers don't read the name twice.
 - Name the control with the text of the tooltip only. A keyboard shortcut goes through `aria-keyshortcuts` instead.
 - The text passes 4.5:1 against the inverse fill in both themes.

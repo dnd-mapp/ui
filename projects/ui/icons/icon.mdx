@@ -72,7 +72,7 @@ The icon takes the color of the text around it, through `currentColor`. Set the 
 ## Accessibility
 
 - Every icon has `aria-hidden="true"`, because the label or the control beside it carries the meaning. Assistive technology skips the icon.
-- An icon never names a control by itself. When a control shows only an icon, give the control an accessible name, such as through `aria-label`.
+- An icon never names a control by itself. When a control shows only an icon, give the control an accessible name, such as through a [tooltip](?path=/docs/components-tooltip--docs) or `aria-label`.
 - The icon takes the color of its label, so it passes the same contrast as the label. In forced colors mode, it takes the system text color.
 - When the user prefers reduced motion, a spinning icon slows to one turn every 3 seconds. It keeps turning, because a spinner that stands still looks frozen.
 
