@@ -193,9 +193,19 @@ describe('IconButtonComponent', () => {
         const warning =
             'An icon button needs an accessible name. Give it a `dmaTooltip`, or an `aria-label` when it has no tooltip.';
 
-        /** Keeps the warnings out of the test output, and returns the spy that records them. */
-        function spyOnWarnings() {
-            return vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+        /** The levels of the console that a test records. */
+        const consoleLevels = ['debug', 'log', 'info', 'warn', 'error'] as const;
+
+        /** Keeps the console out of the test output, and records every message sent to it with its level. */
+        function mockConsole() {
+            const messages: { level: (typeof consoleLevels)[number]; args: unknown[] }[] = [];
+
+            for (const level of consoleLevels) {
+                vi.spyOn(console, level).mockImplementation((...args: unknown[]) => {
+                    messages.push({ level, args });
+                });
+            }
+            return { messages };
         }
 
         afterEach(() => {
@@ -208,54 +218,53 @@ describe('IconButtonComponent', () => {
             { name: 'an empty aria-label', host: EmptyLabelTestHostComponent },
             { name: 'an aria-label of only whitespace', host: BlankLabelTestHostComponent },
         ])('warns once with its host element in dev mode, when it has $name', async ({ host }) => {
-            const warn = spyOnWarnings();
+            const { messages } = mockConsole();
             const { fixture, element } = await setup<unknown>(host);
 
             fixture.detectChanges();
             await fixture.whenStable();
 
-            expect(warn).toHaveBeenCalledOnce();
-            expect(warn).toHaveBeenCalledWith(warning, element.querySelector('button'));
+            expect(messages).toEqual([{ level: 'warn', args: [warning, element.querySelector('button')] }]);
         });
 
         it.each([
             { name: 'a tooltip', host: TooltipTestHostComponent },
             { name: 'an aria-label', host: NoVariantTestHostComponent },
             { name: 'an aria-labelledby', host: LabelledByTestHostComponent },
-        ])("doesn't warn when it has $name", async ({ host }) => {
-            const warn = spyOnWarnings();
+        ])('logs nothing when it has $name', async ({ host }) => {
+            const { messages } = mockConsole();
 
             await setup<unknown>(host);
 
-            expect(warn).not.toHaveBeenCalled();
+            expect(messages).toEqual([]);
         });
 
         it('checks only after its first render', async () => {
-            const warn = spyOnWarnings();
+            const { messages } = mockConsole();
             const { fixture } = await setup(TestHostComponent);
 
             fixture.componentInstance.label.set('');
             await fixture.whenStable();
 
-            expect(warn).not.toHaveBeenCalled();
+            expect(messages).toEqual([]);
         });
 
-        it("doesn't warn in production mode", async () => {
-            const warn = spyOnWarnings();
+        it('logs nothing in production mode', async () => {
+            const { messages } = mockConsole();
 
             vi.stubGlobal('ngDevMode', false);
             await setup(NoNameTestHostComponent);
 
-            expect(warn).not.toHaveBeenCalled();
+            expect(messages).toEqual([]);
         });
 
-        it("doesn't warn on the server", async () => {
-            const warn = spyOnWarnings();
+        it('logs nothing on the server', async () => {
+            const { messages } = mockConsole();
 
             vi.stubGlobal('ngServerMode', true);
             await setup(NoNameTestHostComponent);
 
-            expect(warn).not.toHaveBeenCalled();
+            expect(messages).toEqual([]);
         });
     });
 
