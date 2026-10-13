@@ -14,9 +14,10 @@ import {
     resolveStyle,
     setupHarness,
 } from '@dnd-mapp/ui/testing';
-import { userEvent } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 import { ButtonSizes, DEFAULT_BUTTON_SIZE, type ButtonSize } from '../button/button-size';
 import { ButtonVariants, DEFAULT_BUTTON_VARIANT, type ButtonVariant } from '../button/button-variant';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { IconButtonComponent } from './icon-button.component';
 
 @Component({
@@ -51,6 +52,37 @@ class TestHostComponent {
     imports: [IconButtonComponent, IconXmarkComponent],
 })
 class NoVariantTestHostComponent {}
+
+@Component({
+    template: `<button dma-icon-button type="button" dmaTooltip="Close panel"><dma-icon-xmark /></button>`,
+    imports: [IconButtonComponent, IconXmarkComponent, TooltipDirective],
+})
+class TooltipTestHostComponent {}
+
+@Component({
+    template: `<button dma-icon-button type="button"><dma-icon-xmark /></button>`,
+    imports: [IconButtonComponent, IconXmarkComponent],
+})
+class NoNameTestHostComponent {}
+
+@Component({
+    template: `<button dma-icon-button type="button" aria-label=""><dma-icon-xmark /></button>`,
+    imports: [IconButtonComponent, IconXmarkComponent],
+})
+class EmptyLabelTestHostComponent {}
+
+@Component({
+    template: `<button dma-icon-button type="button" aria-label="  "><dma-icon-xmark /></button>`,
+    imports: [IconButtonComponent, IconXmarkComponent],
+})
+class BlankLabelTestHostComponent {}
+
+@Component({
+    template: `<span id="close-panel-label">Close panel</span>
+        <button dma-icon-button type="button" aria-labelledby="close-panel-label"><dma-icon-xmark /></button>`,
+    imports: [IconButtonComponent, IconXmarkComponent],
+})
+class LabelledByTestHostComponent {}
 
 @Component({
     template: `<button dma-icon-button type="button" aria-label="Close panel" variant size>
@@ -147,6 +179,93 @@ describe('IconButtonComponent', () => {
         fixture.componentInstance.label.set('Close map');
 
         expect(await harness.getLabel()).toBe('Close map');
+    });
+
+    it('takes its accessible name from its tooltip, with no aria-label', async () => {
+        const { harness } = await setup(TooltipTestHostComponent);
+
+        expect(await harness.getLabel()).toBe('Close panel');
+        expect(await (await harness.host()).getAttribute('aria-label')).toBeNull();
+        await expect.element(page.getByRole('button', { name: 'Close panel' })).toBeInTheDocument();
+    });
+
+    describe('without an accessible name', () => {
+        const warning =
+            'An icon button needs an accessible name. Give it a `dmaTooltip`, or an `aria-label` when it has no tooltip.';
+
+        /** The levels of the console that a test records. */
+        const consoleLevels = ['debug', 'log', 'info', 'warn', 'error'] as const;
+
+        /** Keeps the console out of the test output, and records every message sent to it with its level. */
+        function mockConsole() {
+            const messages: { level: (typeof consoleLevels)[number]; args: unknown[] }[] = [];
+
+            for (const level of consoleLevels) {
+                vi.spyOn(console, level).mockImplementation((...args: unknown[]) => {
+                    messages.push({ level, args });
+                });
+            }
+            return { messages };
+        }
+
+        afterEach(() => {
+            vi.restoreAllMocks();
+            vi.unstubAllGlobals();
+        });
+
+        it.each([
+            { name: 'no aria-label', host: NoNameTestHostComponent },
+            { name: 'an empty aria-label', host: EmptyLabelTestHostComponent },
+            { name: 'an aria-label of only whitespace', host: BlankLabelTestHostComponent },
+        ])('warns once with its host element in dev mode, when it has $name', async ({ host }) => {
+            const { messages } = mockConsole();
+            const { fixture, element } = await setup<unknown>(host);
+
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            expect(messages).toEqual([{ level: 'warn', args: [warning, element.querySelector('button')] }]);
+        });
+
+        it.each([
+            { name: 'a tooltip', host: TooltipTestHostComponent },
+            { name: 'an aria-label', host: NoVariantTestHostComponent },
+            { name: 'an aria-labelledby', host: LabelledByTestHostComponent },
+        ])('logs nothing when it has $name', async ({ host }) => {
+            const { messages } = mockConsole();
+
+            await setup<unknown>(host);
+
+            expect(messages).toEqual([]);
+        });
+
+        it('checks only after its first render', async () => {
+            const { messages } = mockConsole();
+            const { fixture } = await setup(TestHostComponent);
+
+            fixture.componentInstance.label.set('');
+            await fixture.whenStable();
+
+            expect(messages).toEqual([]);
+        });
+
+        it('logs nothing in production mode', async () => {
+            const { messages } = mockConsole();
+
+            vi.stubGlobal('ngDevMode', false);
+            await setup(NoNameTestHostComponent);
+
+            expect(messages).toEqual([]);
+        });
+
+        it('logs nothing on the server', async () => {
+            const { messages } = mockConsole();
+
+            vi.stubGlobal('ngServerMode', true);
+            await setup(NoNameTestHostComponent);
+
+            expect(messages).toEqual([]);
+        });
     });
 
     it('shows its content as its icon', async () => {

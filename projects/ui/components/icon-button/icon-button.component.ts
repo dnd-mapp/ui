@@ -1,13 +1,34 @@
-import { booleanAttribute, Component, computed, inject, input } from '@angular/core';
+import { afterNextRender, booleanAttribute, Component, computed, ElementRef, inject, input } from '@angular/core';
 import { ICON_SIZE, IconCircleNotchComponent } from '@dnd-mapp/ui/icons';
 import { buttonSizeAttribute, DEFAULT_BUTTON_SIZE } from '../button/button-size';
 import { buttonVariantAttribute, DEFAULT_BUTTON_VARIANT } from '../button/button-variant';
 import { blockClicksWhile } from '../click-blocking/block-clicks';
 import { injectLoadingState } from '../loading/loading-state';
 
+/** The warning that an icon button logs in dev mode when it has no accessible name. */
+const MISSING_NAME_WARNING =
+    'An icon button needs an accessible name. Give it a `dmaTooltip`, or an `aria-label` when it has no tooltip.';
+
+/**
+ * Returns whether an icon button has an accessible name: an `aria-labelledby`, such as the one of its tooltip, or an
+ * `aria-label` with more than whitespace. Its icon is hidden from assistive technology, so its content names nothing.
+ */
+function hasAccessibleName(host: HTMLElement): boolean {
+    return host.hasAttribute('aria-labelledby') || (host.getAttribute('aria-label') ?? '').trim() !== '';
+}
+
+/** Warns that an icon button has no accessible name, with its host element so the console can point at it. */
+function warnWithoutAccessibleName(host: HTMLElement): void {
+    if (hasAccessibleName(host)) {
+        return;
+    }
+    console.warn(MISSING_NAME_WARNING, host);
+}
+
 /**
  * A button that starts an action with an icon and no visible label, such as closing a panel. Put it on a native
- * `button` element, give it an icon as its content, and name it with `aria-label`.
+ * `button` element, give it an icon as its content, and name it with a `dmaTooltip`. The tooltip text is its
+ * accessible name. Name an icon button without a tooltip with `aria-label` instead.
  *
  * It has the variants, the sizes, and the states of `ButtonComponent`, after the `Icon button` Figma component. Use
  * it where space is tight, such as toolbars and panel headers, and only for well-known icons, such as `xmark` for
@@ -40,10 +61,10 @@ import { injectLoadingState } from '../loading/loading-state';
 })
 export class IconButtonComponent {
     /**
-     * The accessible name of the icon button, such as `'Close panel'`. Match the text of its tooltip, since the icon
-     * button shows no label.
+     * The accessible name of an icon button without a tooltip, such as `'Close panel'`. An icon button with a
+     * `dmaTooltip` needs none, because the tooltip names it through `aria-labelledby`, which wins over `aria-label`.
      */
-    public readonly ariaLabel = input.required<string>({ alias: 'aria-label' });
+    public readonly ariaLabel = input<string>(undefined, { alias: 'aria-label' });
 
     /** The variant of the icon button, which sets its colors. */
     public readonly variant = input(DEFAULT_BUTTON_VARIANT, { transform: buttonVariantAttribute });
@@ -79,5 +100,15 @@ export class IconButtonComponent {
 
     public constructor() {
         blockClicksWhile(this.blocked);
+
+        // An optional `aria-label` can't make the compiler check that every icon button has a name, so it checks at
+        // runtime instead. Production builds drop the check, and `afterNextRender` never runs on the server. The check
+        // reads `ngDevMode` rather than calling `isDevMode()`, because builds replace `ngDevMode` with `false` and can
+        // then drop the block, but can't see through the call.
+        if (typeof ngDevMode === 'undefined' || ngDevMode) {
+            const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+
+            afterNextRender(() => warnWithoutAccessibleName(host));
+        }
     }
 }

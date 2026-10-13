@@ -3,10 +3,12 @@ import { IconPlusComponent, IconXmarkComponent } from '@dnd-mapp/ui/icons';
 import { moduleMetadata, type Meta, type StoryObj } from '@storybook/angular-vite';
 import { ButtonSizes, DEFAULT_BUTTON_SIZE, type ButtonSize } from '../button/button-size';
 import { ButtonVariants, DEFAULT_BUTTON_VARIANT, type ButtonVariant } from '../button/button-variant';
+import { TooltipDirective } from '../tooltip/tooltip.directive';
 import { IconButtonComponent } from './icon-button.component';
 
 interface IconButtonArgs {
-    'aria-label': string;
+    'dmaTooltip': string;
+    'aria-label'?: string;
     'variant': ButtonVariant;
     'size': ButtonSize;
     'disabled': boolean;
@@ -17,12 +19,21 @@ interface IconButtonArgs {
 const meta: Meta<IconButtonArgs> = {
     title: 'Components/Icon button',
     component: IconButtonComponent,
-    decorators: [moduleMetadata({ imports: [IconButtonComponent, IconPlusComponent, IconXmarkComponent] })],
+    decorators: [
+        moduleMetadata({ imports: [IconButtonComponent, IconPlusComponent, IconXmarkComponent, TooltipDirective] }),
+    ],
     argTypes: {
+        'dmaTooltip': {
+            description:
+                'The text of the tooltip, which is the accessible name of the icon button, such as "Close panel". The icon button shows no label, and the design system asks for a tooltip on every icon button. It comes from `TooltipDirective`.',
+            control: 'text',
+            table: {
+                type: { summary: 'string' },
+            },
+        },
         'aria-label': {
             description:
-                'The accessible name of the icon button, such as "Close panel". The icon button shows no label, so it needs one. Match the text of its tooltip.',
-            type: { name: 'string', required: true },
+                'The accessible name of an icon button without a tooltip, such as "Close panel". An icon button with a tooltip needs none, because the tooltip names it.',
             control: 'text',
             table: {
                 type: { summary: 'string' },
@@ -82,6 +93,7 @@ const meta: Meta<IconButtonArgs> = {
             <button
                 dma-icon-button
                 type="button"
+                [dmaTooltip]="dmaTooltip"
                 [aria-label]="label"
                 [variant]="variant"
                 [size]="size"
@@ -103,45 +115,45 @@ type Story = StoryObj<IconButtonArgs>;
 // `States`, `Sizes`, and `Loading` set none, because their templates don't use them.
 export const Primary: Story = {
     args: {
-        'aria-label': 'Close panel',
-        'variant': 'primary',
-        'size': 'medium',
-        'disabled': false,
-        'loading': false,
-        'loadingLabel': 'Loading',
+        dmaTooltip: 'Close panel',
+        variant: 'primary',
+        size: 'medium',
+        disabled: false,
+        loading: false,
+        loadingLabel: 'Loading',
     },
 };
 
 export const Secondary: Story = {
     args: {
-        'aria-label': 'Close panel',
-        'variant': 'secondary',
-        'size': 'medium',
-        'disabled': false,
-        'loading': false,
-        'loadingLabel': 'Loading',
+        dmaTooltip: 'Close panel',
+        variant: 'secondary',
+        size: 'medium',
+        disabled: false,
+        loading: false,
+        loadingLabel: 'Loading',
     },
 };
 
 export const Ghost: Story = {
     args: {
-        'aria-label': 'Close panel',
-        'variant': 'ghost',
-        'size': 'medium',
-        'disabled': false,
-        'loading': false,
-        'loadingLabel': 'Loading',
+        dmaTooltip: 'Close panel',
+        variant: 'ghost',
+        size: 'medium',
+        disabled: false,
+        loading: false,
+        loadingLabel: 'Loading',
     },
 };
 
 export const Danger: Story = {
     args: {
-        'aria-label': 'Remove layer',
-        'variant': 'danger',
-        'size': 'medium',
-        'disabled': false,
-        'loading': false,
-        'loadingLabel': 'Loading',
+        dmaTooltip: 'Remove layer',
+        variant: 'danger',
+        size: 'medium',
+        disabled: false,
+        loading: false,
+        loadingLabel: 'Loading',
     },
 };
 
@@ -157,18 +169,18 @@ export const States: Story = {
     // The template spells out every icon button, so Storybook can show it in the code snippet.
     render: () => ({
         template: `<div style="display: grid; grid-template-columns: repeat(3, max-content); gap: var(--dma-spacing-16)">
-            <button dma-icon-button type="button" aria-label="Close panel" variant="primary"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="primary" disabled><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="primary" loading><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="secondary"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="secondary" disabled><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="secondary" loading><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="ghost"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="ghost" disabled><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="ghost" loading><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Remove layer" variant="danger"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Remove layer" variant="danger" disabled><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Remove layer" variant="danger" loading><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="primary"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="primary" disabled><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="primary" loading><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="secondary"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="secondary" disabled><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="secondary" loading><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="ghost"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="ghost" disabled><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="ghost" loading><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Remove layer" variant="danger"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Remove layer" variant="danger" disabled><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Remove layer" variant="danger" loading><dma-icon-xmark /></button>
         </div>`,
     }),
 };
@@ -183,18 +195,18 @@ export const Sizes: Story = {
     // The template spells out every icon button, so Storybook can show it in the code snippet.
     render: () => ({
         template: `<div style="display: grid; grid-template-columns: repeat(3, max-content); align-items: center; gap: var(--dma-spacing-16)">
-            <button dma-icon-button type="button" aria-label="Close panel" variant="primary" size="small"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="primary" size="medium"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="primary" size="large"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="secondary" size="small"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="secondary" size="medium"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="secondary" size="large"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="ghost" size="small"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="ghost" size="medium"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Close panel" variant="ghost" size="large"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Remove layer" variant="danger" size="small"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Remove layer" variant="danger" size="medium"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" aria-label="Remove layer" variant="danger" size="large"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="primary" size="small"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="primary" size="medium"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="primary" size="large"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="secondary" size="small"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="secondary" size="medium"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="secondary" size="large"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="ghost" size="small"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="ghost" size="medium"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Close panel" variant="ghost" size="large"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Remove layer" variant="danger" size="small"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Remove layer" variant="danger" size="medium"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" dmaTooltip="Remove layer" variant="danger" size="large"><dma-icon-xmark /></button>
         </div>`,
     }),
 };
@@ -220,7 +232,7 @@ export const Loading: Story = {
             <button
                 dma-icon-button
                 type="button"
-                aria-label="Add a layer in 2s"
+                dmaTooltip="Add a layer in 2s"
                 [loading]="slow()"
                 loadingLabel="Adding"
                 (click)="run(slow, 2000)"
@@ -230,7 +242,7 @@ export const Loading: Story = {
             <button
                 dma-icon-button
                 type="button"
-                aria-label="Add a layer in 0.2s"
+                dmaTooltip="Add a layer in 0.2s"
                 variant="secondary"
                 [loading]="fast()"
                 (click)="run(fast, 200)"

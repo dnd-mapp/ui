@@ -99,10 +99,10 @@ Once the spinner shows, screen readers announce "Loading" through a polite live 
 
 ### Icon button
 
-Put `dma-icon-button` on a native `button` element, give it an icon from `@dnd-mapp/ui/icons` as its content, and name it with the required `aria-label` input. Import `IconButtonComponent` next to the component of the icon. Use it where space is tight, such as toolbars and panel headers, and only for well-known icons, such as `xmark` for close.
+Put `dma-icon-button` on a native `button` element, give it an icon from `@dnd-mapp/ui/icons` as its content, and name it with a [tooltip](#tooltip). Import `IconButtonComponent` next to the component of the icon and `TooltipDirective`. Use it where space is tight, such as toolbars and panel headers, and only for well-known icons, such as `xmark` for close.
 
 ```html
-<button dma-icon-button type="button" aria-label="Close panel" variant="ghost" (click)="close()">
+<button dma-icon-button type="button" dmaTooltip="Close panel" variant="ghost" (click)="close()">
     <dma-icon-xmark />
 </button>
 ```
@@ -111,14 +111,14 @@ It takes the `variant`, `size`, `loading`, and `loadingLabel` inputs of `ButtonC
 
 Set the `disabled` input to disable it. A disabled icon button uses `aria-disabled="true"` rather than the native `disabled` attribute, so it stays focusable and can show its tooltip, and it blocks clicks itself. The `disabled` attribute in a template works too: the icon button removes it from the element.
 
-Give every icon button a [tooltip](#tooltip) with the same text as its `aria-label`.
+The text of the tooltip is the accessible name of the icon button, so it needs no `aria-label`. The design system asks for a tooltip on every icon button. Name an icon button without one with the `aria-label` input instead. In dev mode, an icon button without an accessible name logs a warning in the console after its first render.
 
 ### Tooltip
 
 Put the `dmaTooltip` directive on a control that shows only an icon, such as an icon button, and set it to the name of the control. Import `TooltipDirective` into the component that uses it. The directive creates the tooltip in an overlay of the CDK while it shows, and names the control with its text through `aria-labelledby`. The CDK adds the styles of its overlay to the page itself, so the tooltip needs no stylesheet such as `@angular/cdk/overlay-prebuilt.css`.
 
 ```html
-<button dma-icon-button type="button" aria-label="Close panel" variant="ghost" dmaTooltip="Close panel" (click)="close()">
+<button dma-icon-button type="button" variant="ghost" dmaTooltip="Close panel" (click)="close()">
     <dma-icon-xmark />
 </button>
 ```
@@ -128,7 +128,7 @@ The tooltip shows after 500ms of hover, or at once on keyboard focus, and hides 
 It shows above the control by default. Set `dmaTooltipPlacement` to `bottom`, `left`, or `right` to show it on another side. When it doesn't fit there, it flips to the opposite side.
 
 ```html
-<button dma-icon-button type="button" aria-label="Add layer" dmaTooltip="Add layer" dmaTooltipPlacement="right">
+<button dma-icon-button type="button" dmaTooltip="Add layer" dmaTooltipPlacement="right">
     <dma-icon-plus />
 </button>
 ```
@@ -215,7 +215,7 @@ const { fixture, harness } = await setupHarness(SaveMapComponent, ButtonHarness.
 await harness.click();
 ```
 
-`IconButtonHarness.getIcon()` returns the `IconHarness` of the icon of an icon button, and the `label` filter finds an icon button by its `aria-label`.
+`IconButtonHarness.getIcon()` returns the `IconHarness` of the icon of an icon button. The `label` filter finds an icon button by the accessible name that screen readers announce: the text of its tooltip, or the `aria-label` of an icon button without one.
 
 `TooltipHarness` finds the control of a tooltip by the `text` of the tooltip, and reads the text whether the tooltip shows or not. `show()` moves focus to the control, which shows the tooltip at once, and `hide()` presses `Escape`. `isOpen()` tells whether the tooltip shows, and `getPlacement()` returns the side it shows on.
 

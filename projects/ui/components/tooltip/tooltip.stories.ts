@@ -47,7 +47,6 @@ const meta: Meta<TooltipArgs> = {
                 dma-icon-button
                 type="button"
                 variant="ghost"
-                [aria-label]="dmaTooltip"
                 [dmaTooltip]="dmaTooltip"
                 [dmaTooltipPlacement]="dmaTooltipPlacement"
             >
@@ -82,10 +81,10 @@ export const Placements: Story = {
     // The template spells out every icon button, so Storybook can show it in the code snippet.
     render: () => ({
         template: `<div style="display: flex; justify-content: center; gap: var(--dma-spacing-16); padding: var(--dma-spacing-48) 8rem">
-            <button dma-icon-button type="button" variant="ghost" aria-label="Close panel" dmaTooltip="Close panel"><dma-icon-xmark /></button>
-            <button dma-icon-button type="button" variant="ghost" aria-label="Add layer" dmaTooltip="Add layer" dmaTooltipPlacement="bottom"><dma-icon-plus /></button>
-            <button dma-icon-button type="button" variant="ghost" aria-label="Add map" dmaTooltip="Add map" dmaTooltipPlacement="left"><dma-icon-plus /></button>
-            <button dma-icon-button type="button" variant="ghost" aria-label="Close map" dmaTooltip="Close map" dmaTooltipPlacement="right"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" variant="ghost" dmaTooltip="Close panel"><dma-icon-xmark /></button>
+            <button dma-icon-button type="button" variant="ghost" dmaTooltip="Add layer" dmaTooltipPlacement="bottom"><dma-icon-plus /></button>
+            <button dma-icon-button type="button" variant="ghost" dmaTooltip="Add map" dmaTooltipPlacement="left"><dma-icon-plus /></button>
+            <button dma-icon-button type="button" variant="ghost" dmaTooltip="Close map" dmaTooltipPlacement="right"><dma-icon-xmark /></button>
         </div>`,
     }),
 };
@@ -100,7 +99,7 @@ export const DisabledTrigger: Story = {
     },
     render: () => ({
         template: `<div style="display: flex; justify-content: center; padding: var(--dma-spacing-48)">
-            <button dma-icon-button type="button" variant="ghost" aria-label="Delete layer" dmaTooltip="Delete layer" disabled>
+            <button dma-icon-button type="button" variant="ghost" dmaTooltip="Delete layer" disabled>
                 <dma-icon-xmark />
             </button>
         </div>`,
@@ -108,9 +107,10 @@ export const DisabledTrigger: Story = {
 };
 
 /**
- * The groups of the `Tooltip` Figma page, with each tooltip drawn beside its trigger by `dma-tooltip` itself. Tab to
- * the last icon button to see the focus ring of the `Focused trigger` group. The Figma page uses glyphs that
- * `@dnd-mapp/ui/icons` doesn't have yet, so these use `xmark` and `plus`.
+ * The groups of the `Tooltip` Figma page, with each tooltip drawn beside its trigger by `dma-tooltip` itself. The
+ * icon buttons have no `dmaTooltip`, so an `aria-label` names each one. Tab to the last icon button to see the focus
+ * ring of the `Focused trigger` group. The Figma page uses glyphs that `@dnd-mapp/ui/icons` doesn't have yet, so
+ * these use `xmark` and `plus`.
  */
 export const Examples: Story = {
     parameters: {

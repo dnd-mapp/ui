@@ -30,18 +30,18 @@ Pick the size after the space around the icon button. Each size matches the heig
 
 ## Usage
 
-Put `dma-icon-button` on a native `button` element, and import `IconButtonComponent` into the component that uses it, next to the component of its icon. The content of the element is the icon, and the `aria-label` input is its accessible name.
+Put `dma-icon-button` on a native `button` element, and import `IconButtonComponent` into the component that uses it, next to the component of its icon and `TooltipDirective`. The content of the element is the icon. Name the icon button with a [tooltip](?path=/docs/components-tooltip--docs) through the `dmaTooltip` directive, whose text is its accessible name.
 
 ```ts
 import { Component } from '@angular/core';
-import { IconButtonComponent } from '@dnd-mapp/ui/components';
+import { IconButtonComponent, TooltipDirective } from '@dnd-mapp/ui/components';
 import { IconXmarkComponent } from '@dnd-mapp/ui/icons';
 
 @Component({
     selector: 'app-layer-panel-header',
-    imports: [IconButtonComponent, IconXmarkComponent],
+    imports: [IconButtonComponent, IconXmarkComponent, TooltipDirective],
     template: `
-        <button dma-icon-button type="button" aria-label="Close panel" variant="ghost" (click)="close()">
+        <button dma-icon-button type="button" dmaTooltip="Close panel" variant="ghost" (click)="close()">
             <dma-icon-xmark />
         </button>
     `,
@@ -50,6 +50,8 @@ export class LayerPanelHeaderComponent {
     close() {}
 }
 ```
+
+The design system asks for a tooltip on every icon button. An icon button without one takes its accessible name from the `aria-label` input instead.
 
 Set the variant with the `variant` input, and the size with the `size` input. They take the same values and defaults as on `Button`: the `ButtonVariants` and `ButtonSizes` constants hold them, and `variant` defaults to `primary` and `size` to `medium`. An icon that sets no `size` takes the size of the icon button.
 
@@ -60,7 +62,7 @@ The icon button enhances the native element, so it keeps the keyboard support, t
 Set the `disabled` input to disable the icon button. It sets `aria-disabled="true"` rather than the native `disabled` attribute, because a disabled icon button still shows its tooltip, and a tooltip needs focus and hover.
 
 ```html
-<button dma-icon-button type="button" aria-label="Remove layer" variant="danger" [disabled]="locked()" (click)="remove()">
+<button dma-icon-button type="button" dmaTooltip="Remove layer" variant="danger" [disabled]="locked()" (click)="remove()">
     <dma-icon-xmark />
 </button>
 ```
@@ -74,7 +76,7 @@ Set the `disabled` input to disable the icon button. It sets `aria-disabled="tru
 Set the `loading` input while the action that the icon button started runs, and turn it off once the action ends. It works like the `Loading` state of [`Button`](?path=/docs/components-button--docs).
 
 ```html
-<button dma-icon-button type="button" aria-label="Add layer" [loading]="adding()" loadingLabel="Adding" (click)="add()">
+<button dma-icon-button type="button" dmaTooltip="Add layer" [loading]="adding()" loadingLabel="Adding" (click)="add()">
     <dma-icon-plus />
 </button>
 ```
@@ -82,7 +84,7 @@ Set the `loading` input while the action that the icon button started runs, and 
 - From the moment it starts loading, the icon button blocks clicks through `aria-disabled="true"`, but keeps keyboard focus.
 - After 300ms, it shows a spinning `circle-notch` in place of its icon, in the color of the icon. A fast action ends before then and shows no spinner.
 - The spinner stays at least 500ms, so it never flashes. The icon button blocks clicks until the spinner hides.
-- Its `aria-label` stays its accessible name while it loads.
+- It keeps its accessible name while it loads.
 
 <Canvas of={IconButtonStories.Loading} />
 
@@ -107,8 +109,9 @@ Switch between the light and the dark theme with the paintbrush in the toolbar.
 
 ## Accessibility
 
-- Every icon button needs an accessible name, so `aria-label` is required. Keep it a short verb phrase, such as "Close panel".
-- Every icon button needs a [tooltip](?path=/docs/components-tooltip--docs) too. Put the `dmaTooltip` directive on it with the same text as its `aria-label`. The tooltip then names the icon button through `aria-labelledby`, which wins over `aria-label`.
+- Every icon button needs an accessible name. Give it a [tooltip](?path=/docs/components-tooltip--docs), whose text names it through `aria-labelledby`, and keep the text a short verb phrase, such as "Close panel". The design system asks for a tooltip on every icon button.
+- An icon button with a tooltip needs no `aria-label`. Use `aria-label` only for an icon button without a tooltip.
+- In dev mode, an icon button without an accessible name logs a warning in the console after its first render. It warns when it has neither an `aria-labelledby` nor an `aria-label` with text.
 - The icon is hidden from assistive technology, so the tooltip or the `aria-label` stays the accessible name.
 - The icon takes the label colors of `Button`, which pass 4.5:1 against their fills, above the 3:1 that graphics need. The focus ring passes 3:1 against the page, in both themes.
 - A disabled or a loading icon button stays in the tab order, and screen readers report it as unavailable through `aria-disabled="true"`.
@@ -129,4 +132,4 @@ const button = await loader.getHarness(IconButtonHarness.with({ label: 'Close pa
 await button.click();
 ```
 
-Find an icon button by its `label`, which takes a string or a regular expression, by whether it's `disabled` or `loading`, by its `variant`, or by its `size`. The harness can click the icon button, read its accessible name, its variant, and its size, tell whether it's disabled or loading, and move focus to or away from it. Its `getIcon()` method returns an `IconHarness` for its icon, and takes the filters of `IconHarness`, such as `glyph`. It leaves out the spinner of a loading icon button.
+Find an icon button by its `label`, which takes a string or a regular expression, by whether it's `disabled` or `loading`, by its `variant`, or by its `size`. The `label` filter and the `getLabel()` method read the accessible name that screen readers announce: the text of the tooltip, or the `aria-label` of an icon button without one. The harness can click the icon button, read its accessible name, its variant, and its size, tell whether it's disabled or loading, and move focus to or away from it. Its `getIcon()` method returns an `IconHarness` for its icon, and takes the filters of `IconHarness`, such as `glyph`. It leaves out the spinner of a loading icon button.
