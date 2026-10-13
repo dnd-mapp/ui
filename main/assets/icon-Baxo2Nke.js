@@ -1,4 +1,4 @@
-import{n as e}from"./rolldown-runtime-D_-wTCJc.js";import{a as t}from"./chunk-W22LQPXL-D3nZ-YVE.js";import{c as n,i as r,l as i,n as a}from"./blocks-B_2-CIK1.js";import{i as o,r as s}from"./react-C77DJ2jK.js";import{a as c,i as l,n as u,o as d,r as f,t as p}from"./icon.stories-DswGX4vq.js";function _createMdxContent(e){let t={code:`code`,h1:`h1`,h2:`h2`,li:`li`,p:`p`,pre:`pre`,table:`table`,tbody:`tbody`,td:`td`,th:`th`,thead:`thead`,tr:`tr`,ul:`ul`,...o(),...e.components};return(0,m.jsxs)(m.Fragment,{children:[(0,m.jsx)(n,{of:c}),`
+import{n as e}from"./rolldown-runtime-D_-wTCJc.js";import{a as t}from"./chunk-W22LQPXL-D3nZ-YVE.js";import{c as n,i as r,l as i,n as a}from"./blocks-B_2-CIK1.js";import{i as o,r as s}from"./react-C77DJ2jK.js";import{a as c,i as l,n as u,o as d,r as f,t as p}from"./icon.stories-0EZBQOM0.js";function _createMdxContent(e){let t={a:`a`,code:`code`,h1:`h1`,h2:`h2`,li:`li`,p:`p`,pre:`pre`,table:`table`,tbody:`tbody`,td:`td`,th:`th`,thead:`thead`,tr:`tr`,ul:`ul`,...o(),...e.components};return(0,m.jsxs)(m.Fragment,{children:[(0,m.jsx)(n,{of:c}),`
 `,(0,m.jsx)(t.h1,{id:`icon`,children:`Icon`}),`
 `,(0,m.jsxs)(t.p,{children:[`An icon shows a glyph from Font Awesome Free beside a label, such as the `,(0,m.jsx)(t.code,{children:`plus`}),` in "Add map". It's built after the `,(0,m.jsx)(t.code,{children:`Icon`}),` component in the `,(0,m.jsx)(t.code,{children:`Icons`}),` Figma file.`]}),`
 `,(0,m.jsx)(a,{of:u}),`
@@ -34,7 +34,7 @@ export class MapListHeaderComponent {}
 `,(0,m.jsx)(t.h2,{id:`accessibility`,children:`Accessibility`}),`
 `,(0,m.jsxs)(t.ul,{children:[`
 `,(0,m.jsxs)(t.li,{children:[`Every icon has `,(0,m.jsx)(t.code,{children:`aria-hidden="true"`}),`, because the label or the control beside it carries the meaning. Assistive technology skips the icon.`]}),`
-`,(0,m.jsxs)(t.li,{children:[`An icon never names a control by itself. When a control shows only an icon, give the control an accessible name, such as through `,(0,m.jsx)(t.code,{children:`aria-label`}),`.`]}),`
+`,(0,m.jsxs)(t.li,{children:[`An icon never names a control by itself. When a control shows only an icon, give the control an accessible name, such as through a `,(0,m.jsx)(t.a,{href:`?path=/docs/components-tooltip--docs`,children:`tooltip`}),` or `,(0,m.jsx)(t.code,{children:`aria-label`}),`.`]}),`
 `,(0,m.jsx)(t.li,{children:`The icon takes the color of its label, so it passes the same contrast as the label. In forced colors mode, it takes the system text color.`}),`
 `,(0,m.jsx)(t.li,{children:`When the user prefers reduced motion, a spinning icon slows to one turn every 3 seconds. It keeps turning, because a spinner that stands still looks frozen.`}),`
 `]}),`

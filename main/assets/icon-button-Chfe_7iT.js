@@ -1,4 +1,4 @@
-import{n as e}from"./rolldown-runtime-D_-wTCJc.js";import{a as t}from"./chunk-W22LQPXL-D3nZ-YVE.js";import{c as n,i as r,l as i,n as a}from"./blocks-B_2-CIK1.js";import{i as o,r as s}from"./react-C77DJ2jK.js";import{a as c,i as l,n as u,o as d,r as f,t as p}from"./icon-button.stories-DesY-Sqc.js";function _createMdxContent(e){let t={a:`a`,code:`code`,h1:`h1`,h2:`h2`,li:`li`,p:`p`,pre:`pre`,table:`table`,tbody:`tbody`,td:`td`,th:`th`,thead:`thead`,tr:`tr`,ul:`ul`,...o(),...e.components};return(0,m.jsxs)(m.Fragment,{children:[(0,m.jsx)(n,{of:c}),`
+import{n as e}from"./rolldown-runtime-D_-wTCJc.js";import{a as t}from"./chunk-W22LQPXL-D3nZ-YVE.js";import{c as n,i as r,l as i,n as a}from"./blocks-B_2-CIK1.js";import{i as o,r as s}from"./react-C77DJ2jK.js";import{a as c,i as l,n as u,o as d,r as f,t as p}from"./icon-button.stories-BTPCCjqw.js";function _createMdxContent(e){let t={a:`a`,code:`code`,h1:`h1`,h2:`h2`,li:`li`,p:`p`,pre:`pre`,table:`table`,tbody:`tbody`,td:`td`,th:`th`,thead:`thead`,tr:`tr`,ul:`ul`,...o(),...e.components};return(0,m.jsxs)(m.Fragment,{children:[(0,m.jsx)(n,{of:c}),`
 `,(0,m.jsx)(t.h1,{id:`icon-button`,children:`Icon button`}),`
 `,(0,m.jsxs)(t.p,{children:[`An icon button starts an action with an icon and no visible label, such as closing a panel. It's built after the `,(0,m.jsx)(t.code,{children:`Icon button`}),` component in the `,(0,m.jsx)(t.code,{children:`Design system`}),` Figma file, and shares the variants, the sizes, and the states of `,(0,m.jsx)(t.a,{href:`?path=/docs/components-button--docs`,children:(0,m.jsx)(t.code,{children:`Button`})}),`.`]}),`
 `,(0,m.jsx)(a,{of:u}),`
@@ -10,16 +10,16 @@ import{n as e}from"./rolldown-runtime-D_-wTCJc.js";import{a as t}from"./chunk-W2
 `,(0,m.jsxs)(t.table,{children:[(0,m.jsx)(t.thead,{children:(0,m.jsxs)(t.tr,{children:[(0,m.jsx)(t.th,{style:{textAlign:`left`},children:`Size`}),(0,m.jsx)(t.th,{style:{textAlign:`right`},children:`Square`}),(0,m.jsx)(t.th,{style:{textAlign:`left`},children:`Icon size`}),(0,m.jsx)(t.th,{style:{textAlign:`left`},children:`Radius`}),(0,m.jsx)(t.th,{style:{textAlign:`left`},children:`Use for`})]})}),(0,m.jsxs)(t.tbody,{children:[(0,m.jsxs)(t.tr,{children:[(0,m.jsx)(t.td,{style:{textAlign:`left`},children:(0,m.jsx)(t.code,{children:`small`})}),(0,m.jsx)(t.td,{style:{textAlign:`right`},children:`32px`}),(0,m.jsx)(t.td,{style:{textAlign:`left`},children:(0,m.jsx)(t.code,{children:`small`})}),(0,m.jsx)(t.td,{style:{textAlign:`left`},children:(0,m.jsx)(t.code,{children:`radius/4`})}),(0,m.jsx)(t.td,{style:{textAlign:`left`},children:`Dense layouts, such as table rows and panel headers`})]}),(0,m.jsxs)(t.tr,{children:[(0,m.jsx)(t.td,{style:{textAlign:`left`},children:(0,m.jsx)(t.code,{children:`medium`})}),(0,m.jsx)(t.td,{style:{textAlign:`right`},children:`40px`}),(0,m.jsx)(t.td,{style:{textAlign:`left`},children:(0,m.jsx)(t.code,{children:`medium`})}),(0,m.jsx)(t.td,{style:{textAlign:`left`},children:(0,m.jsx)(t.code,{children:`radius/8`})}),(0,m.jsx)(t.td,{style:{textAlign:`left`},children:`Most actions, such as the ones in toolbars and dialogs`})]}),(0,m.jsxs)(t.tr,{children:[(0,m.jsx)(t.td,{style:{textAlign:`left`},children:(0,m.jsx)(t.code,{children:`large`})}),(0,m.jsx)(t.td,{style:{textAlign:`right`},children:`48px`}),(0,m.jsx)(t.td,{style:{textAlign:`left`},children:(0,m.jsx)(t.code,{children:`large`})}),(0,m.jsx)(t.td,{style:{textAlign:`left`},children:(0,m.jsx)(t.code,{children:`radius/12`})}),(0,m.jsx)(t.td,{style:{textAlign:`left`},children:`Actions that lead a sparse view, such as an empty state`})]})]})]}),`
 `,(0,m.jsx)(a,{of:f}),`
 `,(0,m.jsx)(t.h2,{id:`usage`,children:`Usage`}),`
-`,(0,m.jsxs)(t.p,{children:[`Put `,(0,m.jsx)(t.code,{children:`dma-icon-button`}),` on a native `,(0,m.jsx)(t.code,{children:`button`}),` element, and import `,(0,m.jsx)(t.code,{children:`IconButtonComponent`}),` into the component that uses it, next to the component of its icon. The content of the element is the icon, and the `,(0,m.jsx)(t.code,{children:`aria-label`}),` input is its accessible name.`]}),`
+`,(0,m.jsxs)(t.p,{children:[`Put `,(0,m.jsx)(t.code,{children:`dma-icon-button`}),` on a native `,(0,m.jsx)(t.code,{children:`button`}),` element, and import `,(0,m.jsx)(t.code,{children:`IconButtonComponent`}),` into the component that uses it, next to the component of its icon and `,(0,m.jsx)(t.code,{children:`TooltipDirective`}),`. The content of the element is the icon. Name the icon button with a `,(0,m.jsx)(t.a,{href:`?path=/docs/components-tooltip--docs`,children:`tooltip`}),` through the `,(0,m.jsx)(t.code,{children:`dmaTooltip`}),` directive, whose text is its accessible name.`]}),`
 `,(0,m.jsx)(t.pre,{children:(0,m.jsx)(t.code,{className:`language-ts`,children:`import { Component } from '@angular/core';
-import { IconButtonComponent } from '@dnd-mapp/ui/components';
+import { IconButtonComponent, TooltipDirective } from '@dnd-mapp/ui/components';
 import { IconXmarkComponent } from '@dnd-mapp/ui/icons';
 
 @Component({
     selector: 'app-layer-panel-header',
-    imports: [IconButtonComponent, IconXmarkComponent],
+    imports: [IconButtonComponent, IconXmarkComponent, TooltipDirective],
     template: \`
-        <button dma-icon-button type="button" aria-label="Close panel" variant="ghost" (click)="close()">
+        <button dma-icon-button type="button" dmaTooltip="Close panel" variant="ghost" (click)="close()">
             <dma-icon-xmark />
         </button>
     \`,
@@ -28,11 +28,12 @@ export class LayerPanelHeaderComponent {
     close() {}
 }
 `})}),`
+`,(0,m.jsxs)(t.p,{children:[`The design system asks for a tooltip on every icon button. An icon button without one takes its accessible name from the `,(0,m.jsx)(t.code,{children:`aria-label`}),` input instead.`]}),`
 `,(0,m.jsxs)(t.p,{children:[`Set the variant with the `,(0,m.jsx)(t.code,{children:`variant`}),` input, and the size with the `,(0,m.jsx)(t.code,{children:`size`}),` input. They take the same values and defaults as on `,(0,m.jsx)(t.code,{children:`Button`}),`: the `,(0,m.jsx)(t.code,{children:`ButtonVariants`}),` and `,(0,m.jsx)(t.code,{children:`ButtonSizes`}),` constants hold them, and `,(0,m.jsx)(t.code,{children:`variant`}),` defaults to `,(0,m.jsx)(t.code,{children:`primary`}),` and `,(0,m.jsx)(t.code,{children:`size`}),` to `,(0,m.jsx)(t.code,{children:`medium`}),`. An icon that sets no `,(0,m.jsx)(t.code,{children:`size`}),` takes the size of the icon button.`]}),`
 `,(0,m.jsxs)(t.p,{children:[`The icon button enhances the native element, so it keeps the keyboard support, the form behavior, and the `,(0,m.jsx)(t.code,{children:`button`}),` role of the browser. Set `,(0,m.jsx)(t.code,{children:`type="button"`}),` unless the icon button submits a form.`]}),`
 `,(0,m.jsx)(t.h2,{id:`disabled`,children:`Disabled`}),`
 `,(0,m.jsxs)(t.p,{children:[`Set the `,(0,m.jsx)(t.code,{children:`disabled`}),` input to disable the icon button. It sets `,(0,m.jsx)(t.code,{children:`aria-disabled="true"`}),` rather than the native `,(0,m.jsx)(t.code,{children:`disabled`}),` attribute, because a disabled icon button still shows its tooltip, and a tooltip needs focus and hover.`]}),`
-`,(0,m.jsx)(t.pre,{children:(0,m.jsx)(t.code,{className:`language-html`,children:`<button dma-icon-button type="button" aria-label="Remove layer" variant="danger" [disabled]="locked()" (click)="remove()">
+`,(0,m.jsx)(t.pre,{children:(0,m.jsx)(t.code,{className:`language-html`,children:`<button dma-icon-button type="button" dmaTooltip="Remove layer" variant="danger" [disabled]="locked()" (click)="remove()">
     <dma-icon-xmark />
 </button>
 `})}),`
@@ -43,7 +44,7 @@ export class LayerPanelHeaderComponent {
 `]}),`
 `,(0,m.jsx)(t.h2,{id:`loading`,children:`Loading`}),`
 `,(0,m.jsxs)(t.p,{children:[`Set the `,(0,m.jsx)(t.code,{children:`loading`}),` input while the action that the icon button started runs, and turn it off once the action ends. It works like the `,(0,m.jsx)(t.code,{children:`Loading`}),` state of `,(0,m.jsx)(t.a,{href:`?path=/docs/components-button--docs`,children:(0,m.jsx)(t.code,{children:`Button`})}),`.`]}),`
-`,(0,m.jsx)(t.pre,{children:(0,m.jsx)(t.code,{className:`language-html`,children:`<button dma-icon-button type="button" aria-label="Add layer" [loading]="adding()" loadingLabel="Adding" (click)="add()">
+`,(0,m.jsx)(t.pre,{children:(0,m.jsx)(t.code,{className:`language-html`,children:`<button dma-icon-button type="button" dmaTooltip="Add layer" [loading]="adding()" loadingLabel="Adding" (click)="add()">
     <dma-icon-plus />
 </button>
 `})}),`
@@ -51,7 +52,7 @@ export class LayerPanelHeaderComponent {
 `,(0,m.jsxs)(t.li,{children:[`From the moment it starts loading, the icon button blocks clicks through `,(0,m.jsx)(t.code,{children:`aria-disabled="true"`}),`, but keeps keyboard focus.`]}),`
 `,(0,m.jsxs)(t.li,{children:[`After 300ms, it shows a spinning `,(0,m.jsx)(t.code,{children:`circle-notch`}),` in place of its icon, in the color of the icon. A fast action ends before then and shows no spinner.`]}),`
 `,(0,m.jsx)(t.li,{children:`The spinner stays at least 500ms, so it never flashes. The icon button blocks clicks until the spinner hides.`}),`
-`,(0,m.jsxs)(t.li,{children:[`Its `,(0,m.jsx)(t.code,{children:`aria-label`}),` stays its accessible name while it loads.`]}),`
+`,(0,m.jsx)(t.li,{children:`It keeps its accessible name while it loads.`}),`
 `]}),`
 `,(0,m.jsx)(a,{of:p}),`
 `,(0,m.jsx)(t.h2,{id:`states`,children:`States`}),`
@@ -62,8 +63,9 @@ export class LayerPanelHeaderComponent {
 `,(0,m.jsx)(t.p,{children:`Switch between the light and the dark theme with the paintbrush in the toolbar.`}),`
 `,(0,m.jsx)(t.h2,{id:`accessibility`,children:`Accessibility`}),`
 `,(0,m.jsxs)(t.ul,{children:[`
-`,(0,m.jsxs)(t.li,{children:[`Every icon button needs an accessible name, so `,(0,m.jsx)(t.code,{children:`aria-label`}),` is required. Keep it a short verb phrase, such as "Close panel".`]}),`
-`,(0,m.jsxs)(t.li,{children:[`Every icon button needs a `,(0,m.jsx)(t.a,{href:`?path=/docs/components-tooltip--docs`,children:`tooltip`}),` too. Put the `,(0,m.jsx)(t.code,{children:`dmaTooltip`}),` directive on it with the same text as its `,(0,m.jsx)(t.code,{children:`aria-label`}),`. The tooltip then names the icon button through `,(0,m.jsx)(t.code,{children:`aria-labelledby`}),`, which wins over `,(0,m.jsx)(t.code,{children:`aria-label`}),`.`]}),`
+`,(0,m.jsxs)(t.li,{children:[`Every icon button needs an accessible name. Give it a `,(0,m.jsx)(t.a,{href:`?path=/docs/components-tooltip--docs`,children:`tooltip`}),`, whose text names it through `,(0,m.jsx)(t.code,{children:`aria-labelledby`}),`, and keep the text a short verb phrase, such as "Close panel". The design system asks for a tooltip on every icon button.`]}),`
+`,(0,m.jsxs)(t.li,{children:[`An icon button with a tooltip needs no `,(0,m.jsx)(t.code,{children:`aria-label`}),`. Use `,(0,m.jsx)(t.code,{children:`aria-label`}),` only for an icon button without a tooltip.`]}),`
+`,(0,m.jsxs)(t.li,{children:[`In dev mode, an icon button without an accessible name logs a warning in the console after its first render. It warns when it has neither an `,(0,m.jsx)(t.code,{children:`aria-labelledby`}),` nor an `,(0,m.jsx)(t.code,{children:`aria-label`}),` with text.`]}),`
 `,(0,m.jsxs)(t.li,{children:[`The icon is hidden from assistive technology, so the tooltip or the `,(0,m.jsx)(t.code,{children:`aria-label`}),` stays the accessible name.`]}),`
 `,(0,m.jsxs)(t.li,{children:[`The icon takes the label colors of `,(0,m.jsx)(t.code,{children:`Button`}),`, which pass 4.5:1 against their fills, above the 3:1 that graphics need. The focus ring passes 3:1 against the page, in both themes.`]}),`
 `,(0,m.jsxs)(t.li,{children:[`A disabled or a loading icon button stays in the tab order, and screen readers report it as unavailable through `,(0,m.jsx)(t.code,{children:`aria-disabled="true"`}),`.`]}),`
@@ -80,4 +82,4 @@ const button = await loader.getHarness(IconButtonHarness.with({ label: 'Close pa
 
 await button.click();
 `})}),`
-`,(0,m.jsxs)(t.p,{children:[`Find an icon button by its `,(0,m.jsx)(t.code,{children:`label`}),`, which takes a string or a regular expression, by whether it's `,(0,m.jsx)(t.code,{children:`disabled`}),` or `,(0,m.jsx)(t.code,{children:`loading`}),`, by its `,(0,m.jsx)(t.code,{children:`variant`}),`, or by its `,(0,m.jsx)(t.code,{children:`size`}),`. The harness can click the icon button, read its accessible name, its variant, and its size, tell whether it's disabled or loading, and move focus to or away from it. Its `,(0,m.jsx)(t.code,{children:`getIcon()`}),` method returns an `,(0,m.jsx)(t.code,{children:`IconHarness`}),` for its icon, and takes the filters of `,(0,m.jsx)(t.code,{children:`IconHarness`}),`, such as `,(0,m.jsx)(t.code,{children:`glyph`}),`. It leaves out the spinner of a loading icon button.`]})]})}function MDXContent(e={}){let{wrapper:t}={...o(),...e.components};return t?(0,m.jsx)(t,{...e,children:(0,m.jsx)(_createMdxContent,{...e})}):_createMdxContent(e)}var m;function init_icon_button(){return(init_icon_button=e((()=>{m=t(),s(),i(),d()})))()}init_icon_button();export{MDXContent as default};
+`,(0,m.jsxs)(t.p,{children:[`Find an icon button by its `,(0,m.jsx)(t.code,{children:`label`}),`, which takes a string or a regular expression, by whether it's `,(0,m.jsx)(t.code,{children:`disabled`}),` or `,(0,m.jsx)(t.code,{children:`loading`}),`, by its `,(0,m.jsx)(t.code,{children:`variant`}),`, or by its `,(0,m.jsx)(t.code,{children:`size`}),`. The `,(0,m.jsx)(t.code,{children:`label`}),` filter and the `,(0,m.jsx)(t.code,{children:`getLabel()`}),` method read the accessible name that screen readers announce: the text of the tooltip, or the `,(0,m.jsx)(t.code,{children:`aria-label`}),` of an icon button without one. The harness can click the icon button, read its accessible name, its variant, and its size, tell whether it's disabled or loading, and move focus to or away from it. Its `,(0,m.jsx)(t.code,{children:`getIcon()`}),` method returns an `,(0,m.jsx)(t.code,{children:`IconHarness`}),` for its icon, and takes the filters of `,(0,m.jsx)(t.code,{children:`IconHarness`}),`, such as `,(0,m.jsx)(t.code,{children:`glyph`}),`. It leaves out the spinner of a loading icon button.`]})]})}function MDXContent(e={}){let{wrapper:t}={...o(),...e.components};return t?(0,m.jsx)(t,{...e,children:(0,m.jsx)(_createMdxContent,{...e})}):_createMdxContent(e)}var m;function init_icon_button(){return(init_icon_button=e((()=>{m=t(),s(),i(),d()})))()}init_icon_button();export{MDXContent as default};
